@@ -22,6 +22,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+include(..\QtGB.pri)
+
 SOURCES += \
         main.cpp \
         QtGB.cpp
@@ -36,3 +38,11 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+$$AddLibraryReference($${PWD}/../Bin, QtGBMemory)
+$$AddLibraryReference($${PWD}/../Bin, QtGBCPU)
+
+QMAKE_POST_LINK += $$quote(copy $$shell_quote($$shell_path($${PWD}/Bios.gb)) $$shell_quote($${DESTDIR}))
+
+DISTFILES += \
+    Bios.gb
