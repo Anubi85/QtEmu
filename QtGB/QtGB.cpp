@@ -8,14 +8,18 @@ QtGB::QtGB(QWidget *parent) :
     ui(new Ui::QtGB)
 {
     ui->setupUi(this);
-    IQtGBMemory* memory = IQtGBMemory::GetInstance();
-    memory->LoadBios("Bios.gb");
-    IQtGBCPU* cpu = IQtGBCPU::GetInstance();
-    cpu->Reset();
-    while (!cpu->HasError())
-    {
-        cpu->Exec();
-    }
+	IQtGBMemory* memory = IQtGBMemory::GetInstance();
+#ifdef Q_OS_MACX
+	memory->LoadBios("../../../Bios.gb");
+#else
+	memory->LoadBios("Bios.gb");
+#endif
+	IQtGBCPU* cpu = IQtGBCPU::GetInstance();
+	cpu->Reset();
+	while (!cpu->HasError())
+	{
+		cpu->Exec();
+	}
 }
 
 QtGB::~QtGB()

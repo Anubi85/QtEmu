@@ -17,6 +17,8 @@ public:
     bool IsBiosLoaded() override { return m_IsBiosLoaded; }
     uchar ReadByte(ushort address) override;
     ushort ReadWord(ushort address) override;
+	void WriteByte(ushort address, uchar value) override;
+	void WriteWord(ushort address, ushort value) override;
 };
 
 #endif // QTGBMEMORY_H

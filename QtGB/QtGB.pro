@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-include(..\QtGB.pri)
+include(../QtGB.pri)
 
 SOURCES += \
         main.cpp \
@@ -42,7 +42,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 $$AddLibraryReference($${PWD}/../Bin, QtGBMemory)
 $$AddLibraryReference($${PWD}/../Bin, QtGBCPU)
 
-QMAKE_POST_LINK += $$quote(copy $$shell_quote($$shell_path($${PWD}/Bios.gb)) $$shell_quote($${DESTDIR}))
+win32: {
+    COPY_CMD = copy
+}
+unix: {
+    COPY_CMD = cp
+}
+QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${PWD}/Bios.gb)) $$shell_quote($${DESTDIR}))
 
 DISTFILES += \
     Bios.gb

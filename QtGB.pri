@@ -18,18 +18,22 @@ defineReplace(AddLibraryReference) {
         FILE_EXT = *.dll
         COPY_CMD = copy
     }
-    unix: {
+    unix: !macx {
         FILE_EXT = *.so
+        COPY_CMD = cp
+    }
+    macx {
+        FILE_EXT = *.dylib
         COPY_CMD = cp
     }
     #add library to linker and copy the library files to output directory
     CONFIG(debug, debug|release): {
         LIBS += -L$${libraryPath}/$${libraryName}/debug/ -l$${libraryName}
-        QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${libraryPath}/$${libraryName}/debug/$${FILE_EXT})) $$shell_quote($${DESTDIR}))
+        QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${libraryPath}/$${libraryName}/debug/))$${FILE_EXT} $$shell_quote($${DESTDIR}))
     }
     CONFIG(release, debug|release): {
         LIBS += -L$${libraryPath}/$${libraryName}/release/ -l$${libraryName}
-        QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${libraryPath}/$${libraryName}/release/$${FILE_EXT})) $$shell_quote($${DESTDIR}))
+        QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${libraryPath}/$${libraryName}/release/))$${FILE_EXT} $$shell_quote($${DESTDIR}))
     }
     equals(3, "") {
         QMAKE_POST_LINK += $$quote( && )
