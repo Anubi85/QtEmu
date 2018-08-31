@@ -9,6 +9,7 @@ IEmulatorCore* GetCore()
 GB::GB()
 {
     m_Memory = new GBMemory();
+    m_Cpu = new GBCpu(m_Memory);
 }
 
 GB::~GB()

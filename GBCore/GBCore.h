@@ -3,6 +3,7 @@
 
 #include "IEmulatorCore.h"
 #include "GBMemory.h"
+#include "GBCpu.h"
 
 extern "C" Q_DECL_EXPORT IEmulatorCore* GetCore();
 
@@ -10,6 +11,7 @@ class GB : public IEmulatorCore
 {
 private:
     GBMemory* m_Memory;
+    GBCpu* m_Cpu;
 public:
     GB();
     ~GB() override;

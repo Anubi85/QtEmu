@@ -10,7 +10,7 @@ QtGB::QtGB(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QLibrary lib("GB");
+    QLibrary lib("GBCore");
     lib.resolve("GetCore")();
 
 	IQtGBMemory* memory = IQtGBMemory::GetInstance();
