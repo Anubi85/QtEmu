@@ -20,7 +20,7 @@ bool GBMemory::LoadBios(QString biosFilePath)
         if (biosFile.open(QFile::ReadOnly))
         {
             QByteArray tmp = biosFile.readAll();
-            if (tmp.length() == BIOS_SIZE && QCryptographicHash::hash(tmp, QCryptographicHash::Md5).toHex() != BIOS_MD5)
+            if (tmp.length() == BIOS_SIZE && QCryptographicHash::hash(tmp, QCryptographicHash::Md5).toHex() == BIOS_MD5)
             {
                 m_Bios = tmp;
             }

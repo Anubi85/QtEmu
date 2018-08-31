@@ -1,8 +1,8 @@
 #include "QtGB.h"
 #include "ui_QtGB.h"
-#include "IQtGBMemory.h"
-#include "IQtGBCPU.h"
+#include "IEmulatorCore.h"
 #include <QLibrary>
+#include <memory>
 
 QtGB::QtGB(QWidget *parent) :
     QMainWindow(parent),
@@ -11,20 +11,12 @@ QtGB::QtGB(QWidget *parent) :
     ui->setupUi(this);
 
     QLibrary lib("GBCore");
-    lib.resolve("GetCore")();
-
-	IQtGBMemory* memory = IQtGBMemory::GetInstance();
-#ifdef Q_OS_MACX
-	memory->LoadBios("../../../Bios.gb");
-#else
-	memory->LoadBios("Bios.gb");
-#endif
-	IQtGBCPU* cpu = IQtGBCPU::GetInstance();
-	cpu->Reset();
-	while (!cpu->HasError())
-	{
-		cpu->Exec();
-	}
+    std::unique_ptr<IEmulatorCore> core(reinterpret_cast<IEmulatorCore*(*)()>(lib.resolve("GetCore"))());
+    core->LoadBios("Bios.gb");
+    while (!core->HasError())
+    {
+        core->Exec();
+    }
 }
 
 QtGB::~QtGB()

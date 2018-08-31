@@ -3,29 +3,38 @@
 
 IEmulatorCore* GetCore()
 {
-    return new GB();
+    return new GBCore();
 };
 
-GB::GB()
+GBCore::GBCore()
 {
     m_Memory = new GBMemory();
     m_Cpu = new GBCpu(m_Memory);
 }
 
-GB::~GB()
+GBCore::~GBCore()
 {
     delete m_Memory;
 }
 
-bool GB::LoadBios(QString biosFilePath)
+bool GBCore::LoadBios(QString biosFilePath)
 {
-    if (m_Memory)
+    if (m_Memory != nullptr)
     {
         return m_Memory->LoadBios(biosFilePath);
     }
     return false;
 }
 
-void GB::Exec()
+void GBCore::Exec()
 {
+    if (m_Cpu != nullptr)
+    {
+        m_Cpu->Exec();
+    }
+}
+
+bool GBCore::HasError()
+{
+    return m_Cpu->HasError();
 }
