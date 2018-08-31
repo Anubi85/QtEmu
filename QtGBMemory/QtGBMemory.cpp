@@ -23,11 +23,11 @@ bool QtGBMemory::LoadBios(QString biosFilePath)
     return result;
 }
 
-uchar QtGBMemory::ReadByte(ushort address)
+quint8 QtGBMemory::ReadByte(quint16 address)
 {
     if (address < 0x0100 && m_IsBiosLoaded)
     {
-		return static_cast<uchar>(m_Bios[address]);
+        return static_cast<quint8>(m_Bios[address]);
     }
     else
     {
@@ -35,17 +35,17 @@ uchar QtGBMemory::ReadByte(ushort address)
     }
 }
 
-ushort QtGBMemory::ReadWord(ushort address)
+quint16 QtGBMemory::ReadWord(quint16 address)
 {
-	return static_cast<ushort>(ReadByte(address) << 8 | ReadByte(address + 1));
+    return static_cast<quint16>(ReadByte(address) << 8 | ReadByte(address + 1));
 }
 
-void QtGBMemory::WriteByte(ushort address, uchar value)
+void QtGBMemory::WriteByte(quint16 address, quint8 value)
 {
 
 }
 
-void QtGBMemory::WriteWord(ushort address, ushort value)
+void QtGBMemory::WriteWord(quint16 address, quint16 value)
 {
 	WriteByte(address, value & 0x00FF);
 	WriteByte(address + 1, (value & 0xFF00) >> 8);

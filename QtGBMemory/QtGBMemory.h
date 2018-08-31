@@ -15,10 +15,10 @@ public:
     QtGBMemory();
     bool LoadBios(QString biosFilePath) override;
     bool IsBiosLoaded() override { return m_IsBiosLoaded; }
-    uchar ReadByte(ushort address) override;
-    ushort ReadWord(ushort address) override;
-	void WriteByte(ushort address, uchar value) override;
-	void WriteWord(ushort address, ushort value) override;
+    quint8 ReadByte(quint16 address) override;
+    quint16 ReadWord(quint16 address) override;
+    void WriteByte(quint16 address, quint8 value) override;
+    void WriteWord(quint16 address, quint16 value) override;
 };
 
 #endif // QTGBMEMORY_H

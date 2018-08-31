@@ -16,10 +16,10 @@ public:
     virtual ~IQtGBMemory();
     virtual bool LoadBios(QString biosFilePath) = 0;
     virtual bool IsBiosLoaded() = 0;
-    virtual uchar ReadByte(ushort address) = 0;
-    virtual ushort ReadWord(ushort address) = 0;
-	virtual void WriteByte(ushort address, uchar value) = 0;
-	virtual void WriteWord(ushort address, ushort value) = 0;
+    virtual quint8 ReadByte(quint16 address) = 0;
+    virtual quint16 ReadWord(quint16 address) = 0;
+    virtual void WriteByte(quint16 address, quint8 value) = 0;
+    virtual void WriteWord(quint16 address, quint16 value) = 0;
 };
 
 #endif // IQTGBMEMORY_H

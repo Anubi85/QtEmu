@@ -3,7 +3,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
     QtGB \
     QtGBMemory \
-    QtGBCPU
+    QtGBCPU \
+    GBCore
 
 OTHER_FILES += \
     QtGB.pri

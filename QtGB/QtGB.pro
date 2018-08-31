@@ -29,7 +29,8 @@ SOURCES += \
         QtGB.cpp
 
 HEADERS += \
-        QtGB.h
+        QtGB.h \
+    ../Includes/IEmulatorCore.h
 
 FORMS += \
         QtGB.ui

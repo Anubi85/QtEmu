@@ -13,6 +13,7 @@ QtGBCPU::QtGBCPU()
 	m_Instructions[Instructions::NOP] = std::bind(&QtGBCPU::NOP, this, std::placeholders::_1);
 	m_Instructions[Instructions::LD_8Bit] = std::bind(&QtGBCPU::LD_8Bit, this, std::placeholders::_1);
 	m_Instructions[Instructions::LD_16Bit] = std::bind(&QtGBCPU::LD_16Bit, this, std::placeholders::_1);
+    m_Instructions[Instructions::LDD] = std::bind(&QtGBCPU::LDD, this, std::placeholders::_1);
 	m_Instructions[Instructions::XOR] = std::bind(&QtGBCPU::XOR, this, std::placeholders::_1);
 	m_Instructions[Instructions::CP] = std::bind(&QtGBCPU::CP, this, std::placeholders::_1);
 }
@@ -28,74 +29,103 @@ void QtGBCPU::Reset()
 
 Instruction QtGBCPU::Decode(quint8 opCode)
 {
-	if (opCode == 0)
-	{
-		return m_Instructions[Instructions::NOP];
-	}
 	switch (GetX(opCode))
 	{
 		case 0:
-			switch (GetZ(opCode))
-			{
-				case 0:
-					break;
-				case 1:
-					if (GetF(opCode))
-					{
-
-					}
-					else
-					{
-						return m_Instructions[Instructions::LD_16Bit];
-					}
-					break;
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-				case 7:
-					break;
-			}
-			break;
+            return Decode0(opCode);
 		case 1:
-			if (opCode != 0x76)
-			{
-				return m_Instructions[Instructions::LD_8Bit];
-			}
-			break;
+            return Decode1(opCode);
 		case 2:
-			switch (GetY(opCode))
-			{
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-					return m_Instructions[Instructions::XOR];
-				case 6:
-				case 7:
-					break;
-			}
-			break;
+            return Decode2(opCode);
 		case 3:
-			switch (GetY(opCode))
-			{
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-					return m_Instructions[Instructions::XOR];
-				case 6:
-				case 7:
-					break;
-			}
-			break;
+            return Decode3(opCode);
 	}
 	return nullptr;
+}
+
+Instruction QtGBCPU::Decode0(quint8 opCode)
+{
+    if (opCode == 0)
+    {
+        return m_Instructions[Instructions::NOP];
+    }
+    switch (GetZ(opCode))
+    {
+        case 0:
+            break;
+        case 1:
+            if (GetF(opCode))
+            {
+
+            }
+            else
+            {
+                return m_Instructions[Instructions::LD_16Bit];
+            }
+            break;
+        case 2:
+            switch (GetW(opCode))
+            {
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                case 3:
+                    return m_Instructions[Instructions::LDD];
+            }
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            break;
+    }
+    return nullptr;
+}
+
+Instruction QtGBCPU::Decode1(quint8 opCode)
+{
+    if (opCode != 0x76)
+    {
+        return m_Instructions[Instructions::LD_8Bit];
+    }
+    return nullptr;
+}
+
+Instruction QtGBCPU::Decode2(quint8 opCode)
+{
+    switch (GetY(opCode))
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            return m_Instructions[Instructions::XOR];
+        case 6:
+        case 7:
+            break;
+    }
+    return nullptr;
+}
+
+Instruction QtGBCPU::Decode3(quint8 opCode)
+{
+    switch (GetY(opCode))
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            return m_Instructions[Instructions::XOR];
+        case 6:
+        case 7:
+            break;
+    }
+    return nullptr;
 }
 
 void QtGBCPU::Exec()
@@ -143,6 +173,11 @@ quint8 QtGBCPU::AuxSUB(Byte value)
 	return result;
 }
 
+void QtGBCPU::NOP(quint8 opCode)
+{
+    m_Cycles++;
+}
+
 void QtGBCPU::LD_8Bit(quint8 opCode)
 {
 	quint8 regAidx = GetY(opCode);
@@ -185,6 +220,20 @@ void QtGBCPU::LD_16Bit(quint8 opCode)
 	{
 		m_Registers.Double[regIdx] = value;
 	}
+}
+
+void QtGBCPU::LDD(quint8 opCode)
+{
+    if (GetF(opCode))
+    {
+        m_Registers.Single[Registers::A].Value = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
+    }
+    else
+    {
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], m_Registers.Single[Registers::A].Value);
+    }
+    m_Registers.Double[Registers::HL]--;
+    m_Cycles += 2;
 }
 
 void QtGBCPU::CP(quint8 opCode)

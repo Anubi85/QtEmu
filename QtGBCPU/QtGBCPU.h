@@ -44,6 +44,7 @@ enum Instructions
 	NOP,
 	LD_8Bit,
 	LD_16Bit,
+    LDD,
 	XOR,
 	CP,
 	Total
@@ -52,8 +53,51 @@ enum Instructions
 union Byte
 {
 	quint8 Value;
-	quint8 HighNibble : 4;
-	quint8 LowNibble : 4;
+#ifdef Q_OS_MACX
+    struct
+    {
+        quint8 HighNibble : 4;
+        quint8 LowNibble : 4;
+    };
+#else
+    struct
+    {
+        quint8 LowNibble : 4;
+        quint8 HighNibble : 4;
+    };
+#endif
+};
+
+union OpCode
+{
+    quint8 Value;
+#ifdef Q_OS_MACX
+    struct
+    {
+        quint8 x : 2;
+        quint8 y : 3;
+        quint8 z : 3;
+    };
+    struct
+    {
+        quint8 :2;
+        quint8 w : 2;
+        quint8 f : 1;
+    };
+#else
+    struct
+    {
+        quint8 z : 3;
+        quint8 y : 3;
+        quint8 x : 2;
+    };
+    struct
+    {
+        quint8 :3;
+        quint8 f : 1;
+        quint8 w : 2;
+    };
+#endif
 };
 
 typedef std::function<void(quint8)> Instruction;
@@ -83,9 +127,14 @@ private:
     bool m_ErrorOccurred;
 
 	Instruction Decode(quint8 opCode);
-	void NOP(quint8 opCode) {}
+    Instruction Decode0(quint8 opCode);
+    Instruction Decode1(quint8 opCode);
+    Instruction Decode2(quint8 opCode);
+    Instruction Decode3(quint8 opCode);
+    void NOP(quint8 opCode);
 	void LD_8Bit(quint8 opCode);
 	void LD_16Bit(quint8 opCode);
+    void LDD(quint8 opCode);
 	void CP(quint8 opCode);
 	void XOR(quint8 opCode);
 
