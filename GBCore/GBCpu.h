@@ -8,27 +8,54 @@
 
 #define REG8_NUM 8
 #define REG16_NUM 4
-#define REG_A 0x07
-#define REG_F 0x06
-#define REG_SP 0x03
-#define REG_HL 0x02
-#define FROM_HL REG_F
 #define INSTRUCTIONS_NUM 256
+#define INSTRUCTIONS_SETS 2
+#define REGULAR 0
+#define EXTENDED 1
 
-enum FlagMasks : quint8
+enum FlagMasks
 {
-    C = 0x10,
-    H = 0x20,
-    N = 0x40,
-    Z = 0x80,
-    All = 0xF0
+    FLAG_C = 0x10,
+    FLAG_H = 0x20,
+    FLAG_N = 0x40,
+    FLAG_Z = 0x80,
+    FLAG_All = 0xF0
+};
+
+enum Conditions
+{
+    COND_NZ = 0x00,
+    COND_Z = 0x01,
+    COND_NC = 0x02,
+    COND_C = 0x03
+};
+
+enum Registers
+{
+    REG_B = 0x00,
+    REG_C = 0x01,
+    REG_D = 0x02,
+    REG_E = 0x03,
+    REG_H = 0x04,
+    REG_L = 0x05,
+    REG_F = 0x06,
+    REG_A = 0x07,
+    ADR_HL = 0x06,
+    REG_BC = 0x00,
+    REG_DE = 0x01,
+    REG_HL = 0x02,
+    REG_FA = 0x03,
+    REG_SP = 0x03
 };
 
 enum Instructions
 {
     NOP,
     LD_16BIT,
+    LDD,
     XOR,
+    BIT,
+    JR,
     TOTAL
 };
 
@@ -37,7 +64,7 @@ class GBCpu
 private:
     typedef std::function<void(GBCpu*, OpCode)> Instruction;
 
-    static Instruction s_InstructionTable[2][INSTRUCTIONS_NUM];
+    static Instruction s_InstructionTable[INSTRUCTIONS_SETS][INSTRUCTIONS_NUM];
     static bool s_IsInstructionTableInitialized;
     static void InitializeInstructionTable();
 
@@ -53,12 +80,15 @@ private:
         quint16 Double[REG16_NUM];
     } m_Registers;
 
-    void SetFlag(FlagMasks flagMask) { m_Registers.Single[REG_F] |= flagMask; }
-    void ResetFlag(FlagMasks flagMask) { m_Registers.Single[REG_F] &= ~flagMask; }
+    void SetFlag(FlagMasks flagMask, bool value);
+    bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::REG_F] & flagMask) != 0; }
     //Instructions
     void NOP(OpCode opCode);
     void LD_16Bit(OpCode opCode);
+    void LDD(OpCode opCode);
     void XOR(OpCode opCode);
+    void BIT(OpCode opCode);
+    void JR(OpCode opCode);
 public:
     GBCpu(GBMemory* memory);
     void Reset();

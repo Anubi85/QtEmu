@@ -40,9 +40,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-$$AddLibraryReference($${PWD}/../Bin, QtGBMemory)
-$$AddLibraryReference($${PWD}/../Bin, QtGBCPU)
-
 win32: {
     COPY_CMD = copy
 }
