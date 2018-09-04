@@ -51,6 +51,7 @@ enum Registers
 enum Instructions
 {
     NOP,
+    LD_8BIT,
     LD_16BIT,
     LDD,
     XOR,
@@ -84,6 +85,7 @@ private:
     bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::REG_F] & flagMask) != 0; }
     //Instructions
     void NOP(OpCode opCode);
+    void LD_8Bit(OpCode opCode);
     void LD_16Bit(OpCode opCode);
     void LDD(OpCode opCode);
     void XOR(OpCode opCode);
