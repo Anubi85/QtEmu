@@ -13,6 +13,7 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::LD_16BIT] = std::bind(&GBCpu::LD_16Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::LDD] = std::bind(&GBCpu::LDD, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::XOR] = std::bind(&GBCpu::XOR, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::INC] = std::bind(&GBCpu::INC, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::BIT] = std::bind(&GBCpu::BIT, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
     //assign function pointers for standard set
@@ -98,8 +99,10 @@ void GBCpu::InitializeInstructionTable()
         case 0x7D:
         case 0x7E:
         case 0x7F:
+        case 0xE0:
         case 0xE2:
         case 0xEA:
+        case 0xF0:
         case 0xF2:
         case 0xFA:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::LD_8BIT];
@@ -130,6 +133,16 @@ void GBCpu::InitializeInstructionTable()
         case 0xAF:
         case 0xEE:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::XOR];
+            break;
+        case 0x04:
+        case 0x0C:
+        case 0x14:
+        case 0x1C:
+        case 0x24:
+        case 0x2C:
+        case 0x34:
+        case 0x3C:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC];
             break;
         }
     }
@@ -432,11 +445,15 @@ void GBCpu::LD_8Bit(OpCode opCode)
         break;
     case 0b11:
         //special case, write is performed here and then the method returns
+        quint16 address = 0;
         switch (opCode.GetZ())
         {
+        case 0b000:
+            m_Cycles += 2;
+            address = 0xFF00 | m_Memory->ReadByte(m_PC++);
+            break;
         case 0b010:
             m_Cycles++;
-            quint16 address;
             if (opCode.GetF())
             {
                 m_Cycles += 2;
@@ -447,15 +464,15 @@ void GBCpu::LD_8Bit(OpCode opCode)
             {
                 address = 0xFF00 | m_Registers.Single[Registers::REG_C];
             }
-            switch (opCode.GetW())
-            {
-            case 0b10:
-                m_Memory->WriteByte(address, m_Registers.Single[Registers::REG_A]);
-                break;
-            case 0b11:
-                m_Registers.Single[Registers::REG_A] = m_Memory->ReadByte(address);
-                break;
-            }
+            break;
+        }
+        switch (opCode.GetW())
+        {
+        case 0b10:
+            m_Memory->WriteByte(address, m_Registers.Single[Registers::REG_A]);
+            break;
+        case 0b11:
+            m_Registers.Single[Registers::REG_A] = m_Memory->ReadByte(address);
             break;
         }
         return;
@@ -469,4 +486,24 @@ void GBCpu::LD_8Bit(OpCode opCode)
     {
         m_Registers.Single[opCode.GetY()] = value;
     }
+}
+
+void GBCpu::INC(OpCode opCode)
+{
+    m_Cycles++;
+    quint8 finalValue;
+    if (opCode.GetY() == Registers::ADR_HL)
+    {
+        m_Cycles += 2;
+        finalValue = m_Memory->ReadByte(m_Registers.Double[Registers::REG_HL]) + 1;
+        m_Memory->WriteByte(m_Registers.Double[Registers::REG_HL], finalValue);
+    }
+    else
+    {
+        finalValue = m_Registers.Single[opCode.GetY()] + 1;
+        m_Registers.Single[opCode.GetY()] = finalValue;
+    }
+    SetFlag(FlagMasks::FLAG_Z, finalValue == 0);
+    SetFlag(FlagMasks::FLAG_N, false);
+    SetFlag(FlagMasks::FLAG_H, (finalValue & 0x0F) == 0);
 }

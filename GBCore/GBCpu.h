@@ -55,6 +55,7 @@ enum Instructions
     LD_16BIT,
     LDD,
     XOR,
+    INC,
     BIT,
     JR,
     TOTAL
@@ -89,6 +90,7 @@ private:
     void LD_16Bit(OpCode opCode);
     void LDD(OpCode opCode);
     void XOR(OpCode opCode);
+    void INC(OpCode opCode);
     void BIT(OpCode opCode);
     void JR(OpCode opCode);
 public:
