@@ -15,7 +15,10 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::XOR] = std::bind(&GBCpu::XOR, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::INC] = std::bind(&GBCpu::INC, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::BIT] = std::bind(&GBCpu::BIT, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::RL] = std::bind(&GBCpu::RL, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::CALL] = std::bind(&GBCpu::CALL, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::PUSH] = std::bind(&GBCpu::PUSH, std::placeholders::_1, std::placeholders::_2);
     //assign function pointers for standard set
     for (int opCode = 0; opCode < INSTRUCTIONS_NUM; opCode++)
     {
@@ -144,6 +147,22 @@ void GBCpu::InitializeInstructionTable()
         case 0x3C:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC];
             break;
+        case 0xC4:
+        case 0xCC:
+        case 0xCD:
+        case 0xD4:
+        case 0xDC:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::CALL];
+            break;
+        case 0xC5:
+        case 0xD5:
+        case 0xE5:
+        case 0xF5:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::PUSH];
+            break;
+        case 0x17:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::RL];
+            break;
         }
     }
     //assign function pointers for CB set
@@ -217,6 +236,16 @@ void GBCpu::InitializeInstructionTable()
         case 0x7F:
             s_InstructionTable[EXTENDED][opCode] = methods[Instructions::BIT];
             break;
+        case 0x10:
+        case 0x11:
+        case 0x12:
+        case 0x13:
+        case 0x14:
+        case 0x15:
+        case 0x16:
+        case 0x17:
+            s_InstructionTable[EXTENDED][opCode] = methods[Instructions::RL];
+            break;
         }
     }
     //set initialized flag
@@ -285,11 +314,11 @@ void GBCpu::SetFlag(FlagMasks flagMask, bool value)
 {
     if (value)
     {
-        m_Registers.Single[Registers::REG_F] |= flagMask;
+        m_Registers.Single[Registers::F] |= static_cast<quint8>(flagMask);
     }
     else
     {
-        m_Registers.Single[Registers::REG_F] &= ~flagMask;
+        m_Registers.Single[Registers::F] &= ~static_cast<quint8>(flagMask);
     }
 }
 
@@ -304,7 +333,7 @@ void GBCpu::LD_16Bit(OpCode opCode)
     //get value from memory
     quint16 value = m_Memory->ReadWord(m_PC);
     m_PC += 2;
-    if (opCode.GetW() == Registers::REG_SP)
+    if (opCode.GetW() == Registers::SP)
     {
         m_SP = value;
     }
@@ -317,7 +346,7 @@ void GBCpu::LD_16Bit(OpCode opCode)
 void GBCpu::LDD(OpCode opCode)
 {
     m_Cycles += 2;
-    m_Memory->WriteByte(m_Registers.Double[Registers::REG_HL]--, m_Registers.Single[Registers::REG_A]);
+    m_Memory->WriteByte(m_Registers.Double[Registers::HL]--, m_Registers.Single[Registers::A]);
 }
 
 void GBCpu::XOR(OpCode opCode)
@@ -334,19 +363,19 @@ void GBCpu::XOR(OpCode opCode)
         }
         else
         {
-            value = m_Memory->ReadByte(m_Registers.Double[Registers::REG_HL]);
+            value = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
         }
     }
     else
     {
         value = m_Registers.Single[opCode.GetZ()];
     }
-    m_Registers.Single[Registers::REG_A] ^= value;
+    m_Registers.Single[Registers::A] ^= value;
     //set flags
-    SetFlag(FlagMasks::FLAG_All, false);
-    if (m_Registers.Single[Registers::REG_A] == 0)
+    SetFlag(FlagMasks::All, false);
+    if (m_Registers.Single[Registers::A] == 0)
     {
-        SetFlag(FlagMasks::FLAG_Z, true);
+        SetFlag(FlagMasks::Z, true);
     }
 }
 
@@ -357,16 +386,16 @@ void GBCpu::BIT(OpCode opCode)
     if (opCode.GetZ() == Registers::ADR_HL)
     {
         m_Cycles += 2;
-        toTest = m_Memory->ReadByte(m_Registers.Double[Registers::REG_HL]);
+        toTest = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
         m_PC += 2;
     }
     else
     {
         toTest = m_Registers.Single[opCode.GetZ()];
     }
-    SetFlag(FlagMasks::FLAG_Z, toTest & (1 << opCode.GetY()));
-    SetFlag(FlagMasks::FLAG_H, true);
-    SetFlag(FlagMasks::FLAG_N, false);
+    SetFlag(FlagMasks::Z, toTest & (1 << opCode.GetY()));
+    SetFlag(FlagMasks::H, true);
+    SetFlag(FlagMasks::N, false);
 }
 
 void GBCpu::JR(OpCode opCode)
@@ -380,17 +409,17 @@ void GBCpu::JR(OpCode opCode)
         //check condition
         switch (opCode.GetQ())
         {
-        case Conditions::COND_Z:
-            jump = GetFlag(FlagMasks::FLAG_Z);
+        case Conditions::Z:
+            jump = GetFlag(FlagMasks::Z);
             break;
-        case Conditions::COND_NZ:
-            jump = !GetFlag(FlagMasks::FLAG_Z);
+        case Conditions::NZ:
+            jump = !GetFlag(FlagMasks::Z);
             break;
-        case Conditions::COND_C:
-            jump = GetFlag(FlagMasks::FLAG_C);
+        case Conditions::C:
+            jump = GetFlag(FlagMasks::C);
             break;
-        case Conditions::COND_NC:
-            jump = !GetFlag(FlagMasks::FLAG_C);
+        case Conditions::NC:
+            jump = !GetFlag(FlagMasks::C);
             break;
         }
     }
@@ -420,11 +449,11 @@ void GBCpu::LD_8Bit(OpCode opCode)
             //special case, write is performed here and then the method returns
             if (opCode.GetF())
             {
-                m_Registers.Single[Registers::REG_A] = m_Memory->ReadByte(m_Registers.Double[opCode.GetW()]);
+                m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[opCode.GetW()]);
             }
             else
             {
-                m_Memory->WriteByte(m_Registers.Double[opCode.GetW()], m_Registers.Single[Registers::REG_A]);
+                m_Memory->WriteByte(m_Registers.Double[opCode.GetW()], m_Registers.Single[Registers::A]);
             }
             return;
         case 0b110:
@@ -436,7 +465,7 @@ void GBCpu::LD_8Bit(OpCode opCode)
         if (opCode.GetZ() == Registers::ADR_HL)
         {
             m_Cycles++;
-            value = m_Memory->ReadByte(m_Registers.Double[Registers::REG_HL]);
+            value = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
         }
         else
         {
@@ -462,17 +491,17 @@ void GBCpu::LD_8Bit(OpCode opCode)
             }
             else
             {
-                address = 0xFF00 | m_Registers.Single[Registers::REG_C];
+                address = 0xFF00 | m_Registers.Single[Registers::C];
             }
             break;
         }
         switch (opCode.GetW())
         {
         case 0b10:
-            m_Memory->WriteByte(address, m_Registers.Single[Registers::REG_A]);
+            m_Memory->WriteByte(address, m_Registers.Single[Registers::A]);
             break;
         case 0b11:
-            m_Registers.Single[Registers::REG_A] = m_Memory->ReadByte(address);
+            m_Registers.Single[Registers::A] = m_Memory->ReadByte(address);
             break;
         }
         return;
@@ -480,7 +509,7 @@ void GBCpu::LD_8Bit(OpCode opCode)
     if (opCode.GetY() == Registers::ADR_HL)
     {
         m_Cycles++;
-        m_Memory->WriteByte(m_Registers.Double[Registers::REG_HL], value);
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], value);
     }
     else
     {
@@ -495,15 +524,79 @@ void GBCpu::INC(OpCode opCode)
     if (opCode.GetY() == Registers::ADR_HL)
     {
         m_Cycles += 2;
-        finalValue = m_Memory->ReadByte(m_Registers.Double[Registers::REG_HL]) + 1;
-        m_Memory->WriteByte(m_Registers.Double[Registers::REG_HL], finalValue);
+        finalValue = m_Memory->ReadByte(m_Registers.Double[Registers::HL]) + 1;
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], finalValue);
     }
     else
     {
         finalValue = m_Registers.Single[opCode.GetY()] + 1;
         m_Registers.Single[opCode.GetY()] = finalValue;
     }
-    SetFlag(FlagMasks::FLAG_Z, finalValue == 0);
-    SetFlag(FlagMasks::FLAG_N, false);
-    SetFlag(FlagMasks::FLAG_H, (finalValue & 0x0F) == 0);
+    SetFlag(FlagMasks::Z, finalValue == 0);
+    SetFlag(FlagMasks::N, false);
+    SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
+}
+
+void GBCpu::CALL(OpCode opCode)
+{
+    m_Cycles += 3;
+    bool execute = true;
+    if (opCode.GetZ() == 0b100)
+    {
+        switch (opCode.GetQ())
+        {
+        case Conditions::Z:
+            execute = GetFlag(FlagMasks::Z);
+            break;
+        case Conditions::NZ:
+            execute = !GetFlag(FlagMasks::Z);
+            break;
+        case Conditions::C:
+            execute = GetFlag(FlagMasks::C);
+            break;
+        case Conditions::NC:
+            execute = !GetFlag(FlagMasks::C);
+            break;
+        }
+    }
+    if (execute)
+    {
+        quint16 address = m_Memory->ReadWord(m_PC);
+        m_PC += 2;
+        m_Memory->WriteWord(m_SP, m_PC);
+        m_SP -= 2;
+        m_PC = address;
+    }
+    else
+    {
+        m_PC += 2;
+    }
+}
+
+void GBCpu::PUSH(OpCode opCode)
+{
+    m_Cycles += 4;
+    m_Memory->WriteWord(m_SP, m_Registers.Double[opCode.GetW()]);
+    m_SP -= 2;
+}
+
+void GBCpu::RL(OpCode opCode)
+{
+    m_Cycles += 2;
+    quint8 value;
+    if (opCode.GetZ() == Registers::ADR_HL)
+    {
+        m_Cycles += 2;
+        value = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
+        m_Memory ->WriteByte(m_Registers.Double[Registers::HL], (value << 1) & 0xFF);
+    }
+    else
+    {
+        value = m_Registers.Single[opCode.GetZ()];
+        m_Registers.Single[opCode.GetZ()] = (value << 1) & 0xFF;
+    }
+    SetFlag(FlagMasks::Z, value == 0x80);
+    SetFlag(FlagMasks::N, false);
+    SetFlag(FlagMasks::H, false);
+    SetFlag(FlagMasks::C, (value & 0x80) != 0);
 }

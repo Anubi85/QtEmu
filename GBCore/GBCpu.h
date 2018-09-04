@@ -13,53 +13,68 @@
 #define REGULAR 0
 #define EXTENDED 1
 
-enum FlagMasks
+enum class FlagMasks : quint8
 {
-    FLAG_C = 0x10,
-    FLAG_H = 0x20,
-    FLAG_N = 0x40,
-    FLAG_Z = 0x80,
-    FLAG_All = 0xF0
+    C = 0x10,
+    H = 0x20,
+    N = 0x40,
+    Z = 0x80,
+    All = 0xF0
 };
 
-enum Conditions
+//maintanins the explicit conversion to int but provides a sort of "scope" support
+namespace Conditions
 {
-    COND_NZ = 0x00,
-    COND_Z = 0x01,
-    COND_NC = 0x02,
-    COND_C = 0x03
-};
+    enum
+    {
+        NZ = 0x00,
+        Z = 0x01,
+        NC = 0x02,
+        C = 0x03
+    };
+}
 
-enum Registers
+//maintanins the explicit conversion to int but provides a sort of "scope" support
+namespace Registers
 {
-    REG_B = 0x00,
-    REG_C = 0x01,
-    REG_D = 0x02,
-    REG_E = 0x03,
-    REG_H = 0x04,
-    REG_L = 0x05,
-    REG_F = 0x06,
-    REG_A = 0x07,
-    ADR_HL = 0x06,
-    REG_BC = 0x00,
-    REG_DE = 0x01,
-    REG_HL = 0x02,
-    REG_FA = 0x03,
-    REG_SP = 0x03
-};
+    enum
+    {
+        B = 0x00,
+        C = 0x01,
+        D = 0x02,
+        E = 0x03,
+        H = 0x04,
+        L = 0x05,
+        F = 0x06,
+        A = 0x07,
+        ADR_HL = 0x06,
+        BC = 0x00,
+        DE = 0x01,
+        HL = 0x02,
+        AF = 0x03,
+        SP = 0x03
+    };
+}
 
-enum Instructions
+//maintanins the explicit conversion to int but provides a sort of "scope" support
+namespace Instructions
 {
-    NOP,
-    LD_8BIT,
-    LD_16BIT,
-    LDD,
-    XOR,
-    INC,
-    BIT,
-    JR,
-    TOTAL
-};
+    enum
+    {
+        NOP,
+        LD_8BIT,
+        LD_16BIT,
+        LDD,
+        XOR,
+        INC,
+        BIT,
+        RL,
+        JR,
+        CALL,
+        PUSH,
+        TOTAL
+    };
+}
 
 class GBCpu
 {
@@ -83,7 +98,7 @@ private:
     } m_Registers;
 
     void SetFlag(FlagMasks flagMask, bool value);
-    bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::REG_F] & flagMask) != 0; }
+    bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::F] & static_cast<quint8>(flagMask)) != 0; }
     //Instructions
     void NOP(OpCode opCode);
     void LD_8Bit(OpCode opCode);
@@ -92,7 +107,10 @@ private:
     void XOR(OpCode opCode);
     void INC(OpCode opCode);
     void BIT(OpCode opCode);
+    void RL(OpCode opCode);
     void JR(OpCode opCode);
+    void CALL(OpCode opCode);
+    void PUSH(OpCode opCode);
 public:
     GBCpu(GBMemory* memory);
     void Reset();
