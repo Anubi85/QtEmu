@@ -72,6 +72,7 @@ namespace Instructions
         JR,
         CALL,
         PUSH,
+        POP,
         TOTAL
     };
 }
@@ -111,6 +112,7 @@ private:
     void JR(OpCode opCode);
     void CALL(OpCode opCode);
     void PUSH(OpCode opCode);
+    void POP(OpCode opCode);
 public:
     GBCpu(GBMemory* memory);
     void Reset();

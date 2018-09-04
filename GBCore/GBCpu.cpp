@@ -19,6 +19,7 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::CALL] = std::bind(&GBCpu::CALL, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::PUSH] = std::bind(&GBCpu::PUSH, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::POP] = std::bind(&GBCpu::POP, std::placeholders::_1, std::placeholders::_2);
     //assign function pointers for standard set
     for (int opCode = 0; opCode < INSTRUCTIONS_NUM; opCode++)
     {
@@ -159,6 +160,12 @@ void GBCpu::InitializeInstructionTable()
         case 0xE5:
         case 0xF5:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::PUSH];
+            break;
+        case 0xC1:
+        case 0xD1:
+        case 0xE1:
+        case 0xF1:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::POP];
             break;
         case 0x17:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::RL];
@@ -578,6 +585,13 @@ void GBCpu::PUSH(OpCode opCode)
     m_Cycles += 4;
     m_Memory->WriteWord(m_SP, m_Registers.Double[opCode.GetW()]);
     m_SP -= 2;
+}
+
+void GBCpu::POP(OpCode opCode)
+{
+    m_Cycles += 3;
+    m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP);
+    m_SP += 2;
 }
 
 void GBCpu::RL(OpCode opCode)
