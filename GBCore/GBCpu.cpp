@@ -14,6 +14,7 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::LDD] = std::bind(&GBCpu::LDD, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::XOR] = std::bind(&GBCpu::XOR, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::INC] = std::bind(&GBCpu::INC, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::DEC] = std::bind(&GBCpu::DEC, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::BIT] = std::bind(&GBCpu::BIT, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::RL] = std::bind(&GBCpu::RL, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
@@ -147,6 +148,16 @@ void GBCpu::InitializeInstructionTable()
         case 0x34:
         case 0x3C:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC];
+            break;
+        case 0x05:
+        case 0x0D:
+        case 0x15:
+        case 0x1D:
+        case 0x25:
+        case 0x2D:
+        case 0x35:
+        case 0x3D:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::DEC];
             break;
         case 0xC4:
         case 0xCC:
@@ -408,7 +419,6 @@ void GBCpu::BIT(OpCode opCode)
 void GBCpu::JR(OpCode opCode)
 {
     m_Cycles += 2;
-    qint8 toJump = 0;
     bool jump = true;
     //check if conditional jump
     if (opCode.GetG())
@@ -432,7 +442,7 @@ void GBCpu::JR(OpCode opCode)
     }
     if (jump)
     {
-        toJump = static_cast<qint8>(m_Memory->ReadByte(m_PC));
+        qint8 toJump = static_cast<qint8>(m_Memory->ReadByte(m_PC++));
         m_PC += toJump;
     }
     else
@@ -541,6 +551,26 @@ void GBCpu::INC(OpCode opCode)
     }
     SetFlag(FlagMasks::Z, finalValue == 0);
     SetFlag(FlagMasks::N, false);
+    SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
+}
+
+void GBCpu::DEC(OpCode opCode)
+{
+    m_Cycles++;
+    quint8 finalValue;
+    if (opCode.GetY() == Registers::ADR_HL)
+    {
+        m_Cycles += 2;
+        finalValue = m_Memory->ReadByte(m_Registers.Double[Registers::HL]) - 1;
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], finalValue);
+    }
+    else
+    {
+        finalValue = m_Registers.Single[opCode.GetY()] - 1;
+        m_Registers.Single[opCode.GetY()] = finalValue;
+    }
+    SetFlag(FlagMasks::Z, finalValue == 0);
+    SetFlag(FlagMasks::N, true);
     SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
 }
 

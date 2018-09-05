@@ -67,6 +67,7 @@ namespace Instructions
         LDD,
         XOR,
         INC,
+        DEC,
         BIT,
         RL,
         JR,
@@ -107,6 +108,7 @@ private:
     void LDD(OpCode opCode);
     void XOR(OpCode opCode);
     void INC(OpCode opCode);
+    void DEC(OpCode opCode);
     void BIT(OpCode opCode);
     void RL(OpCode opCode);
     void JR(OpCode opCode);
