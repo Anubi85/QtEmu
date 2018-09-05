@@ -654,8 +654,8 @@ void GBCpu::CALL(OpCode opCode)
     {
         quint16 address = m_Memory->ReadWord(m_PC);
         m_PC += 2;
-        m_Memory->WriteWord(m_SP, m_PC);
-        m_SP -= 2;
+        m_SP--;
+        m_Memory->WriteWord(m_SP--, m_PC);
         m_PC = address;
     }
     else
@@ -693,9 +693,8 @@ void GBCpu::RET(OpCode opCode)
     }
     if (execute)
     {
-        m_SP -= 2;
-        quint16 address = m_Memory->ReadWord(m_SP);
-        m_PC = address;
+        m_SP++;
+        m_PC = m_Memory->ReadWord(m_SP++);
         if (activateInterrupts)
         {
             m_Memory->WriteByte(0xFFFF, 0x1F);
@@ -706,15 +705,15 @@ void GBCpu::RET(OpCode opCode)
 void GBCpu::PUSH(OpCode opCode)
 {
     m_Cycles += 4;
-    m_Memory->WriteWord(m_SP, m_Registers.Double[opCode.GetW()]);
-    m_SP -= 2;
+    m_SP--;
+    m_Memory->WriteWord(m_SP--, m_Registers.Double[opCode.GetW()]);
 }
 
 void GBCpu::POP(OpCode opCode)
 {
     m_Cycles += 3;
-    m_SP += 2;
-    m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP);
+    m_SP++;
+    m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP++);
 }
 
 void GBCpu::RL(OpCode opCode)
