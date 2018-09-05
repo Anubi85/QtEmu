@@ -1,14 +1,17 @@
 #include "GBMemory.h"
 #include <QCryptographicHash>
 
-GBMemory::GBMemory()
+GBMemory::GBMemory() :
+    m_Bios(BIOS_SIZE, 0),
+    m_ZRAM(ZRAM_SIZE, 0)
 {
     Reset();
 }
 
 void GBMemory::Reset()
 {
-    m_Bios.clear();
+    m_Bios.fill(0);
+    m_ZRAM.fill(0);
     m_IsBiosMapped = true;
 }
 
@@ -27,7 +30,7 @@ bool GBMemory::LoadBios(QString biosFilePath)
             biosFile.close();
         }
     }
-    return !m_Bios.isEmpty();
+    return m_Bios.count('\0')!= BIOS_SIZE;
 }
 
 quint8 GBMemory::ReadByte(quint16 address)
@@ -35,6 +38,10 @@ quint8 GBMemory::ReadByte(quint16 address)
     if (address < 0x100 && m_IsBiosMapped)
     {
         return static_cast<quint8>(m_Bios[address]);
+    }
+    else if (address > 0xFF7F)
+    {
+        return static_cast<quint8>(m_ZRAM[address - 0xFF80]);
     }
     return 0;
 }
@@ -51,6 +58,10 @@ void GBMemory::WriteByte(quint16 address, quint8 value)
     {
         //disable bios mapping if set to 1
         m_IsBiosMapped = value != 1;
+    }
+    else if (address > 0xFF7F)
+    {
+        m_ZRAM[address - 0xFF80] = static_cast<char>(value);
     }
 }
 

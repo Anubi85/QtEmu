@@ -620,8 +620,8 @@ void GBCpu::PUSH(OpCode opCode)
 void GBCpu::POP(OpCode opCode)
 {
     m_Cycles += 3;
-    m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP);
     m_SP += 2;
+    m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP);
 }
 
 void GBCpu::RL(OpCode opCode)
