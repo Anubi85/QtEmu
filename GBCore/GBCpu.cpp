@@ -21,6 +21,7 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::RL] = std::bind(&GBCpu::RL, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::CALL] = std::bind(&GBCpu::CALL, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::RET] = std::bind(&GBCpu::RET, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::PUSH] = std::bind(&GBCpu::PUSH, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::POP] = std::bind(&GBCpu::POP, std::placeholders::_1, std::placeholders::_2);
     //assign function pointers for standard set
@@ -177,6 +178,14 @@ void GBCpu::InitializeInstructionTable()
         case 0xD4:
         case 0xDC:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::CALL];
+            break;
+        case 0xC0:
+        case 0xC8:
+        case 0xC9:
+        case 0xD0:
+        case 0xD8:
+        case 0xD9:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::RET];
             break;
         case 0xC5:
         case 0xD5:
@@ -652,6 +661,45 @@ void GBCpu::CALL(OpCode opCode)
     else
     {
         m_PC += 2;
+    }
+}
+
+void GBCpu::RET(OpCode opCode)
+{
+    m_Cycles += 2;
+    bool execute = true;
+    bool activateInterrupts = false;
+    if (opCode.GetZ() == 0b000)
+    {
+        switch (opCode.GetQ())
+        {
+        case Conditions::Z:
+            execute = GetFlag(FlagMasks::Z);
+            break;
+        case Conditions::NZ:
+            execute = !GetFlag(FlagMasks::Z);
+            break;
+        case Conditions::C:
+            execute = GetFlag(FlagMasks::C);
+            break;
+        case Conditions::NC:
+            execute = !GetFlag(FlagMasks::C);
+            break;
+        }
+    }
+    else
+    {
+        activateInterrupts = opCode.GetW() == 0b01;
+    }
+    if (execute)
+    {
+        m_SP -= 2;
+        quint16 address = m_Memory->ReadWord(m_SP);
+        m_PC = address;
+        if (activateInterrupts)
+        {
+            m_Memory->WriteByte(0xFFFF, 0x1F);
+        }
     }
 }
 

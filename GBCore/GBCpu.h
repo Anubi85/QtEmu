@@ -74,6 +74,7 @@ namespace Instructions
         RL,
         JR,
         CALL,
+        RET,
         PUSH,
         POP,
         TOTAL
@@ -117,6 +118,7 @@ private:
     void RL(OpCode opCode);
     void JR(OpCode opCode);
     void CALL(OpCode opCode);
+    void RET(OpCode opCode);
     void PUSH(OpCode opCode);
     void POP(OpCode opCode);
 public:
