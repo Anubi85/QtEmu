@@ -65,9 +65,11 @@ namespace Instructions
         LD_8BIT,
         LD_16BIT,
         LDD,
+        LDI,
         XOR,
-        INC,
-        DEC,
+        INC_8BIT,
+        DEC_8BIT,
+        INC_16BIT,
         BIT,
         RL,
         JR,
@@ -106,9 +108,11 @@ private:
     void LD_8Bit(OpCode opCode);
     void LD_16Bit(OpCode opCode);
     void LDD(OpCode opCode);
+    void LDI(OpCode opCode);
     void XOR(OpCode opCode);
-    void INC(OpCode opCode);
-    void DEC(OpCode opCode);
+    void INC_8Bit(OpCode opCode);
+    void DEC_8Bit(OpCode opCode);
+    void INC_16Bit(OpCode opCode);
     void BIT(OpCode opCode);
     void RL(OpCode opCode);
     void JR(OpCode opCode);

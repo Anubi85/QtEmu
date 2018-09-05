@@ -12,9 +12,11 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::LD_8BIT] = std::bind(&GBCpu::LD_8Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::LD_16BIT] = std::bind(&GBCpu::LD_16Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::LDD] = std::bind(&GBCpu::LDD, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::LDI] = std::bind(&GBCpu::LDI, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::XOR] = std::bind(&GBCpu::XOR, std::placeholders::_1, std::placeholders::_2);
-    methods[Instructions::INC] = std::bind(&GBCpu::INC, std::placeholders::_1, std::placeholders::_2);
-    methods[Instructions::DEC] = std::bind(&GBCpu::DEC, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::INC_8BIT] = std::bind(&GBCpu::INC_8Bit, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::DEC_8BIT] = std::bind(&GBCpu::DEC_8Bit, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::INC_16BIT] = std::bind(&GBCpu::INC_16Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::BIT] = std::bind(&GBCpu::BIT, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::RL] = std::bind(&GBCpu::RL, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::JR] = std::bind(&GBCpu::JR, std::placeholders::_1, std::placeholders::_2);
@@ -126,7 +128,11 @@ void GBCpu::InitializeInstructionTable()
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::JR];
             break;
         case 0x32:
+        case 0x3A:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::LDD];
+        case 0x22:
+        case 0x2A:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::LDI];
             break;
         case 0xA8:
         case 0xA9:
@@ -147,7 +153,7 @@ void GBCpu::InitializeInstructionTable()
         case 0x2C:
         case 0x34:
         case 0x3C:
-            s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC];
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC_8BIT];
             break;
         case 0x05:
         case 0x0D:
@@ -157,7 +163,13 @@ void GBCpu::InitializeInstructionTable()
         case 0x2D:
         case 0x35:
         case 0x3D:
-            s_InstructionTable[REGULAR][opCode] = methods[Instructions::DEC];
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::DEC_8BIT];
+            break;
+        case 0x03:
+        case 0x13:
+        case 0x23:
+        case 0x33:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::INC_16BIT];
             break;
         case 0xC4:
         case 0xCC:
@@ -364,7 +376,27 @@ void GBCpu::LD_16Bit(OpCode opCode)
 void GBCpu::LDD(OpCode opCode)
 {
     m_Cycles += 2;
-    m_Memory->WriteByte(m_Registers.Double[Registers::HL]--, m_Registers.Single[Registers::A]);
+    if (opCode.GetF())
+    {
+        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]--);
+    }
+    else
+    {
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL]--, m_Registers.Single[Registers::A]);
+    }
+}
+
+void GBCpu::LDI(OpCode opCode)
+{
+    m_Cycles += 2;
+    if (opCode.GetF())
+    {
+        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]++);
+    }
+    else
+    {
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL]++, m_Registers.Single[Registers::A]);
+    }
 }
 
 void GBCpu::XOR(OpCode opCode)
@@ -534,7 +566,7 @@ void GBCpu::LD_8Bit(OpCode opCode)
     }
 }
 
-void GBCpu::INC(OpCode opCode)
+void GBCpu::INC_8Bit(OpCode opCode)
 {
     m_Cycles++;
     quint8 finalValue;
@@ -554,7 +586,7 @@ void GBCpu::INC(OpCode opCode)
     SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
 }
 
-void GBCpu::DEC(OpCode opCode)
+void GBCpu::DEC_8Bit(OpCode opCode)
 {
     m_Cycles++;
     quint8 finalValue;
@@ -572,6 +604,19 @@ void GBCpu::DEC(OpCode opCode)
     SetFlag(FlagMasks::Z, finalValue == 0);
     SetFlag(FlagMasks::N, true);
     SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
+}
+
+void GBCpu::INC_16Bit(OpCode opCode)
+{
+    m_Cycles++;
+    if (opCode.GetW() == Registers::SP)
+    {
+        m_SP++;
+    }
+    else
+    {
+        m_Registers.Double[opCode.GetW()]++;
+    }
 }
 
 void GBCpu::CALL(OpCode opCode)
