@@ -36,5 +36,5 @@ void GBCore::Exec()
 
 bool GBCore::HasError()
 {
-    return m_Cpu->HasError();
+    return m_Cpu->HasError() || m_Memory->HasError();
 }
