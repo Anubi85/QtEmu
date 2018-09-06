@@ -18,8 +18,7 @@ enum class FlagMasks : quint8
     C = 0x10,
     H = 0x20,
     N = 0x40,
-    Z = 0x80,
-    All = 0xF0
+    Z = 0x80
 };
 
 //maintanins the explicit conversion to int but provides a sort of "scope" support
@@ -39,14 +38,14 @@ namespace Registers
 {
     enum
     {
-        B = 0x00,
-        C = 0x01,
-        D = 0x02,
-        E = 0x03,
-        H = 0x04,
-        L = 0x05,
-        F = 0x06,
+        B = 0x01,
+        C = 0x00,
+        D = 0x03,
+        E = 0x02,
+        H = 0x05,
+        L = 0x04,
         A = 0x07,
+        F = 0x06,
         ADR_HL = 0x06,
         BC = 0x00,
         DE = 0x01,
@@ -67,6 +66,7 @@ namespace Instructions
         LDD,
         LDI,
         XOR,
+        CP,
         INC_8BIT,
         DEC_8BIT,
         INC_16BIT,
@@ -99,7 +99,7 @@ private:
     {
         long long All;
         quint8 Single[REG8_NUM];
-        quint16 Double[REG16_NUM];
+        quint16_be Double[REG16_NUM];
     } m_Registers;
 
     void SetFlag(FlagMasks flagMask, bool value);
@@ -111,6 +111,7 @@ private:
     void LDD(OpCode opCode);
     void LDI(OpCode opCode);
     void XOR(OpCode opCode);
+    void CP(OpCode opCode);
     void INC_8Bit(OpCode opCode);
     void DEC_8Bit(OpCode opCode);
     void INC_16Bit(OpCode opCode);

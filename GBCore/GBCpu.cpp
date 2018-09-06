@@ -14,6 +14,7 @@ void GBCpu::InitializeInstructionTable()
     methods[Instructions::LDD] = std::bind(&GBCpu::LDD, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::LDI] = std::bind(&GBCpu::LDI, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::XOR] = std::bind(&GBCpu::XOR, std::placeholders::_1, std::placeholders::_2);
+    methods[Instructions::CP] = std::bind(&GBCpu::CP, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::INC_8BIT] = std::bind(&GBCpu::INC_8Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::DEC_8BIT] = std::bind(&GBCpu::DEC_8Bit, std::placeholders::_1, std::placeholders::_2);
     methods[Instructions::INC_16BIT] = std::bind(&GBCpu::INC_16Bit, std::placeholders::_1, std::placeholders::_2);
@@ -145,6 +146,17 @@ void GBCpu::InitializeInstructionTable()
         case 0xAF:
         case 0xEE:
             s_InstructionTable[REGULAR][opCode] = methods[Instructions::XOR];
+            break;
+        case 0xB8:
+        case 0xB9:
+        case 0xBA:
+        case 0xBB:
+        case 0xBC:
+        case 0xBD:
+        case 0xBE:
+        case 0xBF:
+        case 0xFE:
+            s_InstructionTable[REGULAR][opCode] = methods[Instructions::CP];
             break;
         case 0x04:
         case 0x0C:
@@ -387,12 +399,13 @@ void GBCpu::LDD(OpCode opCode)
     m_Cycles += 2;
     if (opCode.GetF())
     {
-        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]--);
+        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
     }
     else
     {
-        m_Memory->WriteByte(m_Registers.Double[Registers::HL]--, m_Registers.Single[Registers::A]);
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], m_Registers.Single[Registers::A]);
     }
+    m_Registers.Double[Registers::HL] -= 1;
 }
 
 void GBCpu::LDI(OpCode opCode)
@@ -400,12 +413,13 @@ void GBCpu::LDI(OpCode opCode)
     m_Cycles += 2;
     if (opCode.GetF())
     {
-        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]++);
+        m_Registers.Single[Registers::A] = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
     }
     else
     {
-        m_Memory->WriteByte(m_Registers.Double[Registers::HL]++, m_Registers.Single[Registers::A]);
+        m_Memory->WriteByte(m_Registers.Double[Registers::HL], m_Registers.Single[Registers::A]);
     }
+    m_Registers.Double[Registers::HL] += 1;
 }
 
 void GBCpu::XOR(OpCode opCode)
@@ -431,11 +445,10 @@ void GBCpu::XOR(OpCode opCode)
     }
     m_Registers.Single[Registers::A] ^= value;
     //set flags
-    SetFlag(FlagMasks::All, false);
-    if (m_Registers.Single[Registers::A] == 0)
-    {
-        SetFlag(FlagMasks::Z, true);
-    }
+    SetFlag(FlagMasks::Z, m_Registers.Single[Registers::A] == 0);
+    SetFlag(FlagMasks::N, false);
+    SetFlag(FlagMasks::C, false);
+    SetFlag(FlagMasks::H, false);
 }
 
 void GBCpu::BIT(OpCode opCode)
@@ -624,7 +637,7 @@ void GBCpu::INC_16Bit(OpCode opCode)
     }
     else
     {
-        m_Registers.Double[opCode.GetW()]++;
+        m_Registers.Double[opCode.GetW()] += 1;
     }
 }
 
@@ -735,4 +748,32 @@ void GBCpu::RL(OpCode opCode)
     SetFlag(FlagMasks::N, false);
     SetFlag(FlagMasks::H, false);
     SetFlag(FlagMasks::C, (value & 0x80) != 0);
+}
+
+void GBCpu::CP(OpCode opCode)
+{
+    quint8 value = 0;
+    m_Cycles++;
+    //check if value has to be read from memory
+    if (opCode.GetZ() == Registers::ADR_HL)
+    {
+        m_Cycles++;
+        if(opCode.GetX() == 0b11)
+        {
+            value = m_Memory->ReadByte(m_PC++);
+        }
+        else
+        {
+            value = m_Memory->ReadByte(m_Registers.Double[Registers::HL]);
+        }
+    }
+    else
+    {
+        value = m_Registers.Single[opCode.GetZ()];
+    }
+    //set flags
+    SetFlag(FlagMasks::Z, m_Registers.Single[Registers::A] == value);
+    SetFlag(FlagMasks::N, true);
+    SetFlag(FlagMasks::C, m_Registers.Single[Registers::A] < value);
+    SetFlag(FlagMasks::H, (m_Registers.Single[Registers::A] & 0x0F) < (value & 0x0F));
 }

@@ -8,6 +8,7 @@
 #define ZRAM_SIZE 0x0080
 #define MEMORY_SIZE 0xFFFF
 #define BIOS_MAPPED_ADDRESS 0xFF50
+#define ZRAM_START_ADDRESS 0xFF80
 
 class GBMemory
 {

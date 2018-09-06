@@ -39,10 +39,13 @@ quint8 GBMemory::ReadByte(quint16 address)
     {
         return static_cast<quint8>(m_Bios[address]);
     }
-    else if (address > 0xFF7F)
+    else if (address >= ZRAM_START_ADDRESS)
     {
-        return static_cast<quint8>(m_ZRAM[address - 0xFF80]);
+        return static_cast<quint8>(m_ZRAM[address - ZRAM_START_ADDRESS]);
     }
+#ifdef DEBUG
+        qDebug("Read from address 0x%04X not implemented", address);
+#endif
     return 0;
 }
 
@@ -59,9 +62,15 @@ void GBMemory::WriteByte(quint16 address, quint8 value)
         //disable bios mapping if set to 1
         m_IsBiosMapped = value != 1;
     }
-    else if (address > 0xFF7F)
+    else if (address >= ZRAM_START_ADDRESS)
     {
-        m_ZRAM[address - 0xFF80] = static_cast<char>(value);
+        m_ZRAM[address - ZRAM_START_ADDRESS] = static_cast<char>(value);
+    }
+    else
+    {
+#ifdef DEBUG
+        qDebug("Write to address 0x%04X not implemented", address);
+#endif
     }
 }
 
