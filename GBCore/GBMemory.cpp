@@ -3,6 +3,7 @@
 
 GBMemory::GBMemory() :
     m_Bios(BIOS_SIZE, 0),
+    m_ROM0(BNK0_SIZE, 0),
     m_ZRAM(ZRAM_SIZE, 0),
     m_VRAM(VRAM_SIZE, 0)
 {
@@ -13,9 +14,12 @@ void GBMemory::Reset()
 {
     m_ErrorCode = 0;
     m_Bios.fill(0);
+    m_ROM0.fill(0);
     m_ZRAM.fill(0);
     m_VRAM.fill(0);
     m_IsBiosMapped = true;
+    m_IsBiosLoaded = false;
+    m_IsRomLoaded = false;
 }
 
 MemoryAreas GBMemory::GetSection(quint16 address)
@@ -92,7 +96,8 @@ bool GBMemory::LoadBios(QString biosFilePath)
             biosFile.close();
         }
     }
-    return m_Bios.count('\0')!= BIOS_SIZE;
+    m_IsBiosLoaded = m_Bios.count('\0')!= BIOS_SIZE;
+    return m_IsBiosLoaded;
 }
 
 quint8 GBMemory::ReadByte(quint16 address)
@@ -101,6 +106,26 @@ quint8 GBMemory::ReadByte(quint16 address)
     {
     case MemoryAreas::BIOS:
         return static_cast<quint8>(m_Bios[address]);
+    case MemoryAreas::CROM:
+        if (m_IsRomLoaded)
+        {
+            if (address < BNK0_SIZE)
+            {
+                return  static_cast<quint8>(m_ROM0[address]);
+            }
+            else
+            {
+                //TODO ROM handling
+                return 0;
+            }
+        }
+        else
+        {
+#ifdef DEBUG
+        qDebug("No ROM loaded");
+#endif
+            return 0;
+        }
     case MemoryAreas::VRAM:
         return static_cast<quint8>(m_VRAM[address - VRAM_START_ADDRESS]);
     case MemoryAreas::MMIO:

@@ -14,6 +14,7 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
+    delete m_Cpu;
     delete m_Memory;
 }
 

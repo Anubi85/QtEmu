@@ -7,6 +7,8 @@
 
 //BIOS size
 #define BIOS_SIZE 0x0100
+//Cartridge ROM bank 0 size
+#define BNK0_SIZE 0x4000
 //Video RAM size
 #define VRAM_SIZE 0x2000
 //Working RAM size
@@ -54,9 +56,12 @@ class GBMemory
 private:
     quint32 m_ErrorCode;
     QByteArray m_Bios;
-    bool m_IsBiosMapped;
+    QByteArray m_ROM0;
     QByteArray m_ZRAM;
     QByteArray m_VRAM;
+    bool m_IsBiosMapped;
+    bool m_IsBiosLoaded;
+    bool m_IsRomLoaded;
 
     MemoryAreas GetSection(quint16 address);
     quint8 MMIORead(quint16 address);

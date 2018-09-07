@@ -31,7 +31,8 @@ SOURCES += \
         GBCore.cpp \
     GBMemory.cpp \
     GBCpu.cpp \
-    OpCode.cpp
+    OpCode.cpp \
+    GBCpu_s.cpp
 
 HEADERS += \
         GBCore.h \

@@ -38,14 +38,14 @@ namespace Registers
 {
     enum
     {
-        B = 0x01,
-        C = 0x00,
-        D = 0x03,
-        E = 0x02,
-        H = 0x05,
-        L = 0x04,
-        A = 0x07,
+        B = 0x00,
+        C = 0x01,
+        D = 0x02,
+        E = 0x03,
+        H = 0x04,
+        L = 0x05,
         F = 0x06,
+        A = 0x07,
         ADR_HL = 0x06,
         BC = 0x00,
         DE = 0x01,
@@ -84,11 +84,9 @@ namespace Instructions
 class GBCpu
 {
 private:
-    typedef std::function<void(GBCpu*, OpCode)> Instruction;
+    typedef void (GBCpu::*Instruction)(OpCode);
 
     static Instruction s_InstructionTable[INSTRUCTIONS_SETS][INSTRUCTIONS_NUM];
-    static bool s_IsInstructionTableInitialized;
-    static void InitializeInstructionTable();
 
     GBMemory* m_Memory;
     quint32 m_ErrorCode;
@@ -99,9 +97,10 @@ private:
     {
         long long All;
         quint8 Single[REG8_NUM];
-        quint16_be Double[REG16_NUM];
+        quint16 Double[REG16_NUM];
     } m_Registers;
 
+    void Exec(Instruction inst, quint8 rawOpCode) { (this->*inst)(OpCode(rawOpCode)); }
     void SetFlag(FlagMasks flagMask, bool value);
     bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::F] & static_cast<quint8>(flagMask)) != 0; }
     //Instructions
