@@ -32,14 +32,18 @@ SOURCES += \
     GBMemory.cpp \
     GBCpu.cpp \
     OpCode.cpp \
-    GBCpu_s.cpp
+    GBCpu_s.cpp \
+    GBHardware.cpp \
+    GBComponent.cpp
 
 HEADERS += \
         GBCore.h \
     ../Includes/IEmulatorCore.h \
     GBMemory.h \
     GBCpu.h \
-    OpCode.h
+    OpCode.h \
+    GBHardware.h \
+    GBComponent.h
 
 unix {
     target.path = /usr/lib

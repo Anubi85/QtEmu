@@ -1,5 +1,4 @@
 #include "GBCore.h"
-#include "GBMemory.h"
 
 IEmulatorCore* GetCore()
 {
@@ -8,7 +7,8 @@ IEmulatorCore* GetCore()
 
 GBCore::GBCore()
 {
-    m_Memory = new GBMemory();
+    m_Hardware = new GBHardware();
+    m_Memory = new GBMemory(m_Hardware);
     m_Cpu = new GBCpu(m_Memory);
 }
 
@@ -16,6 +16,7 @@ GBCore::~GBCore()
 {
     delete m_Cpu;
     delete m_Memory;
+    delete m_Hardware;
 }
 
 bool GBCore::LoadBios(QString biosFilePath)
@@ -37,5 +38,5 @@ void GBCore::Exec()
 
 bool GBCore::HasError()
 {
-    return m_Cpu->HasError() || m_Memory->HasError();
+    return m_Cpu->HasError() || m_Memory->HasError() || m_Hardware->HasError();
 }

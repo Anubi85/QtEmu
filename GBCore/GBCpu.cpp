@@ -8,7 +8,7 @@ GBCpu::GBCpu(GBMemory* memory)
 
 void GBCpu::Reset()
 {
-    m_ErrorCode = 0;
+    GBComponent::Reset();
     m_Cycles = 0;
     m_PC = 0;
     m_SP = 0;
@@ -52,6 +52,7 @@ void GBCpu::Exec()
         qDebug("Op code 0x%02X not implemented", rawOpCode);
 #endif
     }
+    //tutto ok fino a  PC = 0x0064, implementare V-Blank e IO
 }
 
 void GBCpu::SetFlag(FlagMasks flagMask, bool value)
@@ -158,7 +159,7 @@ void GBCpu::BIT(OpCode opCode)
     {
         toTest = m_Registers.Single[opCode.GetZ()];
     }
-    SetFlag(FlagMasks::Z, toTest & (1 << opCode.GetY()));
+    SetFlag(FlagMasks::Z, (toTest & (1 << opCode.GetY())) == 0);
     SetFlag(FlagMasks::H, true);
     SetFlag(FlagMasks::N, false);
 }

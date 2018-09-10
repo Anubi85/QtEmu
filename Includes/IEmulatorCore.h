@@ -6,7 +6,7 @@
 class IEmulatorCore
 {
 public:
-    virtual ~IEmulatorCore() {}
+    virtual ~IEmulatorCore() = default;
     virtual bool LoadBios(QString biosFilePath) = 0;
     virtual void Exec() = 0;
     virtual bool HasError() = 0;

@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <functional>
 #include "OpCode.h"
+#include "GBComponent.h"
 #include "GBMemory.h"
 
 #define REG8_NUM 8
@@ -55,33 +56,7 @@ namespace Registers
     };
 }
 
-//maintanins the explicit conversion to int but provides a sort of "scope" support
-namespace Instructions
-{
-    enum
-    {
-        NOP,
-        LD_8BIT,
-        LD_16BIT,
-        LDD,
-        LDI,
-        XOR,
-        CP,
-        INC_8BIT,
-        DEC_8BIT,
-        INC_16BIT,
-        BIT,
-        RL,
-        JR,
-        CALL,
-        RET,
-        PUSH,
-        POP,
-        TOTAL
-    };
-}
-
-class GBCpu
+class GBCpu : public GBComponent
 {
 private:
     typedef void (GBCpu::*Instruction)(OpCode);
@@ -89,7 +64,6 @@ private:
     static Instruction s_InstructionTable[INSTRUCTIONS_SETS][INSTRUCTIONS_NUM];
 
     GBMemory* m_Memory;
-    quint32 m_ErrorCode;
     quint64 m_Cycles;    
     quint16 m_PC;
     quint16 m_SP;
@@ -97,7 +71,7 @@ private:
     {
         long long All;
         quint8 Single[REG8_NUM];
-        quint16 Double[REG16_NUM];
+        quint16_be Double[REG16_NUM];
     } m_Registers;
 
     void Exec(Instruction inst, quint8 rawOpCode) { (this->*inst)(OpCode(rawOpCode)); }
@@ -123,9 +97,8 @@ private:
     void POP(OpCode opCode);
 public:
     GBCpu(GBMemory* memory);
-    void Reset();
+    void Reset() override;
     void Exec();
-    bool HasError() { return m_ErrorCode != 0; }
 };
 
 #endif // GBCPU_H

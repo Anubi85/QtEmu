@@ -1,38 +1,47 @@
 #include "GBMemory.h"
 #include <QCryptographicHash>
 
-GBMemory::GBMemory() :
+GBMemory::GBMemory(GBHardware* hardware) :
     m_Bios(BIOS_SIZE, 0),
     m_ROM0(BNK0_SIZE, 0),
     m_ZRAM(ZRAM_SIZE, 0),
     m_VRAM(VRAM_SIZE, 0)
 {
+    m_Hardware = hardware;
     Reset();
 }
 
 void GBMemory::Reset()
 {
-    m_ErrorCode = 0;
+    GBComponent::Reset();
     m_Bios.fill(0);
     m_ROM0.fill(0);
     m_ZRAM.fill(0);
     m_VRAM.fill(0);
-    m_IsBiosMapped = true;
     m_IsBiosLoaded = false;
     m_IsRomLoaded = false;
+    if (m_Hardware != nullptr)
+    {
+        m_Hardware->Reset();
+    }
 }
 
 MemoryAreas GBMemory::GetSection(quint16 address)
 {
-    //Check if cartridge ROM area
-    if (address < VRAM_START_ADDRESS)
+    //check if cartridge ROM bank 0 area
+    if (address < SROM_START_ADDRESS)
     {
         //Check if BIOS area
-        if ((address < BIOS_SIZE) && m_IsBiosMapped)
+        if ((address < BIOS_SIZE) && m_Hardware->IsBiosMapped())
         {
             return MemoryAreas::BIOS;
         }
-        return MemoryAreas::CROM;
+        return MemoryAreas::ROM0;
+    }
+    //Check if cartridge ROM area
+    if (address < VRAM_START_ADDRESS)
+    {
+        return MemoryAreas::SROM;
     }
     //Check if video RAM area
     else if (address < CRAM_START_ADDRESS)
@@ -66,21 +75,6 @@ MemoryAreas GBMemory::GetSection(quint16 address)
     }
 }
 
-void GBMemory::MMIOWrite(quint16 address, quint8 value)
-{
-    if (address == BIOS_MAPPED_ADDRESS)
-    {
-        //disable bios mapping if set to 1
-        m_IsBiosMapped = value != 1;
-        return;
-    }
-}
-
-quint8 GBMemory::MMIORead(quint16 address)
-{
-    return 0;
-}
-
 bool GBMemory::LoadBios(QString biosFilePath)
 {
     if (QFile::exists(biosFilePath))
@@ -106,18 +100,10 @@ quint8 GBMemory::ReadByte(quint16 address)
     {
     case MemoryAreas::BIOS:
         return static_cast<quint8>(m_Bios[address]);
-    case MemoryAreas::CROM:
+    case MemoryAreas::ROM0:
         if (m_IsRomLoaded)
         {
-            if (address < BNK0_SIZE)
-            {
-                return  static_cast<quint8>(m_ROM0[address]);
-            }
-            else
-            {
-                //TODO ROM handling
-                return 0;
-            }
+            return  static_cast<quint8>(m_ROM0[address]);
         }
         else
         {
@@ -129,7 +115,7 @@ quint8 GBMemory::ReadByte(quint16 address)
     case MemoryAreas::VRAM:
         return static_cast<quint8>(m_VRAM[address - VRAM_START_ADDRESS]);
     case MemoryAreas::MMIO:
-        return MMIORead(address);
+        return m_Hardware->ReadIO(address);
     case MemoryAreas::ZRAM:
         return static_cast<quint8>(m_ZRAM[address - ZRAM_START_ADDRESS]);
     default:
@@ -154,7 +140,7 @@ void GBMemory::WriteByte(quint16 address, quint8 value)
         m_VRAM[address - VRAM_START_ADDRESS] = static_cast<char>(value);
         break;
     case MemoryAreas::MMIO:
-        MMIOWrite(address, value);
+        m_Hardware->WriteIO(address, value);
         break;
     case MemoryAreas::ZRAM:
         m_ZRAM[address - ZRAM_START_ADDRESS] = static_cast<char>(value);
