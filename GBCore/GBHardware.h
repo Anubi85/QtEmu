@@ -13,28 +13,32 @@ namespace IO
 {
     enum
     {
-        SOUND_NR10 = 0xFF10 - ADDRESS_OFFSET,
-        SOUND_NR11 = 0xFF11 - ADDRESS_OFFSET,
-        SOUND_NR12 = 0xFF12 - ADDRESS_OFFSET,
-        SOUND_NR13 = 0xFF13 - ADDRESS_OFFSET,
-        SOUND_NR14 = 0xFF14 - ADDRESS_OFFSET,
-        SOUND_NR21 = 0xFF16 - ADDRESS_OFFSET,
-        SOUND_NR22 = 0xFF17 - ADDRESS_OFFSET,
-        SOUND_NR23 = 0xFF18 - ADDRESS_OFFSET,
-        SOUND_NR24 = 0xFF19 - ADDRESS_OFFSET,
-        SOUND_NR30 = 0xFF1A - ADDRESS_OFFSET,
-        SOUND_NR31 = 0xFF1B - ADDRESS_OFFSET,
-        SOUND_NR32 = 0xFF1C - ADDRESS_OFFSET,
-        SOUND_NR33 = 0xFF1D - ADDRESS_OFFSET,
-        SOUND_NR34 = 0xFF1E - ADDRESS_OFFSET,
-        SOUND_NR41 = 0xFF20 - ADDRESS_OFFSET,
-        SOUND_NR42 = 0xFF21 - ADDRESS_OFFSET,
-        SOUND_NR43 = 0xFF22 - ADDRESS_OFFSET,
-        SOUND_NR44 = 0xFF23 - ADDRESS_OFFSET,
-        SOUND_NR50 = 0xFF24 - ADDRESS_OFFSET,
-        SOUND_NR51 = 0xFF25 - ADDRESS_OFFSET,
-        SOUND_NR52 = 0xFF26 - ADDRESS_OFFSET,
-        BIOS_MAPPING = 0xFF50 - ADDRESS_OFFSET,
+        SOUND_NR10 = 0xFF10,
+        SOUND_NR11 = 0xFF11,
+        SOUND_NR12 = 0xFF12,
+        SOUND_NR13 = 0xFF13,
+        SOUND_NR14 = 0xFF14,
+        SOUND_NR21 = 0xFF16,
+        SOUND_NR22 = 0xFF17,
+        SOUND_NR23 = 0xFF18,
+        SOUND_NR24 = 0xFF19,
+        SOUND_NR30 = 0xFF1A,
+        SOUND_NR31 = 0xFF1B,
+        SOUND_NR32 = 0xFF1C,
+        SOUND_NR33 = 0xFF1D,
+        SOUND_NR34 = 0xFF1E,
+        SOUND_NR41 = 0xFF20,
+        SOUND_NR42 = 0xFF21,
+        SOUND_NR43 = 0xFF22,
+        SOUND_NR44 = 0xFF23,
+        SOUND_NR50 = 0xFF24,
+        SOUND_NR51 = 0xFF25,
+        SOUND_NR52 = 0xFF26,
+        LCD_CONTROL = 0xFF40,
+        SCROLL_Y = 0xFF42,
+        LCD_Y = 0xFF44,
+        BACKGROUND_PALETTE = 0xFF47,
+        BIOS_MAPPING = 0xFF50,
     };
 };
 
@@ -42,6 +46,10 @@ class GBHardware : public GBComponent
 {
 private:
     QByteArray m_Registers;
+    quint8 ReadAudioReg(quint16 address);
+    void WriteAudioReg(quint16 address, quint8 value);
+    quint8 ReadVideoReg(quint16 address);
+    void WriteVideoReg(quint16 address, quint8 value);
 public:
     GBHardware();
     void Reset() override;

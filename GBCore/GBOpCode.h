@@ -1,9 +1,9 @@
-#ifndef OPCODE_H
-#define OPCODE_H
+#ifndef GBOPCODE_H
+#define GBOPCODE_H
 
 #include <QtCore>
 
-/* OpCode bits
+/* Opcode bits
  * +-+-+-+-+-+-+-+-+
  * |7|6|5|4|3|2|1|0|
  * +-+-+-+-+-+-+-+-+
@@ -28,7 +28,7 @@
 #define SHIFT_W 4
 #define SHIFT_Q 3
 
-class OpCode
+class GBOpCode
 {
 private:
     quint8 m_x;
@@ -39,7 +39,7 @@ private:
     quint8 m_q;
     bool m_g;
 public:
-    OpCode(quint8 value);
+    GBOpCode(quint8 value);
     quint8 GetX() { return m_x; }
     quint8 GetY() { return m_y; }
     quint8 GetZ() { return m_z; }
@@ -49,4 +49,4 @@ public:
     bool GetG() { return m_g; }
 };
 
-#endif // OPCODE_H
+#endif // GBOPCODE_H

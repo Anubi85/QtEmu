@@ -2,7 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     QtGB \
-    GBCore
+    GBCore \
+    GBCore2
 
 OTHER_FILES += \
     QtGB.pri \

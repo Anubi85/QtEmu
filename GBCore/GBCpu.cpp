@@ -13,10 +13,6 @@ void GBCpu::Reset()
     m_PC = 0;
     m_SP = 0;
     m_Registers.All = 0;
-    if (m_Memory != nullptr)
-    {
-        m_Memory->Reset();
-    }
 }
 
 void GBCpu::Exec()
@@ -67,12 +63,12 @@ void GBCpu::SetFlag(FlagMasks flagMask, bool value)
     }
 }
 
-void GBCpu::NOP(OpCode opCode)
+void GBCpu::NOP(GBOpCode opCode)
 {
     m_Cycles++;
 }
 
-void GBCpu::LD_16Bit(OpCode opCode)
+void GBCpu::LD_16Bit(GBOpCode opCode)
 {
     m_Cycles += 3;
     //get value from memory
@@ -88,7 +84,7 @@ void GBCpu::LD_16Bit(OpCode opCode)
     }
 }
 
-void GBCpu::LDD(OpCode opCode)
+void GBCpu::LDD(GBOpCode opCode)
 {
     m_Cycles += 2;
     if (opCode.GetF())
@@ -102,7 +98,7 @@ void GBCpu::LDD(OpCode opCode)
     m_Registers.Double[Registers::HL] -= 1;
 }
 
-void GBCpu::LDI(OpCode opCode)
+void GBCpu::LDI(GBOpCode opCode)
 {
     m_Cycles += 2;
     if (opCode.GetF())
@@ -116,7 +112,7 @@ void GBCpu::LDI(OpCode opCode)
     m_Registers.Double[Registers::HL] += 1;
 }
 
-void GBCpu::XOR(OpCode opCode)
+void GBCpu::XOR(GBOpCode opCode)
 {
     quint8 value = 0;
     m_Cycles++;
@@ -145,7 +141,7 @@ void GBCpu::XOR(OpCode opCode)
     SetFlag(FlagMasks::H, false);
 }
 
-void GBCpu::BIT(OpCode opCode)
+void GBCpu::BIT(GBOpCode opCode)
 {
     m_Cycles += 2;
     quint8 toTest = 0;
@@ -164,7 +160,7 @@ void GBCpu::BIT(OpCode opCode)
     SetFlag(FlagMasks::N, false);
 }
 
-void GBCpu::JR(OpCode opCode)
+void GBCpu::JR(GBOpCode opCode)
 {
     m_Cycles += 2;
     bool jump = true;
@@ -200,7 +196,7 @@ void GBCpu::JR(OpCode opCode)
     }
 }
 
-void GBCpu::LD_8Bit(OpCode opCode)
+void GBCpu::LD_8Bit(GBOpCode opCode)
 {
     m_Cycles++;
     quint8 value = 0;
@@ -282,7 +278,7 @@ void GBCpu::LD_8Bit(OpCode opCode)
     }
 }
 
-void GBCpu::INC_8Bit(OpCode opCode)
+void GBCpu::INC_8Bit(GBOpCode opCode)
 {
     m_Cycles++;
     quint8 finalValue;
@@ -302,7 +298,7 @@ void GBCpu::INC_8Bit(OpCode opCode)
     SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
 }
 
-void GBCpu::DEC_8Bit(OpCode opCode)
+void GBCpu::DEC_8Bit(GBOpCode opCode)
 {
     m_Cycles++;
     quint8 finalValue;
@@ -322,7 +318,7 @@ void GBCpu::DEC_8Bit(OpCode opCode)
     SetFlag(FlagMasks::H, (finalValue & 0x0F) == 0);
 }
 
-void GBCpu::INC_16Bit(OpCode opCode)
+void GBCpu::INC_16Bit(GBOpCode opCode)
 {
     m_Cycles++;
     if (opCode.GetW() == Registers::SP)
@@ -335,7 +331,7 @@ void GBCpu::INC_16Bit(OpCode opCode)
     }
 }
 
-void GBCpu::CALL(OpCode opCode)
+void GBCpu::CALL(GBOpCode opCode)
 {
     m_Cycles += 3;
     bool execute = true;
@@ -371,7 +367,7 @@ void GBCpu::CALL(OpCode opCode)
     }
 }
 
-void GBCpu::RET(OpCode opCode)
+void GBCpu::RET(GBOpCode opCode)
 {
     m_Cycles += 2;
     bool execute = true;
@@ -409,21 +405,21 @@ void GBCpu::RET(OpCode opCode)
     }
 }
 
-void GBCpu::PUSH(OpCode opCode)
+void GBCpu::PUSH(GBOpCode opCode)
 {
     m_Cycles += 4;
     m_SP--;
     m_Memory->WriteWord(m_SP--, m_Registers.Double[opCode.GetW()]);
 }
 
-void GBCpu::POP(OpCode opCode)
+void GBCpu::POP(GBOpCode opCode)
 {
     m_Cycles += 3;
     m_SP++;
     m_Registers.Double[opCode.GetW()] = m_Memory->ReadWord(m_SP++);
 }
 
-void GBCpu::RL(OpCode opCode)
+void GBCpu::RL(GBOpCode opCode)
 {
     m_Cycles += 2;
     quint8 value;
@@ -444,7 +440,7 @@ void GBCpu::RL(OpCode opCode)
     SetFlag(FlagMasks::C, (value & 0x80) != 0);
 }
 
-void GBCpu::CP(OpCode opCode)
+void GBCpu::CP(GBOpCode opCode)
 {
     quint8 value = 0;
     m_Cycles++;

@@ -1,6 +1,6 @@
-#include "OpCode.h"
+#include "GBOpCode.h"
 
-OpCode::OpCode(quint8 value)
+GBOpCode::GBOpCode(quint8 value)
 {
     m_x = (value & MASK_X) >> SHIFT_X;
     m_y = (value & MASK_Y) >> SHIFT_Y;

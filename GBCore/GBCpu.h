@@ -3,7 +3,7 @@
 
 #include <QtCore>
 #include <functional>
-#include "OpCode.h"
+#include "GBOpCode.h"
 #include "GBComponent.h"
 #include "GBMemory.h"
 
@@ -59,7 +59,7 @@ namespace Registers
 class GBCpu : public GBComponent
 {
 private:
-    typedef void (GBCpu::*Instruction)(OpCode);
+    typedef void (GBCpu::*Instruction)(GBOpCode);
 
     static Instruction s_InstructionTable[INSTRUCTIONS_SETS][INSTRUCTIONS_NUM];
 
@@ -74,27 +74,27 @@ private:
         quint16_be Double[REG16_NUM];
     } m_Registers;
 
-    void Exec(Instruction inst, quint8 rawOpCode) { (this->*inst)(OpCode(rawOpCode)); }
+    void Exec(Instruction inst, quint8 rawOpCode) { (this->*inst)(GBOpCode(rawOpCode)); }
     void SetFlag(FlagMasks flagMask, bool value);
     bool GetFlag(FlagMasks flagMask) { return (m_Registers.Single[Registers::F] & static_cast<quint8>(flagMask)) != 0; }
     //Instructions
-    void NOP(OpCode opCode);
-    void LD_8Bit(OpCode opCode);
-    void LD_16Bit(OpCode opCode);
-    void LDD(OpCode opCode);
-    void LDI(OpCode opCode);
-    void XOR(OpCode opCode);
-    void CP(OpCode opCode);
-    void INC_8Bit(OpCode opCode);
-    void DEC_8Bit(OpCode opCode);
-    void INC_16Bit(OpCode opCode);
-    void BIT(OpCode opCode);
-    void RL(OpCode opCode);
-    void JR(OpCode opCode);
-    void CALL(OpCode opCode);
-    void RET(OpCode opCode);
-    void PUSH(OpCode opCode);
-    void POP(OpCode opCode);
+    void NOP(GBOpCode opCode);
+    void LD_8Bit(GBOpCode opCode);
+    void LD_16Bit(GBOpCode opCode);
+    void LDD(GBOpCode opCode);
+    void LDI(GBOpCode opCode);
+    void XOR(GBOpCode opCode);
+    void CP(GBOpCode opCode);
+    void INC_8Bit(GBOpCode opCode);
+    void DEC_8Bit(GBOpCode opCode);
+    void INC_16Bit(GBOpCode opCode);
+    void BIT(GBOpCode opCode);
+    void RL(GBOpCode opCode);
+    void JR(GBOpCode opCode);
+    void CALL(GBOpCode opCode);
+    void RET(GBOpCode opCode);
+    void PUSH(GBOpCode opCode);
+    void POP(GBOpCode opCode);
 public:
     GBCpu(GBMemory* memory);
     void Reset() override;
