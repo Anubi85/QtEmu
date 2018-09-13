@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include "GBComponent.h"
+#include "GBInstruction.h"
 #include "GBUtils.h"
 
 #define REG8_NUM 8
@@ -44,22 +45,23 @@ enum class Register
 };
 
 //Forward class declarations
-class GBInstructionContext;
 class IGBCpuState;
 class GBCpuState_Fetch;
 class GBCpuState_CBFetch;
 class GBCpuState_Decode;
+class GBCpuState_Execute;
+class GBCpuState_InterruptCheck;
 
 class GBCpu : public GBComponent
 {
     friend GBCpuState_Fetch;
     friend GBCpuState_CBFetch;
     friend GBCpuState_Decode;
+    friend GBCpuState_Execute;
+    friend GBCpuState_InterruptCheck;
 private:
-    typedef void (GBCpu::*Instruction)(GBInstructionContext*);
-
-    static Instruction s_InstructionTable[INSTRUCTIONS_NUM];
-    static Instruction s_CBInstructionTable[INSTRUCTIONS_NUM];
+    static GBInstruction s_InstructionTable[INSTRUCTIONS_NUM];
+    static GBInstruction s_CBInstructionTable[INSTRUCTIONS_NUM];
 
     quint64 m_Cycles;
     quint16 m_PC;
@@ -70,6 +72,7 @@ private:
         quint8 Single[REG8_NUM];
         quint16_be Double[REG16_NUM];
     } m_Registers;
+    bool m_IsInterruptEnabled;
     IGBCpuState* m_State;
 
     void SetState(IGBCpuState* newState);

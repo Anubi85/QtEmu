@@ -37,7 +37,7 @@ bool GBBios::Load(QString biosFilePath)
 void GBBios::Tick(GBBus* bus)
 {
     //Check if BIOS data has been properly loaded
-    if (m_IsBiosMapped & m_IsBiosLoaded)
+    if (m_IsBiosMapped && m_IsBiosLoaded)
     {
         //Check if BIOS data has been requested
         if (bus->IsReadReqPending() && (bus->GetAddress() <= BIOS_SIZE))

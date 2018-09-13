@@ -1,6 +1,6 @@
 #include "GBCpu.h"
 
-GBCpu::Instruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
+GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 {
     //Regular instruction set
     nullptr,            //0x00
@@ -261,7 +261,7 @@ GBCpu::Instruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xFF
 };
 
-GBCpu::Instruction GBCpu::s_CBInstructionTable[INSTRUCTIONS_NUM] =
+GBInstruction GBCpu::s_CBInstructionTable[INSTRUCTIONS_NUM] =
 {
     //Regular instruction set
     nullptr,            //0x00

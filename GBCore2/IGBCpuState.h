@@ -8,7 +8,9 @@ enum class State
 {
     FETCH,
     CBFETCH,
-    DECODE
+    DECODE,
+    EXECUTE,
+    INTERRUPT_CHECK
 };
 
 class IGBCpuState

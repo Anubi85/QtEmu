@@ -39,7 +39,7 @@ private:
     quint8 m_q;
     bool m_g;
 public:
-    GBInstructionContext();
+    GBInstructionContext(quint8 opcode);
     quint8 GetX() { return m_x; }
     quint8 GetY() { return m_y; }
     quint8 GetZ() { return m_z; }
@@ -47,7 +47,6 @@ public:
     bool GetF() { return m_f; }
     quint8 GetQ() { return m_q; }
     bool GetG() { return m_g; }
-    void SetOpCode(quint8 opcode);
 };
 
 #endif // GBINSTRUCTIONCONTEXT_H
