@@ -15,11 +15,16 @@ void GBCpu::Reset()
     m_SP = 0;
     m_Registers.All = 0;
     m_State = new GBCpuState_Fetch(this);
-    m_SkipCounter = 0;
 }
 
 void GBCpu::Tick(GBBus* bus)
 {
     m_Cycles++;
     m_State->Update(bus);
+}
+
+void GBCpu::SetState(IGBCpuState* newState)
+{
+    delete m_State;
+    m_State = newState;
 }

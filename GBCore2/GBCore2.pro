@@ -35,7 +35,9 @@ SOURCES += \
     GBCpuState_Fetch.cpp \
     GBCore.cpp \
     GBCpuState_Decode.cpp \
-    IGBCpuState.cpp
+    IGBCpuState.cpp \
+    GBInstructionContext.cpp \
+    GBCpuState_CBFetch.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -46,7 +48,10 @@ HEADERS += \
     IGBCpuState.h \
     GBCpuState_Fetch.h \
     GBCore.h \
-    GBCpuState_Decode.h
+    GBCpuState_Decode.h \
+    GBInstructionContext.h \
+    GBUtils.h \
+    GBCpuState_CBFetch.h
 
 unix {
     target.path = /usr/lib

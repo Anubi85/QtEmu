@@ -10,11 +10,11 @@ IEmulatorCore* GetCore()
 GBCore::GBCore()
 {
     m_Bus = new GBBus();
-    for (int comp = 0; comp < GBComponents::ALL; comp++)
+    for (int comp = 0; comp < *Component::TOTAL; comp++)
     {
-        switch (comp)
+        switch (static_cast<Component>(comp))
         {
-        case GBComponents::BIOS:
+        case Component::BIOS:
             m_Components[comp] = new GBBios();
             break;
         default:
@@ -26,7 +26,7 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-    for (int comp = 0; comp < GBComponents::ALL; comp++)
+    for (int comp = 0; comp < *Component::TOTAL; comp++)
     {
         delete m_Components[comp];
     }
@@ -35,16 +35,16 @@ GBCore::~GBCore()
 
 bool GBCore::LoadBios(QString biosFilePath)
 {
-    if (m_Components[GBComponents::BIOS] != nullptr)
+    if (m_Components[*Component::BIOS] != nullptr)
     {
-        return static_cast<GBBios*>(m_Components[GBComponents::BIOS])->Load(biosFilePath);
+        return static_cast<GBBios*>(m_Components[*Component::BIOS])->Load(biosFilePath);
     }
     return false;
 }
 
 void GBCore::Exec()
 {
-    for (int comp = 0; comp < GBComponents::ALL; comp++)
+    for (int comp = 0; comp < *Component::TOTAL; comp++)
     {
         if (m_Components[comp] != nullptr)
         {
@@ -56,7 +56,7 @@ void GBCore::Exec()
 bool GBCore::HasError()
 {
     bool hasError = false;
-    for (int comp = 0; comp < GBComponents::ALL; comp++)
+    for (int comp = 0; comp < *Component::TOTAL; comp++)
     {
         hasError |= m_Components[comp]->HasError();
     }

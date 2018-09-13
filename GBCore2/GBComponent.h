@@ -3,14 +3,11 @@
 
 #include <QtCore>
 
-namespace GBComponents
-{
-enum
+enum class Component
 {
     BIOS,
-    ALL
+    TOTAL
 };
-}
 
 class GBBus;
 

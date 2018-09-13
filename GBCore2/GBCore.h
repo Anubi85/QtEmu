@@ -3,6 +3,7 @@
 
 #include "IEmulatorCore.h"
 #include "GBComponent.h"
+#include "GBUtils.h"
 
 extern "C" Q_DECL_EXPORT IEmulatorCore* GetCore();
 
@@ -10,7 +11,7 @@ class GBCore : public IEmulatorCore
 {
 private:
     GBBus* m_Bus;
-    GBComponent* m_Components[GBComponents::ALL];
+    GBComponent* m_Components[*Component::TOTAL];
 public:
     GBCore();
     ~GBCore() override;
