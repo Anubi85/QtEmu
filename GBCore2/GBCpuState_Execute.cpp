@@ -8,12 +8,12 @@ GBCpuState_Execute::GBCpuState_Execute(GBCpu* context, GBInstruction inst, GBIns
 {
     m_Instruction = inst;
     m_InstructionContext = instContext;
-    m_Count = 1;
+    m_Count = 0;
 }
 
 void GBCpuState_Execute::Update(GBBus* bus)
 {
-    if (--m_Count == 0)
+    if (m_Count-- == 0)
     {
         if ((m_Context->*m_Instruction)(m_InstructionContext, bus))
         {

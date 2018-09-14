@@ -12,6 +12,7 @@ void GBCpu::Reset()
 {
     GBComponent::Reset();
     m_Cycles = 0;
+    m_IME = false;
     m_PC = 0;
     m_SP = 0;
     m_Registers.All = 0;
@@ -20,8 +21,8 @@ void GBCpu::Reset()
 
 void GBCpu::Tick(GBBus* bus)
 {
-    m_Cycles++;
     m_State->Update(bus);
+    m_Cycles++;
 }
 
 void GBCpu::SetState(IGBCpuState* newState)
@@ -55,6 +56,38 @@ bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
         {
             m_Registers.Double[context->GetW()] = context->Get16BitData();
         }
+        return true;   
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LD_A_n(GBInstructionContext* context, GBBus* bus)
+{
+    return true;
+}
+
+bool GBCpu::XOR_n(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetZ() == *Register::ADR_HL)
+        {
+            bus->SetAddress(context->GetX() == 0b11 ? m_PC++ : m_Registers.Double[*Register::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+        else
+        {
+            m_Registers.Single[*Register::A] ^= m_Registers.Single[context->GetZ()];
+            return true;
+        }
+    case 1:
+        m_Registers.Single[*Register::A] ^= bus->GetData();
         return true;
     }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
 }

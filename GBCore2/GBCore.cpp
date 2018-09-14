@@ -26,6 +26,7 @@ GBCore::GBCore()
             break;
         }
     }
+    m_Error = Error::Ok;
 }
 
 GBCore::~GBCore()
@@ -48,18 +49,35 @@ bool GBCore::LoadBios(QString biosFilePath)
 
 void GBCore::Exec()
 {
-    for (int comp = 0; comp < *Component::TOTAL; comp++)
+    if (m_Bus->IsReadReqPending())
     {
-        if (m_Components[comp] != nullptr)
+        m_Error = Error::BUS_ReadRequestNotServed;
+#ifdef DEBUG
+        qDebug("Read request to a not implemented address 0x%04X", m_Bus->GetAddress());
+#endif
+    }
+    else if (m_Bus->IsWriteReqPending())
+    {
+        m_Error = Error::BUS_WriteRequestNotServed;
+#ifdef DEBUG
+        qDebug("Write request to a not implemented address 0x%04X", m_Bus->GetAddress());
+#endif
+    }
+    else
+    {
+        for (int comp = 0; comp < *Component::TOTAL; comp++)
         {
-            m_Components[comp]->Tick(m_Bus);
+            if (m_Components[comp] != nullptr)
+            {
+                m_Components[comp]->Tick(m_Bus);
+            }
         }
     }
 }
 
 bool GBCore::HasError()
 {
-    bool hasError = false;
+    bool hasError = m_Error != Error::Ok;
     for (int comp = 0; comp < *Component::TOTAL; comp++)
     {
         hasError |= m_Components[comp]->HasError();

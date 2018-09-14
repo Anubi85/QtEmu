@@ -69,7 +69,7 @@ private:
         quint8 Single[REG8_NUM];
         quint16_be Double[REG16_NUM];
     } m_Registers;
-    bool m_IsInterruptEnabled;
+    bool m_IME;
     IGBCpuState* m_State;
 
     void SetState(IGBCpuState* newState);
@@ -78,6 +78,8 @@ private:
 
     //instructions
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
+    bool LD_A_n(GBInstructionContext* context, GBBus* bus);
+    bool XOR_n(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
     void Reset() override;
