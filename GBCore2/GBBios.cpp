@@ -23,12 +23,31 @@ bool GBBios::Load(QString biosFilePath)
         if (biosFile.open(QFile::ReadOnly))
         {
             QByteArray tmp = biosFile.readAll();
-            if (tmp.length() == BIOS_SIZE && QCryptographicHash::hash(tmp, QCryptographicHash::Md5).toHex() == BIOS_MD5)
+            if (tmp.length() == BIOS_SIZE)
             {
-                m_Data = tmp;
+                if (QCryptographicHash::hash(tmp, QCryptographicHash::Md5).toHex() == BIOS_MD5)
+                {
+                    m_Data = tmp;
+                }
+                else
+                {
+                    m_ErrorCode = Error::BIOS_WrongFileMD5;
+                }
+            }
+            else
+            {
+                m_ErrorCode = Error::BIOS_WrongFileSize;
             }
             biosFile.close();
         }
+        else
+        {
+            m_ErrorCode = Error::BIOS_FailToOpen;
+        }
+    }
+    else
+    {
+        m_ErrorCode = Error::BIOS_FileNotFound;
     }
     m_IsBiosLoaded = m_Data.count('\0')!= BIOS_SIZE;
     return m_IsBiosLoaded;

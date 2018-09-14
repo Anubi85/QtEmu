@@ -15,7 +15,7 @@ private:
 public:
     GBCpuState_Execute(GBCpu* context, GBInstruction inst, GBInstructionContext* instContext);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::EXECUTE; }
+    State GetStateID() override { return State::Execute; }
 };
 
 #endif // GBCPUSTATE_EXECUTE_H

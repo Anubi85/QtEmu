@@ -16,6 +16,7 @@ DEFINES += GBCORE2_LIBRARY
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+CONFIG(debug, debug|release): DEFINES += DEBUG
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -37,9 +38,9 @@ SOURCES += \
     GBCpuState_Decode.cpp \
     IGBCpuState.cpp \
     GBInstructionContext.cpp \
-    GBCpuState_CBFetch.cpp \
     GBCpuState_Execute.cpp \
-    GBCpuState_InterruptCheck.cpp
+    GBCpuState_InterruptCheck.cpp \
+    GBCpuState_Error.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -53,10 +54,10 @@ HEADERS += \
     GBCpuState_Decode.h \
     GBInstructionContext.h \
     GBUtils.h \
-    GBCpuState_CBFetch.h \
     GBCpuState_Execute.h \
     GBInstruction.h \
-    GBCpuState_InterruptCheck.h
+    GBCpuState_InterruptCheck.h \
+    GBCpuState_Error.h
 
 unix {
     target.path = /usr/lib

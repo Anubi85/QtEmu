@@ -4,7 +4,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 {
     //Regular instruction set
     nullptr,            //0x00
-    nullptr,            //0x01
+    &GBCpu::LD_rr_nn,   //0x01
     nullptr,            //0x02
     nullptr,            //0x03
     nullptr,            //0x04
@@ -20,7 +20,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x0E
     nullptr,            //0x0F
     nullptr,            //0x10
-    nullptr,            //0x11
+    &GBCpu::LD_rr_nn,   //0x11
     nullptr,            //0x12
     nullptr,            //0x13
     nullptr,            //0x14
@@ -36,7 +36,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x1E
     nullptr,            //0x1F
     nullptr,            //0x20
-    nullptr,            //0x21
+    &GBCpu::LD_rr_nn,   //0x21
     nullptr,            //0x22
     nullptr,            //0x23
     nullptr,            //0x24
@@ -52,7 +52,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x2E
     nullptr,            //0x2F
     nullptr,            //0x30
-    nullptr,            //0x31
+    &GBCpu::LD_rr_nn,   //0x31
     nullptr,            //0x32
     nullptr,            //0x33
     nullptr,            //0x34

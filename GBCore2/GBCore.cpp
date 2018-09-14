@@ -1,5 +1,6 @@
 #include "GBCore.h"
 #include "GBBus.h"
+#include "GBCpu.h"
 #include "GBBios.h"
 
 IEmulatorCore* GetCore()
@@ -14,6 +15,9 @@ GBCore::GBCore()
     {
         switch (static_cast<Component>(comp))
         {
+        case Component::CPU:
+            m_Components[comp] = new GBCpu();
+            break;
         case Component::BIOS:
             m_Components[comp] = new GBBios();
             break;

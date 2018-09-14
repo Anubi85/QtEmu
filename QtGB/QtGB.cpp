@@ -10,7 +10,7 @@ QtGB::QtGB(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QLibrary lib("GBCore");
+    QLibrary lib("GBCore2");
     std::unique_ptr<IEmulatorCore> core(reinterpret_cast<IEmulatorCore*(*)()>(lib.resolve("GetCore"))());
     core->LoadBios("Bios.gb");
     while (!core->HasError())

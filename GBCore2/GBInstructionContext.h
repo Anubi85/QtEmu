@@ -38,6 +38,8 @@ private:
     bool m_f;
     quint8 m_q;
     bool m_g;
+    quint16 m_Data;
+    quint8 m_Step;
 public:
     GBInstructionContext(quint8 opcode);
     quint8 GetX() { return m_x; }
@@ -47,6 +49,12 @@ public:
     bool GetF() { return m_f; }
     quint8 GetQ() { return m_q; }
     bool GetG() { return m_g; }
+    void SetLSB(quint8 value);
+    void SetMSB(quint8 value);
+    quint16 Get16BitData() { return m_Data; }
+    quint8 Get8BitData() { return m_Data & 0x00FF; }
+    quint8 GetStep() { return m_Step; }
+    void AdvanceStep() { m_Step++; }
 };
 
 #endif // GBINSTRUCTIONCONTEXT_H

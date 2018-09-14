@@ -10,7 +10,7 @@ private:
 public:
     GBCpuState_Decode(GBCpu* context, bool isCB);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::DECODE; }
+    State GetStateID() override { return State::Decode; }
 };
 
 #endif // GBCPUSTATE_DECODE_H

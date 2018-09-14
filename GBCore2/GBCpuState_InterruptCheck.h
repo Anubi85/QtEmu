@@ -8,7 +8,7 @@ class GBCpuState_InterruptCheck : public IGBCpuState
 public:
     GBCpuState_InterruptCheck(GBCpu* context);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::INTERRUPT_CHECK; }
+    State GetStateID() override { return State::InterruptCheck; }
 };
 
 #endif // GBCPUSTATE_INTERRUPTCHECK_H

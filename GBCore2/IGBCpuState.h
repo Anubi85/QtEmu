@@ -6,11 +6,11 @@ class GBCpu;
 
 enum class State
 {
-    FETCH,
-    CBFETCH,
-    DECODE,
-    EXECUTE,
-    INTERRUPT_CHECK
+    Fetch,
+    Decode,
+    Execute,
+    InterruptCheck,
+    Error
 };
 
 class IGBCpuState

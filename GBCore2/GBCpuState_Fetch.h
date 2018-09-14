@@ -10,10 +10,12 @@ class GBCpuState_Fetch : public IGBCpuState
 {
 private:
     static quint16 s_InterruptRoutineAddress[INTERRUPT_NUM];
+
+    int m_Count;
 public:
-    GBCpuState_Fetch(GBCpu* context);
+    GBCpuState_Fetch(GBCpu* context, bool isCB);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::FETCH; }
+    State GetStateID() override { return State::Fetch; }
 };
 
 #endif // GBCPUSTATE_FETCH_H

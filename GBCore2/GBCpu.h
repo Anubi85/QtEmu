@@ -41,13 +41,11 @@ enum class Register
         DE = 0x01,
         HL = 0x02,
         AF = 0x03,
-        SP = 0x03
 };
 
 //Forward class declarations
 class IGBCpuState;
 class GBCpuState_Fetch;
-class GBCpuState_CBFetch;
 class GBCpuState_Decode;
 class GBCpuState_Execute;
 class GBCpuState_InterruptCheck;
@@ -55,7 +53,6 @@ class GBCpuState_InterruptCheck;
 class GBCpu : public GBComponent
 {
     friend GBCpuState_Fetch;
-    friend GBCpuState_CBFetch;
     friend GBCpuState_Decode;
     friend GBCpuState_Execute;
     friend GBCpuState_InterruptCheck;
@@ -78,6 +75,9 @@ private:
     void SetState(IGBCpuState* newState);
     void SetFlag(FlagMask flagMask, bool value);
     bool GetFlag(FlagMask flagMask) { return (m_Registers.Single[*Register::F] & *flagMask) != 0; }
+
+    //instructions
+    bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
     void Reset() override;
