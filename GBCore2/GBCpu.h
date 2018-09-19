@@ -78,6 +78,7 @@ private:
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
+    bool LD_oC_A(GBInstructionContext* context, GBBus* bus);
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
     bool XOR(GBInstructionContext* context, GBBus* bus);
     bool LDD(GBInstructionContext* context, GBBus* bus);

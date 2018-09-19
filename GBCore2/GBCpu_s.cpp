@@ -229,7 +229,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xDF
     nullptr,            //0xE0
     nullptr,            //0xE1
-    nullptr,            //0xE2
+    &GBCpu::LD_oC_A,    //0xE2
     nullptr,            //0xE3
     nullptr,            //0xE4
     nullptr,            //0xE5

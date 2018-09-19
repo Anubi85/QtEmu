@@ -74,6 +74,25 @@ bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::LD_oC_A(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //prepare the bus
+        bus->SetAddress(0xFF00 | m_Registers.Single[*Register::C]);
+        bus->SetData(m_Registers.Single[*Register::A]);
+        context->AdvanceStep();
+        return false;
+    case 1:
+        //send the write request, Gameboy hardware cannot do this in the previous cycle, the bus is busy for instruction fetching
+        bus->RequestWrite();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
