@@ -77,9 +77,12 @@ private:
     bool GetFlag(FlagMask flagMask) { return (m_Registers.Single[*Register::F] & *flagMask) != 0; }
 
     //instructions
+    bool LD_r_n(GBInstructionContext* context, GBBus* bus);
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
-    bool LD_A_n(GBInstructionContext* context, GBBus* bus);
-    bool XOR_n(GBInstructionContext* context, GBBus* bus);
+    bool XOR(GBInstructionContext* context, GBBus* bus);
+    bool LDD(GBInstructionContext* context, GBBus* bus);
+    bool BIT(GBInstructionContext* context, GBBus* bus);
+    bool JR(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
     void Reset() override;

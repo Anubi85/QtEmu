@@ -11,7 +11,7 @@ class GBCore : public IEmulatorCore
 {
 private:
     GBBus* m_Bus;
-    GBComponent* m_Components[*Component::TOTAL];
+    GBComponent* m_Components[*Component::Total];
     Error m_Error;
 public:
     GBCore();

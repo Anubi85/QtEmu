@@ -32,7 +32,7 @@ void GBCpuState_Decode::Update(GBBus* bus)
         {
             m_Context->m_ErrorCode = Error::CPU_OpCodeNotImplemented;
             QString msg("Op Code %1 not implemented");
-            m_Context->SetState(new GBCpuState_Error(m_Context, msg.arg(m_IsCB ? "0xCB 0x%1" : "0x%1").arg(bus->GetData(), 2, 16)));
+            m_Context->SetState(new GBCpuState_Error(m_Context, msg.arg(m_IsCB ? "0xCB 0x%1" : "0x%1").arg(bus->GetData(), 2, 16, QLatin1Char('0'))));
         }
     }
 }

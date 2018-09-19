@@ -20,7 +20,8 @@ enum class Component
 {
     CPU,
     BIOS,
-    TOTAL
+    LCD_Display,
+    Total
 };
 
 class GBBus;

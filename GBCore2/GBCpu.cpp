@@ -31,6 +31,49 @@ void GBCpu::SetState(IGBCpuState* newState)
     m_State = newState;
 }
 
+void GBCpu::SetFlag(FlagMask flagMask, bool value)
+{
+    if (value)
+    {
+        m_Registers.Single[*Register::F] |= *flagMask;
+    }
+    else
+    {
+        m_Registers.Single[*Register::F] &= ~*flagMask;
+    }
+}
+
+bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetY() != *Register::ADR_HL)
+        {
+            m_Registers.Single[context->GetY()] = bus->GetData();
+            return true;
+        }
+        else
+        {
+            //dummy cycle, Gameboy harware cannot read and write from bus in the same cycle!
+            context->AdvanceStep();
+            return false;
+        }
+    case 2:
+        bus->SetAddress(m_Registers.Double[*Register::HL]);
+        //no need to change the data, it has just be read and no one change it!
+        return true;
+
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
@@ -62,12 +105,7 @@ bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_A_n(GBInstructionContext* context, GBBus* bus)
-{
-    return true;
-}
-
-bool GBCpu::XOR_n(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -87,6 +125,106 @@ bool GBCpu::XOR_n(GBInstructionContext* context, GBBus* bus)
     case 1:
         m_Registers.Single[*Register::A] ^= bus->GetData();
         return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        bus->SetAddress(m_Registers.Double[*Register::HL]);
+        if (context->GetF())
+        {
+            bus->RequestRead();
+        }
+        else
+        {
+            bus->SetData(m_Registers.Single[*Register::A]);
+            bus->RequestWrite();
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetF())
+        {
+            m_Registers.Single[*Register::A] = bus->GetData();
+        }
+        m_Registers.Double[*Register::HL] -= 1;
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetZ() == *Register::ADR_HL)
+        {
+            bus->SetAddress(m_Registers.Double[*Register::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+        else
+        {
+            SetFlag(FlagMask::Z, (m_Registers.Single[context->GetZ()] & (1<<context->GetY())) == 0);
+            SetFlag(FlagMask::N, false);
+            SetFlag(FlagMask::H, true);
+            return true;
+        }
+    case 1:
+        SetFlag(FlagMask::Z, (bus->GetData() & (1<<context->GetY())) == 0);
+        SetFlag(FlagMask::N, false);
+        SetFlag(FlagMask::H, true);
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //read the address offset from memory
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        //check if conditional jump
+        bool jump = true;
+        if (context->GetG())
+        {
+            switch (static_cast<Condition>(context->GetQ()))
+            {
+            case Condition::NZ:
+                jump = !GetFlag(FlagMask::Z);
+                break;
+            case Condition::Z:
+                jump = GetFlag(FlagMask::Z);
+                break;
+            case Condition::NC:
+                jump = !GetFlag(FlagMask::C);
+                break;
+            case Condition::C:
+                jump = GetFlag(FlagMask::C);
+                break;
+            }
+        }
+        if (jump)
+        {
+            m_PC += static_cast<qint8>(bus->GetData()); //it is a signed value!!
+        }
+        return true;
+
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;

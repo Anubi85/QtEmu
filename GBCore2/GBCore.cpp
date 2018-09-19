@@ -2,6 +2,7 @@
 #include "GBBus.h"
 #include "GBCpu.h"
 #include "GBBios.h"
+#include "GBLcdDisplay.h"
 
 IEmulatorCore* GetCore()
 {
@@ -11,7 +12,7 @@ IEmulatorCore* GetCore()
 GBCore::GBCore()
 {
     m_Bus = new GBBus();
-    for (int comp = 0; comp < *Component::TOTAL; comp++)
+    for (int comp = 0; comp < *Component::Total; comp++)
     {
         switch (static_cast<Component>(comp))
         {
@@ -20,6 +21,9 @@ GBCore::GBCore()
             break;
         case Component::BIOS:
             m_Components[comp] = new GBBios();
+            break;
+        case Component::LCD_Display:
+            m_Components[comp] = new GBLcdDisplay();
             break;
         default:
             m_Components[comp] = nullptr;
@@ -31,7 +35,7 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-    for (int comp = 0; comp < *Component::TOTAL; comp++)
+    for (int comp = 0; comp < *Component::Total; comp++)
     {
         delete m_Components[comp];
     }
@@ -65,7 +69,7 @@ void GBCore::Exec()
     }
     else
     {
-        for (int comp = 0; comp < *Component::TOTAL; comp++)
+        for (int comp = 0; comp < *Component::Total; comp++)
         {
             if (m_Components[comp] != nullptr)
             {
@@ -78,7 +82,7 @@ void GBCore::Exec()
 bool GBCore::HasError()
 {
     bool hasError = m_Error != Error::Ok;
-    for (int comp = 0; comp < *Component::TOTAL; comp++)
+    for (int comp = 0; comp < *Component::Total; comp++)
     {
         hasError |= m_Components[comp]->HasError();
     }

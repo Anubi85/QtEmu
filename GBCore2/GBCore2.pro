@@ -40,7 +40,8 @@ SOURCES += \
     GBInstructionContext.cpp \
     GBCpuState_Execute.cpp \
     GBCpuState_InterruptCheck.cpp \
-    GBCpuState_Error.cpp
+    GBCpuState_Error.cpp \
+    GBLcdDisplay.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -57,7 +58,8 @@ HEADERS += \
     GBCpuState_Execute.h \
     GBInstruction.h \
     GBCpuState_InterruptCheck.h \
-    GBCpuState_Error.h
+    GBCpuState_Error.h \
+    GBLcdDisplay.h
 
 unix {
     target.path = /usr/lib

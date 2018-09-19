@@ -9,7 +9,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x03
     nullptr,            //0x04
     nullptr,            //0x05
-    nullptr,            //0x06
+    &GBCpu::LD_r_n,     //0x06
     nullptr,            //0x07
     nullptr,            //0x08
     nullptr,            //0x09
@@ -17,7 +17,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x0B
     nullptr,            //0x0C
     nullptr,            //0x0D
-    nullptr,            //0x0E
+    &GBCpu::LD_r_n,     //0x0E
     nullptr,            //0x0F
     nullptr,            //0x10
     &GBCpu::LD_rr_nn,   //0x11
@@ -25,47 +25,47 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x13
     nullptr,            //0x14
     nullptr,            //0x15
-    nullptr,            //0x16
+    &GBCpu::LD_r_n,     //0x16
     nullptr,            //0x17
-    nullptr,            //0x18
+    &GBCpu::JR,         //0x18
     nullptr,            //0x19
     nullptr,            //0x1A
     nullptr,            //0x1B
     nullptr,            //0x1C
     nullptr,            //0x1D
-    nullptr,            //0x1E
+    &GBCpu::LD_r_n,     //0x1E
     nullptr,            //0x1F
-    nullptr,            //0x20
+    &GBCpu::JR,         //0x20
     &GBCpu::LD_rr_nn,   //0x21
     nullptr,            //0x22
     nullptr,            //0x23
     nullptr,            //0x24
     nullptr,            //0x25
-    nullptr,            //0x26
+    &GBCpu::LD_r_n,     //0x26
     nullptr,            //0x27
-    nullptr,            //0x28
+    &GBCpu::JR,         //0x28
     nullptr,            //0x29
     nullptr,            //0x2A
     nullptr,            //0x2B
     nullptr,            //0x2C
     nullptr,            //0x2D
-    nullptr,            //0x2E
+    &GBCpu::LD_r_n,     //0x2E
     nullptr,            //0x2F
-    nullptr,            //0x30
+    &GBCpu::JR,         //0x30
     &GBCpu::LD_rr_nn,   //0x31
-    nullptr,            //0x32
+    &GBCpu::LDD,        //0x32
     nullptr,            //0x33
     nullptr,            //0x34
     nullptr,            //0x35
-    nullptr,            //0x36
+    &GBCpu::LD_r_n,     //0x36
     nullptr,            //0x37
-    nullptr,            //0x38
+    &GBCpu::JR,         //0x38
     nullptr,            //0x39
-    nullptr,            //0x3A
+    &GBCpu::LDD,        //0x3A
     nullptr,            //0x3B
     nullptr,            //0x3C
     nullptr,            //0x3D
-    nullptr,            //0x3E
+    &GBCpu::LD_r_n,     //0x3E
     nullptr,            //0x3F
     nullptr,            //0x40
     nullptr,            //0x41
@@ -171,14 +171,14 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xA5
     nullptr,            //0xA6
     nullptr,            //0xA7
-    &GBCpu::XOR_n,      //0xA8
-    &GBCpu::XOR_n,      //0xA9
-    &GBCpu::XOR_n,      //0xAA
-    &GBCpu::XOR_n,      //0xAB
-    &GBCpu::XOR_n,      //0xAC
-    &GBCpu::XOR_n,      //0xAD
-    &GBCpu::XOR_n,      //0xAE
-    &GBCpu::XOR_n,      //0xAF
+    &GBCpu::XOR,        //0xA8
+    &GBCpu::XOR,        //0xA9
+    &GBCpu::XOR,        //0xAA
+    &GBCpu::XOR,        //0xAB
+    &GBCpu::XOR,        //0xAC
+    &GBCpu::XOR,        //0xAD
+    &GBCpu::XOR,        //0xAE
+    &GBCpu::XOR,        //0xAF
     nullptr,            //0xB0
     nullptr,            //0xB1
     nullptr,            //0xB2
@@ -241,7 +241,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xEB
     nullptr,            //0xEC
     nullptr,            //0xED
-    &GBCpu::XOR_n,      //0xEE
+    &GBCpu::XOR,        //0xEE
     nullptr,            //0xEF
     nullptr,            //0xF0
     nullptr,            //0xF1
@@ -328,70 +328,70 @@ GBInstruction GBCpu::s_CBInstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x3D
     nullptr,            //0x3E
     nullptr,            //0x3F
-    nullptr,            //0x40
-    nullptr,            //0x41
-    nullptr,            //0x42
-    nullptr,            //0x43
-    nullptr,            //0x44
-    nullptr,            //0x45
-    nullptr,            //0x46
-    nullptr,            //0x47
-    nullptr,            //0x48
-    nullptr,            //0x49
-    nullptr,            //0x4A
-    nullptr,            //0x4B
-    nullptr,            //0x4C
-    nullptr,            //0x4D
-    nullptr,            //0x4E
-    nullptr,            //0x4F
-    nullptr,            //0x50
-    nullptr,            //0x51
-    nullptr,            //0x52
-    nullptr,            //0x53
-    nullptr,            //0x54
-    nullptr,            //0x55
-    nullptr,            //0x56
-    nullptr,            //0x57
-    nullptr,            //0x58
-    nullptr,            //0x59
-    nullptr,            //0x5A
-    nullptr,            //0x5B
-    nullptr,            //0x5C
-    nullptr,            //0x5D
-    nullptr,            //0x5E
-    nullptr,            //0x5F
-    nullptr,            //0x60
-    nullptr,            //0x61
-    nullptr,            //0x62
-    nullptr,            //0x63
-    nullptr,            //0x64
-    nullptr,            //0x65
-    nullptr,            //0x66
-    nullptr,            //0x67
-    nullptr,            //0x68
-    nullptr,            //0x69
-    nullptr,            //0x6A
-    nullptr,            //0x6B
-    nullptr,            //0x6C
-    nullptr,            //0x6D
-    nullptr,            //0x6E
-    nullptr,            //0x6F
-    nullptr,            //0x70
-    nullptr,            //0x71
-    nullptr,            //0x72
-    nullptr,            //0x73
-    nullptr,            //0x74
-    nullptr,            //0x75
-    nullptr,            //0x76
-    nullptr,            //0x77
-    nullptr,            //0x78
-    nullptr,            //0x79
-    nullptr,            //0x7A
-    nullptr,            //0x7B
-    nullptr,            //0x7C
-    nullptr,            //0x7D
-    nullptr,            //0x7E
-    nullptr,            //0x7F
+    &GBCpu::BIT,        //0x40
+    &GBCpu::BIT,        //0x41
+    &GBCpu::BIT,        //0x42
+    &GBCpu::BIT,        //0x43
+    &GBCpu::BIT,        //0x44
+    &GBCpu::BIT,        //0x45
+    &GBCpu::BIT,        //0x46
+    &GBCpu::BIT,        //0x47
+    &GBCpu::BIT,        //0x48
+    &GBCpu::BIT,        //0x49
+    &GBCpu::BIT,        //0x4A
+    &GBCpu::BIT,        //0x4B
+    &GBCpu::BIT,        //0x4C
+    &GBCpu::BIT,        //0x4D
+    &GBCpu::BIT,        //0x4E
+    &GBCpu::BIT,        //0x4F
+    &GBCpu::BIT,        //0x50
+    &GBCpu::BIT,        //0x51
+    &GBCpu::BIT,        //0x52
+    &GBCpu::BIT,        //0x53
+    &GBCpu::BIT,        //0x54
+    &GBCpu::BIT,        //0x55
+    &GBCpu::BIT,        //0x56
+    &GBCpu::BIT,        //0x57
+    &GBCpu::BIT,        //0x58
+    &GBCpu::BIT,        //0x59
+    &GBCpu::BIT,        //0x5A
+    &GBCpu::BIT,        //0x5B
+    &GBCpu::BIT,        //0x5C
+    &GBCpu::BIT,        //0x5D
+    &GBCpu::BIT,        //0x5E
+    &GBCpu::BIT,        //0x5F
+    &GBCpu::BIT,        //0x60
+    &GBCpu::BIT,        //0x61
+    &GBCpu::BIT,        //0x62
+    &GBCpu::BIT,        //0x63
+    &GBCpu::BIT,        //0x64
+    &GBCpu::BIT,        //0x65
+    &GBCpu::BIT,        //0x66
+    &GBCpu::BIT,        //0x67
+    &GBCpu::BIT,        //0x68
+    &GBCpu::BIT,        //0x69
+    &GBCpu::BIT,        //0x6A
+    &GBCpu::BIT,        //0x6B
+    &GBCpu::BIT,        //0x6C
+    &GBCpu::BIT,        //0x6D
+    &GBCpu::BIT,        //0x6E
+    &GBCpu::BIT,        //0x6F
+    &GBCpu::BIT,        //0x70
+    &GBCpu::BIT,        //0x71
+    &GBCpu::BIT,        //0x72
+    &GBCpu::BIT,        //0x73
+    &GBCpu::BIT,        //0x74
+    &GBCpu::BIT,        //0x75
+    &GBCpu::BIT,        //0x76
+    &GBCpu::BIT,        //0x77
+    &GBCpu::BIT,        //0x78
+    &GBCpu::BIT,        //0x79
+    &GBCpu::BIT,        //0x7A
+    &GBCpu::BIT,        //0x7B
+    &GBCpu::BIT,        //0x7C
+    &GBCpu::BIT,        //0x7D
+    &GBCpu::BIT,        //0x7E
+    &GBCpu::BIT,        //0x7F
     nullptr,            //0x80
     nullptr,            //0x81
     nullptr,            //0x82
