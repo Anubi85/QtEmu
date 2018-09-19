@@ -7,13 +7,15 @@ enum class Error : quint16
 {
     Ok = 0x0000,
     BUS_ReadRequestNotServed = 0x0001,
-    BUS_WriteRequestNotServed = 0x0001,
+    BUS_WriteRequestNotServed = 0x0002,
     CPU_OpCodeNotImplemented = 0x0101,
     CPU_UnespectedOpCodeStep = 0x0102,
     BIOS_FileNotFound = 0x0201,
     BIOS_FailToOpen = 0x0202,
     BIOS_WrongFileSize = 0x0203,
-    BIOS_WrongFileMD5 = 0x0204
+    BIOS_WrongFileMD5 = 0x0204,
+    AUDIO_WriteToNotValidRegister = 0x0401,
+    AUDIO_ReadFromNotValidRegister = 0x0402,
 };
 
 enum class Component

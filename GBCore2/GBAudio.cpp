@@ -16,9 +16,8 @@ void GBAudio::Reset()
 
 void GBAudio::Tick(GBBus* bus)
 {
-    AudioRegister reg = AudioRegister::Invalid;
-    quint8 mask = 0x00;
-    bool processRequest = true;
+    AudioRegister reg;
+    quint8 mask;
     //check if a read request is pending and the address is in range
     if (bus->IsReadReqPending() && IsAddressInRange(bus->GetAddress()))
     {
@@ -32,14 +31,11 @@ void GBAudio::Tick(GBBus* bus)
             mask = 0x3F;
             break;
         default:
-            processRequest = false;
-            break;
+            m_ErrorCode = Error::AUDIO_ReadFromNotValidRegister;
+            return;
         }
-        if (processRequest)
-        {
-            bus->SetData(static_cast<quint8>(m_Registers[*reg]) | mask);
-            bus->ReadReqAck();
-        }
+        bus->SetData(static_cast<quint8>(m_Registers[*reg]) | mask);
+        bus->ReadReqAck();
     }
     //check if a write request is pending and the address is in range
     if (bus->IsWriteReqPending() && IsAddressInRange(bus->GetAddress()))
@@ -56,13 +52,10 @@ void GBAudio::Tick(GBBus* bus)
             mask = 0xFF;
             break;
         default:
-            processRequest = false;
-            break;
+            m_ErrorCode = Error::AUDIO_WriteToNotValidRegister;
+            return;
         }
-        if (processRequest)
-        {
-            m_Registers[*reg] = static_cast<char>(bus->GetData() & mask);
-            bus->WriteReqAck();
-        }
+        m_Registers[*reg] = static_cast<char>(bus->GetData() & mask);
+        bus->WriteReqAck();
     }
 }

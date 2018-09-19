@@ -11,7 +11,6 @@ enum class AudioRegister
 {
     NR11 = 0xFF11 - AUDIO_ADDRESS_OFFSET,
     NR52 = 0xFF26 - AUDIO_ADDRESS_OFFSET,
-    Invalid,
 };
 
 class GBAudio : public GBComponent
