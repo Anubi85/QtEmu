@@ -21,6 +21,7 @@ enum class Component
     CPU,
     BIOS,
     LCD_Display,
+    Audio,
     Total
 };
 

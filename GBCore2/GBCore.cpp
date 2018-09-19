@@ -3,6 +3,7 @@
 #include "GBCpu.h"
 #include "GBBios.h"
 #include "GBLcdDisplay.h"
+#include "GBAudio.h"
 
 IEmulatorCore* GetCore()
 {
@@ -24,6 +25,9 @@ GBCore::GBCore()
             break;
         case Component::LCD_Display:
             m_Components[comp] = new GBLcdDisplay();
+            break;
+        case Component::Audio:
+            m_Components[comp] = new GBAudio();
             break;
         default:
             m_Components[comp] = nullptr;

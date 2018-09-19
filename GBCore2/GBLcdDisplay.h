@@ -10,6 +10,8 @@ class GBLcdDisplay : public GBComponent
 {
 private:
     QByteArray m_VideoRAM;
+
+    bool IsAddressInRange(quint16 address) { return address >= ADDRESS_OFFSET && address < ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
 public:
     GBLcdDisplay();
     void Reset() override;
