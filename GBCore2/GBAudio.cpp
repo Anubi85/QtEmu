@@ -1,47 +1,68 @@
 #include "GBAudio.h"
 #include "GBBus.h"
 
-GBAudio::GBAudio()
+GBAudio::GBAudio() :
+    m_Registers(AUDIO_MEMORY_SIZE, 0)
 {
     Reset();
 }
 
 void GBAudio::Reset()
 {
-    m_NR52 = 0x81; //audio enabled, channel 1 enabled
-}
-
-bool GBAudio::IsAddressInRange(quint16 address)
-{
-    bool result = false;
-    result |= address == NR52_ADDRESS;
-    return result;
+    m_Registers.fill(0);
+    m_Registers[*AudioRegister::NR11] = static_cast<char>(0xBF);
+    m_Registers[*AudioRegister::NR52] = static_cast<char>(0x81);
 }
 
 void GBAudio::Tick(GBBus* bus)
 {
+    AudioRegister reg = AudioRegister::Invalid;
+    quint8 mask = 0x00;
+    bool processRequest = true;
     //check if a read request is pending and the address is in range
     if (bus->IsReadReqPending() && IsAddressInRange(bus->GetAddress()))
     {
-        switch (bus->GetAddress())
+        reg = static_cast<AudioRegister>(bus->GetAddress() - AUDIO_ADDRESS_OFFSET);
+        switch (reg)
         {
-        case NR52_ADDRESS:
-            bus->SetData(m_NR52 | 0x70);
+        case AudioRegister::NR52:
+            mask = 0x70;
+            break;
+        case AudioRegister::NR11:
+            mask = 0x3F;
+            break;
+        default:
+            processRequest = false;
             break;
         }
-        bus->ReadReqAck();
+        if (processRequest)
+        {
+            bus->SetData(static_cast<quint8>(m_Registers[*reg]) | mask);
+            bus->ReadReqAck();
+        }
     }
     //check if a write request is pending and the address is in range
     if (bus->IsWriteReqPending() && IsAddressInRange(bus->GetAddress()))
     {
-        switch (bus->GetAddress())
+        reg = static_cast<AudioRegister>(bus->GetAddress() - AUDIO_ADDRESS_OFFSET);
+        switch (reg)
         {
-        case NR52_ADDRESS:
-            m_NR52 = bus->GetData() & 0x80;
+        case AudioRegister::NR52:
+            mask = 0x80;
             //resetta i contenuti di tutti i registri audio quando disabilito il suono
             //se suono disabilitato gli altri registri non sono acessibili
             break;
+        case AudioRegister::NR11:
+            mask = 0xFF;
+            break;
+        default:
+            processRequest = false;
+            break;
         }
-        bus->WriteReqAck();
+        if (processRequest)
+        {
+            m_Registers[*reg] = static_cast<char>(bus->GetData() & mask);
+            bus->WriteReqAck();
+        }
     }
 }

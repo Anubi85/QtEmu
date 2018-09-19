@@ -26,7 +26,7 @@ enum class Condition
     C  = 0x03
 };
 
-enum class Register
+enum class CpuRegister
 {
          B = 0x00,
          C = 0x01,
@@ -74,7 +74,7 @@ private:
 
     void SetState(IGBCpuState* newState);
     void SetFlag(FlagMask flagMask, bool value);
-    bool GetFlag(FlagMask flagMask) { return (m_Registers.Single[*Register::F] & *flagMask) != 0; }
+    bool GetFlag(FlagMask flagMask) { return (m_Registers.Single[*CpuRegister::F] & *flagMask) != 0; }
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
@@ -86,6 +86,7 @@ private:
     bool JR(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
+    ~GBCpu() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
 };

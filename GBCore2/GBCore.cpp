@@ -39,10 +39,11 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-    for (int comp = 0; comp < *Component::Total; comp++)
-    {
-        delete m_Components[comp];
-    }
+//    for (int comp = 0; comp < *Component::Total; comp++)
+//    {
+//        delete m_Components[comp];
+//    }
+    delete m_Components[*Component::Audio];
     delete m_Bus;
 }
 
