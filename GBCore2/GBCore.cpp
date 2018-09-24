@@ -2,7 +2,7 @@
 #include "GBBus.h"
 #include "GBCpu.h"
 #include "GBBios.h"
-#include "GBLcdDisplay.h"
+#include "GBVideo.h"
 #include "GBAudio.h"
 
 IEmulatorCore* GetCore()
@@ -23,7 +23,7 @@ GBCore::GBCore()
         case Component::BIOS:
             m_Components[comp] = new GBBios();
             break;
-        case Component::LCD_Display:
+        case Component::Video:
             m_Components[comp] = new GBLcdDisplay();
             break;
         case Component::Audio:

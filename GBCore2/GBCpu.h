@@ -36,7 +36,6 @@ enum class CpuRegister
          L = 0x05,
          F = 0x06,
          A = 0x07,
-    ADR_HL = 0x06,
         BC = 0x00,
         DE = 0x01,
         HL = 0x02,
@@ -78,9 +77,12 @@ private:
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
+    bool LD_r1_r2(GBInstructionContext* context, GBBus* bus);
+    bool LD_addr_A(GBInstructionContext* context, GBBus* bus);
     bool LD_oC_A(GBInstructionContext* context, GBBus* bus);
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
     bool XOR(GBInstructionContext* context, GBBus* bus);
+    bool INC_r(GBInstructionContext* context, GBBus* bus);
     bool LDD(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);

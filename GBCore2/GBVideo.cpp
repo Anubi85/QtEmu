@@ -1,4 +1,4 @@
-#include "GBLcdDisplay.h"
+#include "GBVideo.h"
 #include "GBBus.h"
 
 GBLcdDisplay::GBLcdDisplay() :
@@ -9,6 +9,7 @@ GBLcdDisplay::GBLcdDisplay() :
 
 void GBLcdDisplay::Reset()
 {
+    GBComponent::Reset();
     m_VideoRAM.fill(0);
 }
 

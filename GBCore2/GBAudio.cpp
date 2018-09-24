@@ -9,8 +9,11 @@ GBAudio::GBAudio() :
 
 void GBAudio::Reset()
 {
+    GBComponent::Reset();
     m_Registers.fill(0);
-    m_Registers[*AudioRegister::NR11] = static_cast<char>(0xBF);
+    m_Registers[*AudioRegister::NR11] = static_cast<char>(0x80);
+    m_Registers[*AudioRegister::NR12] = static_cast<char>(0xF3);
+    m_Registers[*AudioRegister::NR51] = static_cast<char>(0xF3);
     m_Registers[*AudioRegister::NR52] = static_cast<char>(0x81);
 }
 
@@ -24,14 +27,19 @@ void GBAudio::Tick(GBBus* bus)
         reg = static_cast<AudioRegister>(bus->GetAddress() - AUDIO_ADDRESS_OFFSET);
         switch (reg)
         {
-        case AudioRegister::NR52:
-            mask = 0x70;
-            break;
         case AudioRegister::NR11:
             mask = 0x3F;
             break;
+        case AudioRegister::NR12:
+            mask = 0x00;
+            break;
+        case AudioRegister::NR51:
+            mask = 0x00;
+            break;
+        case AudioRegister::NR52:
+            mask = 0x70;
+            break;
         default:
-            m_ErrorCode = Error::AUDIO_ReadFromNotValidRegister;
             return;
         }
         bus->SetData(static_cast<quint8>(m_Registers[*reg]) | mask);
@@ -43,16 +51,19 @@ void GBAudio::Tick(GBBus* bus)
         reg = static_cast<AudioRegister>(bus->GetAddress() - AUDIO_ADDRESS_OFFSET);
         switch (reg)
         {
-        case AudioRegister::NR52:
-            mask = 0x80;
-            //resetta i contenuti di tutti i registri audio quando disabilito il suono
-            //se suono disabilitato gli altri registri non sono acessibili
-            break;
         case AudioRegister::NR11:
             mask = 0xFF;
             break;
+        case AudioRegister::NR12:
+            mask = 0xFF;
+            break;
+        case AudioRegister::NR51:
+            mask = 0xFF;
+            break;
+        case AudioRegister::NR52:
+            mask = 0x80;
+            break;
         default:
-            m_ErrorCode = Error::AUDIO_WriteToNotValidRegister;
             return;
         }
         m_Registers[*reg] = static_cast<char>(bus->GetData() & mask);

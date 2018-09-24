@@ -34,10 +34,6 @@ QString GBComponent::GetErrorDescription(Error error)
         return "Requested the execution of an unimplemented op code.";
     case Error::CPU_UnespectedOpCodeStep:
         return "Unespected execution step for the current op code.";
-    case Error::AUDIO_ReadFromNotValidRegister:
-        return "Attempt to read from an invalid audio register.";
-    case Error::AUDIO_WriteToNotValidRegister:
-        return "Attempt to write to an invalid audio register.";
     default:
         return "Unrecognize error code";
     }

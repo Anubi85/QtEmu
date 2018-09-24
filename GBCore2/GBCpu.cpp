@@ -58,22 +58,105 @@ bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
         context->AdvanceStep();
         return false;
     case 1:
-        if (context->GetY() != *CpuRegister::ADR_HL)
+        if (context->GetY() != *CpuRegister::F)
         {
             m_Registers.Single[context->GetY()] = bus->GetData();
             return true;
         }
         else
         {
-            //dummy cycle, Gameboy harware cannot read and write from bus in the same cycle!
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            //no need to change the data, it has just be read and no one change it!
+            //Gameboy harware cannot read and write from bus in the same cycle!
+            //Write request will be set in the next cycle
             context->AdvanceStep();
             return false;
         }
     case 2:
-        bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
-        //no need to change the data, it has just be read and no one change it!
+        bus->RequestWrite();
         return true;
 
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LD_r1_r2(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetY() != *CpuRegister::F && context->GetZ() != *CpuRegister::F)
+        {
+            m_Registers.Single[context->GetY()] = m_Registers.Single[context->GetZ()];
+            return true;
+        }
+        else
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            if (context->GetZ() == *CpuRegister::F)
+            {
+                bus->RequestRead();
+            }
+            context->AdvanceStep();
+            return false;
+        }
+    case 1:
+        if (context->GetY() == *CpuRegister::F)
+        {
+            bus->SetData(m_Registers.Single[context->GetZ()]);
+            bus->RequestWrite();
+        }
+        else
+        {
+            m_Registers.Single[context->GetY()] = bus->GetData();
+        }
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetW() != *CpuRegister::AF)
+        {
+            bus->SetAddress(m_Registers.Double[context->GetW()]);
+            bus->SetData(m_Registers.Single[*CpuRegister::A]);
+        }
+        else
+        {
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetW() != *CpuRegister::AF)
+        {
+            bus->RequestWrite();
+            return true;
+        }
+        else
+        {
+            context->SetMSB(bus->GetData());
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+    case 2:
+        context->SetLSB(bus->GetData());
+        bus->SetAddress(context->Get16BitData());
+        bus->SetData(m_Registers.Single[*CpuRegister::A]);
+        context->AdvanceStep();
+        return false;
+    case 3:
+        bus->RequestWrite();
+        return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;
@@ -84,13 +167,12 @@ bool GBCpu::LD_oC_A(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        //prepare the bus
+        //Compute the address
         bus->SetAddress(0xFF00 | m_Registers.Single[*CpuRegister::C]);
-        bus->SetData(m_Registers.Single[*CpuRegister::A]);
         context->AdvanceStep();
         return false;
     case 1:
-        //send the write request, Gameboy hardware cannot do this in the previous cycle, the bus is busy for instruction fetching
+        bus->SetData(m_Registers.Single[*CpuRegister::A]);
         bus->RequestWrite();
         return true;
     }
@@ -134,7 +216,7 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetZ() == *CpuRegister::ADR_HL)
+        if (context->GetZ() == *CpuRegister::F)
         {
             bus->SetAddress(context->GetX() == 0b11 ? m_PC++ : m_Registers.Double[*CpuRegister::HL]);
             bus->RequestRead();
@@ -148,6 +230,42 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
         }
     case 1:
         m_Registers.Single[*CpuRegister::A] ^= bus->GetData();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetY() != *CpuRegister::F)
+        {
+            m_Registers.Single[context->GetY()]++;
+            SetFlag(FlagMask::Z, m_Registers.Single[context->GetY()] == 0);
+            SetFlag(FlagMask::N, false);
+            SetFlag(FlagMask::H, (m_Registers.Single[context->GetY()] & 0x0F) == 0);
+            return true;
+        }
+        else
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+    case 1:
+        //no need to set address, it is the same of previous step
+        bus->SetData(bus->GetData() + 1);
+        SetFlag(FlagMask::Z, bus->GetData() == 0);
+        SetFlag(FlagMask::N, false);
+        SetFlag(FlagMask::H, (bus->GetData() & 0x0F) == 0);
+        context->AdvanceStep();
+        return false;
+    case 2:
+        bus->RequestWrite();
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
@@ -188,7 +306,7 @@ bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetZ() == *CpuRegister::ADR_HL)
+        if (context->GetZ() == *CpuRegister::F)
         {
             bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
             bus->RequestRead();
