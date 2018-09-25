@@ -6,9 +6,11 @@ GBInstructionContext::GBInstructionContext(quint8 opCode)
     m_y = (opCode & MASK_Y) >> SHIFT_Y;
     m_z = (opCode & MASK_Z);
     m_w = (opCode & MASK_W) >> SHIFT_W;
-    m_f = (opCode & MASK_F) != 0;
     m_q = (opCode & MASK_Q) >> SHIFT_Q;
-    m_g = (opCode & MASK_G) != 0;
+    for (int i = 0; i < BYTE_SIZE; ++i)
+    {
+        m_Bits[i] = ((opCode >> i) & 0x01) != 0;
+    }
     m_Data = 0;
     m_Step = 0;
 }

@@ -1,19 +1,19 @@
 #include "GBVideo.h"
 #include "GBBus.h"
 
-GBLcdDisplay::GBLcdDisplay() :
+GBVideo::GBVideo() :
     m_VideoRAM(VIDEO_RAM_SIZE, 0)
 {
     Reset();
 }
 
-void GBLcdDisplay::Reset()
+void GBVideo::Reset()
 {
     GBComponent::Reset();
     m_VideoRAM.fill(0);
 }
 
-void GBLcdDisplay::Tick(GBBus* bus)
+void GBVideo::Tick(GBBus* bus)
 {
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending() && IsAddressInRange(bus->GetAddress()))

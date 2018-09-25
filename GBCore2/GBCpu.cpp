@@ -162,16 +162,40 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_oC_A(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_off_A(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
     {
     case 0:
-        //Compute the address
-        bus->SetAddress(0xFF00 | m_Registers.Single[*CpuRegister::C]);
+        //Check offset source
+        if (context->GetBit(Bit::Bit1))
+        {
+            //Compute the address
+            bus->SetAddress(0xFF00 | m_Registers.Single[*CpuRegister::C]);
+        }
+        else
+        {
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+        }
         context->AdvanceStep();
         return false;
     case 1:
+        //Check offset source
+        if (context->GetBit(Bit::Bit1))
+        {
+            bus->SetData(m_Registers.Single[*CpuRegister::A]);
+            bus->RequestWrite();
+            return true;
+        }
+        else
+        {
+            //Compute the address
+            bus->SetAddress(0xFF00 | bus->GetData());
+            context->AdvanceStep();
+            return false;
+        }
+    case 2:
         bus->SetData(m_Registers.Single[*CpuRegister::A]);
         bus->RequestWrite();
         return true;
@@ -278,7 +302,7 @@ bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
     {
     case 0:
         bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
-        if (context->GetF())
+        if (context->GetBit(Bit::Bit3))
         {
             bus->RequestRead();
         }
@@ -290,7 +314,7 @@ bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
         context->AdvanceStep();
         return false;
     case 1:
-        if (context->GetF())
+        if (context->GetBit(Bit::Bit3))
         {
             m_Registers.Single[*CpuRegister::A] = bus->GetData();
         }
@@ -343,7 +367,7 @@ bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
     case 1:
         //check if conditional jump
         bool jump = true;
-        if (context->GetG())
+        if (context->GetBit(Bit::Bit5))
         {
             switch (static_cast<Condition>(context->GetQ()))
             {

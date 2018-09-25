@@ -2,6 +2,7 @@
 #define GBINSTRUCTIONCONTEXT_H
 
 #include <QtCore>
+#include "GBUtils.h"
 
 /* Opcode bits
  * +-+-+-+-+-+-+-+-+
@@ -15,12 +16,12 @@
  * +-+-+-+-+-+-+-+-+
 */
 
+#define BYTE_SIZE 8
+
 #define MASK_X 0xC0
 #define MASK_Y 0x38
 #define MASK_Z 0x07
 #define MASK_W 0x30
-#define MASK_F 0x08
-#define MASK_G 0x20
 #define MASK_Q 0x18
 
 #define SHIFT_X 6
@@ -28,16 +29,27 @@
 #define SHIFT_W 4
 #define SHIFT_Q 3
 
+enum class Bit
+{
+    Bit0,
+    Bit1,
+    Bit2,
+    Bit3,
+    Bit4,
+    Bit5,
+    Bit6,
+    Bit7,
+};
+
 class GBInstructionContext
 {
 private:
+    bool m_Bits[BYTE_SIZE];
     quint8 m_x;
     quint8 m_y;
     quint8 m_z;
     quint8 m_w;
-    bool m_f;
     quint8 m_q;
-    bool m_g;
     quint16 m_Data;
     quint8 m_Step;
 public:
@@ -46,9 +58,8 @@ public:
     quint8 GetY() { return m_y; }
     quint8 GetZ() { return m_z; }
     quint8 GetW() { return m_w; }
-    bool GetF() { return m_f; }
     quint8 GetQ() { return m_q; }
-    bool GetG() { return m_g; }
+    bool GetBit(Bit bit) { return m_Bits[*bit]; }
     void SetLSB(quint8 value);
     void SetMSB(quint8 value);
     quint16 Get16BitData() { return m_Data; }

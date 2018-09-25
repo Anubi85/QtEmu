@@ -24,7 +24,7 @@ GBCore::GBCore()
             m_Components[comp] = new GBBios();
             break;
         case Component::Video:
-            m_Components[comp] = new GBLcdDisplay();
+            m_Components[comp] = new GBVideo();
             break;
         case Component::Audio:
             m_Components[comp] = new GBAudio();
