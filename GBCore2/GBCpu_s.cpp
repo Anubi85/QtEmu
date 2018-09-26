@@ -13,7 +13,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x07
     nullptr,            //0x08
     nullptr,            //0x09
-    nullptr,            //0x0A
+    &GBCpu::LD_A_addr,  //0x0A
     nullptr,            //0x0B
     &GBCpu::INC_r,      //0x0C
     nullptr,            //0x0D
@@ -29,7 +29,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x17
     &GBCpu::JR,         //0x18
     nullptr,            //0x19
-    nullptr,            //0x1A
+    &GBCpu::LD_A_addr,  //0x1A
     nullptr,            //0x1B
     &GBCpu::INC_r,      //0x1C
     nullptr,            //0x1D
@@ -253,7 +253,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xF7
     nullptr,            //0xF8
     nullptr,            //0xF9
-    nullptr,            //0xFA
+    &GBCpu::LD_A_addr,  //0xFA
     nullptr,            //0xFB
     nullptr,            //0xFC
     nullptr,            //0xFD

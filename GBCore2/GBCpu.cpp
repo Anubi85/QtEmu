@@ -142,20 +142,65 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
         }
         else
         {
-            context->SetMSB(bus->GetData());
+            context->SetLSB(bus->GetData());
             bus->SetAddress(m_PC++);
             bus->RequestRead();
             context->AdvanceStep();
             return false;
         }
     case 2:
-        context->SetLSB(bus->GetData());
+        context->SetMSB(bus->GetData());
         bus->SetAddress(context->Get16BitData());
         bus->SetData(m_Registers.Single[*CpuRegister::A]);
         context->AdvanceStep();
         return false;
     case 3:
         bus->RequestWrite();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LD_A_addr(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetW() != *CpuRegister::AF)
+        {
+            bus->SetAddress(m_Registers.Double[context->GetW()]);
+            bus->RequestRead();
+        }
+        else
+        {
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetW() != *CpuRegister::AF)
+        {
+            m_Registers.Single[*CpuRegister::A] = bus->GetData();
+            return true;
+        }
+        else
+        {
+            context->SetLSB(bus->GetData());
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+    case 2:
+        context->SetMSB(bus->GetData());
+        bus->SetAddress(context->Get16BitData());
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 3:
+        m_Registers.Single[*CpuRegister::A] = bus->GetData();
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
