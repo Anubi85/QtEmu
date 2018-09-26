@@ -10,7 +10,7 @@
 
 enum class VideoRegister
 {
-
+    BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
 };
 
 class GBVideo : public GBComponent
