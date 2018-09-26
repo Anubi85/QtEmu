@@ -46,7 +46,8 @@ win32: {
 unix: {
     COPY_CMD = cp
 }
-QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${PWD}/Bios.gb)) $$shell_quote($${DESTDIR}))
+QMAKE_POST_LINK += $$quote($${COPY_CMD} $$shell_quote($$shell_path($${PWD}/*.gb)) $$shell_quote($${DESTDIR}))
 
 DISTFILES += \
-    Bios.gb
+    Bios.gb \
+    Tetris.gb

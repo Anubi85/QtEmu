@@ -4,6 +4,7 @@
 #include "GBBios.h"
 #include "GBVideo.h"
 #include "GBAudio.h"
+#include "IGBCartridge.h"
 
 IEmulatorCore* GetCore()
 {
@@ -39,21 +40,30 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-//    for (int comp = 0; comp < *Component::Total; comp++)
-//    {
-//        delete m_Components[comp];
-//    }
-    delete m_Components[*Component::Audio];
+    for (int comp = 0; comp < *Component::Total; comp++)
+    {
+        delete m_Components[comp];
+    }
     delete m_Bus;
 }
 
 bool GBCore::LoadBios(QString biosFilePath)
 {
-    if (m_Components[*Component::BIOS] != nullptr)
+    GBBios* bios = new GBBios();
+    if (bios->Load(biosFilePath))
     {
-        return static_cast<GBBios*>(m_Components[*Component::BIOS])->Load(biosFilePath);
+        delete m_Components[*Component::BIOS];
+        m_Components[*Component::BIOS] = bios;
+        return true;
     }
     return false;
+}
+
+bool GBCore::LoadRom(QString romFilePath)
+{
+    delete m_Components[*Component::Cartridge];
+    m_Components[*Component::Cartridge] = IGBCartridge::Load(romFilePath);
+    return m_Components[*Component::Cartridge] != nullptr;
 }
 
 void GBCore::Exec()
@@ -89,7 +99,10 @@ bool GBCore::HasError()
     bool hasError = m_Error != Error::Ok;
     for (int comp = 0; comp < *Component::Total; comp++)
     {
-        hasError |= m_Components[comp]->HasError();
+        if (m_Components[comp] != nullptr)
+        {
+            hasError |= m_Components[comp]->HasError();
+        }
     }
     return hasError;
 }

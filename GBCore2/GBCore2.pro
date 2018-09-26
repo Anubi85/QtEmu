@@ -42,7 +42,8 @@ SOURCES += \
     GBCpuState_InterruptCheck.cpp \
     GBCpuState_Error.cpp \
     GBAudio.cpp \
-    GBVideo.cpp
+    GBVideo.cpp \
+    IGBCartridge.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -61,7 +62,8 @@ HEADERS += \
     GBCpuState_InterruptCheck.h \
     GBCpuState_Error.h \
     GBAudio.h \
-    GBVideo.h
+    GBVideo.h \
+    IGBCartridge.h
 
 unix {
     target.path = /usr/lib

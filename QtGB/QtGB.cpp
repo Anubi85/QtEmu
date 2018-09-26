@@ -13,6 +13,7 @@ QtGB::QtGB(QWidget *parent) :
     QLibrary lib("GBCore2");
     std::unique_ptr<IEmulatorCore> core(reinterpret_cast<IEmulatorCore*(*)()>(lib.resolve("GetCore"))());
     core->LoadBios("Bios.gb");
+    core->LoadRom("Tetris.gb");
     while (!core->HasError())
     {
         core->Exec();

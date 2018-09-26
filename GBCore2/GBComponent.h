@@ -20,6 +20,7 @@ enum class Component
 {
     CPU,
     BIOS,
+    Cartridge,
     Video,
     Audio,
     Total

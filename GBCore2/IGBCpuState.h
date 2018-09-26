@@ -17,8 +17,8 @@ class IGBCpuState
 {
 protected:
     GBCpu* m_Context;
-public:
     IGBCpuState(GBCpu* context);
+public:
     virtual ~IGBCpuState();
     virtual void Update(GBBus* bus) = 0;
     virtual State GetStateID() = 0;

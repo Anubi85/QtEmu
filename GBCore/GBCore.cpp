@@ -28,6 +28,11 @@ bool GBCore::LoadBios(QString biosFilePath)
     return false;
 }
 
+bool GBCore::LoadRom(QString romFilePath)
+{
+    return false;
+}
+
 void GBCore::Exec()
 {
     if (m_Cpu != nullptr)

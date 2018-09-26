@@ -18,6 +18,7 @@ public:
     GBCore();
     ~GBCore() override;
     bool LoadBios(QString biosFilePath) override;
+    bool LoadRom(QString romFilePath) override;
     void Exec() override;
     bool HasError() override;
 };
