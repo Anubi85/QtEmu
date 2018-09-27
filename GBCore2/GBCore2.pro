@@ -43,7 +43,9 @@ SOURCES += \
     GBCpuState_Error.cpp \
     GBAudio.cpp \
     GBVideo.cpp \
-    IGBCartridge.cpp
+    GBCartridge.cpp \
+    IGBCartridgeBehaviour.cpp \
+    GBCartridgeBehaviour_RomOnly.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -63,7 +65,9 @@ HEADERS += \
     GBCpuState_Error.h \
     GBAudio.h \
     GBVideo.h \
-    IGBCartridge.h
+    GBCartridge.h \
+    IGBCartridgeBehaviour.h \
+    GBCartridgeBehaviour_RomOnly.h
 
 unix {
     target.path = /usr/lib

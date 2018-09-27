@@ -14,6 +14,8 @@ enum class Error : quint16
     BIOS_FailToOpen = 0x0202,
     BIOS_WrongFileSize = 0x0203,
     BIOS_WrongFileMD5 = 0x0204,
+    ROM_FileNotFound = 0x0501,
+    ROM_FailToOpen = 0x0502,
 };
 
 enum class Component

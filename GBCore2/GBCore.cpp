@@ -4,7 +4,7 @@
 #include "GBBios.h"
 #include "GBVideo.h"
 #include "GBAudio.h"
-#include "IGBCartridge.h"
+#include "GBCartridge.h"
 
 IEmulatorCore* GetCore()
 {
@@ -61,9 +61,14 @@ bool GBCore::LoadBios(QString biosFilePath)
 
 bool GBCore::LoadRom(QString romFilePath)
 {
-    delete m_Components[*Component::Cartridge];
-    m_Components[*Component::Cartridge] = IGBCartridge::Load(romFilePath);
-    return m_Components[*Component::Cartridge] != nullptr;
+    GBCartridge* cartridge = new GBCartridge();
+    if (cartridge->Load(romFilePath))
+    {
+        delete m_Components[*Component::Cartridge];
+        m_Components[*Component::Cartridge] = cartridge;
+        return true;
+    }
+    return false;
 }
 
 void GBCore::Exec()
