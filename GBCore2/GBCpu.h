@@ -10,7 +10,7 @@
 #define REG16_NUM 4
 #define INSTRUCTIONS_NUM 256
 
-enum class FlagMask : quint8
+enum class Flag : quint8
 {
     C = 0x10,
     H = 0x20,
@@ -72,8 +72,8 @@ private:
     IGBCpuState* m_State;
 
     void SetState(IGBCpuState* newState);
-    void SetFlag(FlagMask flagMask, bool value);
-    bool GetFlag(FlagMask flagMask) { return (m_Registers.Single[*CpuRegister::F] & *flagMask) != 0; }
+    void SetFlag(Flag flagMask, bool value);
+    bool GetFlag(Flag flagMask) { return (m_Registers.Single[*CpuRegister::F] & *flagMask) != 0; }
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
@@ -85,6 +85,7 @@ private:
     bool XOR(GBInstructionContext* context, GBBus* bus);
     bool INC_r(GBInstructionContext* context, GBBus* bus);
     bool LDD(GBInstructionContext* context, GBBus* bus);
+    bool CALL(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);
 public:

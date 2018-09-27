@@ -36,7 +36,7 @@ void GBCpu::SetState(IGBCpuState* newState)
     m_State = newState;
 }
 
-void GBCpu::SetFlag(FlagMask flagMask, bool value)
+void GBCpu::SetFlag(Flag flagMask, bool value)
 {
     if (value)
     {
@@ -313,9 +313,9 @@ bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
         if (context->GetY() != *CpuRegister::F)
         {
             m_Registers.Single[context->GetY()]++;
-            SetFlag(FlagMask::Z, m_Registers.Single[context->GetY()] == 0);
-            SetFlag(FlagMask::N, false);
-            SetFlag(FlagMask::H, (m_Registers.Single[context->GetY()] & 0x0F) == 0);
+            SetFlag(Flag::Z, m_Registers.Single[context->GetY()] == 0);
+            SetFlag(Flag::N, false);
+            SetFlag(Flag::H, (m_Registers.Single[context->GetY()] & 0x0F) == 0);
             return true;
         }
         else
@@ -328,9 +328,9 @@ bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
     case 1:
         //no need to set address, it is the same of previous step
         bus->SetData(bus->GetData() + 1);
-        SetFlag(FlagMask::Z, bus->GetData() == 0);
-        SetFlag(FlagMask::N, false);
-        SetFlag(FlagMask::H, (bus->GetData() & 0x0F) == 0);
+        SetFlag(Flag::Z, bus->GetData() == 0);
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, (bus->GetData() & 0x0F) == 0);
         context->AdvanceStep();
         return false;
     case 2:
@@ -370,6 +370,78 @@ bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        context->SetLSB(bus->GetData());
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 2:
+        context->SetMSB(bus->GetData());
+        //Check if condition is specified
+        if (!context->GetBit(Bit::Bit5))
+        {
+            bool jump;
+            switch (static_cast<Condition>(context->GetQ()))
+            {
+            case Condition::Z:
+                jump = GetFlag(Flag::Z);
+                break;
+            case Condition::NZ:
+                jump = !GetFlag(Flag::Z);
+                break;
+            case Condition::C:
+                jump = GetFlag(Flag::C);
+                break;
+            case Condition::NC:
+                jump = !GetFlag(Flag::C);
+                break;
+            }
+            if (jump)
+            {
+                context->AdvanceStep();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            //No condition required, advance
+            context->AdvanceStep();
+            return false;
+        }
+    case 3:
+        bus->SetAddress(++m_SP);
+        bus->SetData(static_cast<quint8>((m_PC & 0xFF00) >> 8));
+        bus->RequestWrite();
+        context->AdvanceStep();
+        return false;
+    case 4:
+        bus->SetAddress(++m_SP);
+        bus->SetData(static_cast<quint8>(m_PC & 0x00FF));
+        bus->RequestWrite();
+        context->AdvanceStep();
+        return false;
+    case 5:
+        m_PC = context->Get16BitData();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
@@ -384,15 +456,15 @@ bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
         }
         else
         {
-            SetFlag(FlagMask::Z, (m_Registers.Single[context->GetZ()] & (1<<context->GetY())) == 0);
-            SetFlag(FlagMask::N, false);
-            SetFlag(FlagMask::H, true);
+            SetFlag(Flag::Z, (m_Registers.Single[context->GetZ()] & (1<<context->GetY())) == 0);
+            SetFlag(Flag::N, false);
+            SetFlag(Flag::H, true);
             return true;
         }
     case 1:
-        SetFlag(FlagMask::Z, (bus->GetData() & (1<<context->GetY())) == 0);
-        SetFlag(FlagMask::N, false);
-        SetFlag(FlagMask::H, true);
+        SetFlag(Flag::Z, (bus->GetData() & (1<<context->GetY())) == 0);
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, true);
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
@@ -417,16 +489,16 @@ bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
             switch (static_cast<Condition>(context->GetQ()))
             {
             case Condition::NZ:
-                jump = !GetFlag(FlagMask::Z);
+                jump = !GetFlag(Flag::Z);
                 break;
             case Condition::Z:
-                jump = GetFlag(FlagMask::Z);
+                jump = GetFlag(Flag::Z);
                 break;
             case Condition::NC:
-                jump = !GetFlag(FlagMask::C);
+                jump = !GetFlag(Flag::C);
                 break;
             case Condition::C:
-                jump = GetFlag(FlagMask::C);
+                jump = GetFlag(Flag::C);
                 break;
             }
         }
