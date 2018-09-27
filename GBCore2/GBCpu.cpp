@@ -295,10 +295,49 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
         else
         {
             m_Registers.Single[*CpuRegister::A] ^= m_Registers.Single[context->GetZ()];
+            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+            SetFlag(Flag::N, false);
+            SetFlag(Flag::H, false);
+            SetFlag(Flag::C, false);
             return true;
         }
     case 1:
         m_Registers.Single[*CpuRegister::A] ^= bus->GetData();
+        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, false);
+        SetFlag(Flag::C, false);
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::CP(GBInstructionContext* context,  GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetZ() == *CpuRegister::F)
+        {
+            bus->SetAddress(context->GetX() == 0b11 ? m_PC++ : m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+        else
+        {
+            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == m_Registers.Single[context->GetY()]);
+            SetFlag(Flag::N, true);
+            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetY()] & 0x0F));
+            SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < m_Registers.Single[context->GetY()]);
+            return true;
+        }
+    case 1:
+        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == bus->GetData());
+        SetFlag(Flag::N, true);
+        SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (bus->GetData() & 0x0F));
+        SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < bus->GetData());
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
