@@ -341,6 +341,29 @@ bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetW() == *CpuRegister::AF)
+        {
+            m_SP++;
+        }
+        else
+        {
+            m_Registers.Double[context->GetW()] += 1;
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        //Dummy step due to 16 bit operation requested and 8 bit ALU avaialable on Game Boy
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
