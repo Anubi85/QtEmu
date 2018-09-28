@@ -52,6 +52,7 @@ private:
     quint8 m_q;
     quint16 m_Data;
     quint8 m_Step;
+    bool m_Carry;
 public:
     GBInstructionContext(quint8 opcode);
     quint8 GetX() { return m_x; }
@@ -65,6 +66,8 @@ public:
     quint16 Get16BitData() { return m_Data; }
     quint8 Get8BitData() { return m_Data & 0x00FF; }
     quint8 GetStep() { return m_Step; }
+    bool GetCarry() { return m_Carry; }
+    void SetCarry(bool value) { m_Carry = value; }
     void AdvanceStep() { m_Step++; }
 };
 

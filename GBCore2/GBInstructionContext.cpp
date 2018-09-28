@@ -13,6 +13,7 @@ GBInstructionContext::GBInstructionContext(quint8 opCode)
     }
     m_Data = 0;
     m_Step = 0;
+    m_Carry = false;
 }
 
 void GBInstructionContext::SetLSB(quint8 value)
