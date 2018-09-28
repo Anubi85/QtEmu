@@ -87,6 +87,7 @@ private:
     bool INC_r(GBInstructionContext* context, GBBus* bus);
     bool INC_rr(GBInstructionContext* context, GBBus* bus);
     bool LDD(GBInstructionContext* context, GBBus* bus);
+    bool LDI(GBInstructionContext* context, GBBus* bus);
     bool CALL(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);

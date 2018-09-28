@@ -37,7 +37,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x1F
     &GBCpu::JR,         //0x20
     &GBCpu::LD_rr_nn,   //0x21
-    nullptr,            //0x22
+    &GBCpu::LDI,        //0x22
     &GBCpu::INC_rr,     //0x23
     &GBCpu::INC_r,      //0x24
     nullptr,            //0x25
@@ -45,7 +45,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x27
     &GBCpu::JR,         //0x28
     nullptr,            //0x29
-    nullptr,            //0x2A
+    &GBCpu::LDI,        //0x2A
     nullptr,            //0x2B
     &GBCpu::INC_r,      //0x2C
     nullptr,            //0x2D

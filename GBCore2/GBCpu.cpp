@@ -387,10 +387,8 @@ bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
     case 0:
         if (context->GetW() == *CpuRegister::AF)
         {
-            quint8 tmp = m_SP & 0x00FF;
-            tmp++;
-            context->SetCarry(tmp == 0);
-            m_SP = (m_SP & 0xFF00) | tmp;
+            context->SetCarry((m_SP & 0x00FF) == 0xFF);
+            m_SP = (m_SP & 0xFF00) | ((m_SP + 1) & 0x00FF);
         }
         else
         {
@@ -439,6 +437,35 @@ bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
             m_Registers.Single[*CpuRegister::A] = bus->GetData();
         }
         m_Registers.Double[*CpuRegister::HL] -= 1;
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::LDI(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+        if (context->GetBit(Bit::Bit3))
+        {
+            bus->RequestRead();
+        }
+        else
+        {
+            bus->SetData(m_Registers.Single[*CpuRegister::A]);
+            bus->RequestWrite();
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetBit(Bit::Bit3))
+        {
+            m_Registers.Single[*CpuRegister::A] = bus->GetData();
+        }
+        m_Registers.Double[*CpuRegister::HL] += 1;
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
