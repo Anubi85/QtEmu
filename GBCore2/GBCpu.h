@@ -93,6 +93,8 @@ private:
     bool CALL(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);
+    bool RL(GBInstructionContext* context, GBBus* bus);
+    bool RLA(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
     ~GBCpu() override;

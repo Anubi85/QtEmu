@@ -122,31 +122,31 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetW() != *CpuRegister::AF)
-        {
-            bus->SetAddress(m_Registers.Double[context->GetW()]);
-            bus->SetData(m_Registers.Single[*CpuRegister::A]);
-        }
-        else
+        if (context->GetW() == *CpuRegister::AF)
         {
             bus->SetAddress(m_PC++);
             bus->RequestRead();
         }
+        else
+        {
+            bus->SetAddress(m_Registers.Double[context->GetW()]);
+            bus->SetData(m_Registers.Single[*CpuRegister::A]);
+        }
         context->AdvanceStep();
         return false;
     case 1:
-        if (context->GetW() != *CpuRegister::AF)
-        {
-            bus->RequestWrite();
-            return true;
-        }
-        else
+        if (context->GetW() == *CpuRegister::AF)
         {
             context->SetLSB(bus->GetData());
             bus->SetAddress(m_PC++);
             bus->RequestRead();
             context->AdvanceStep();
             return false;
+        }
+        else
+        {
+            bus->RequestWrite();
+            return true;
         }
     case 2:
         context->SetMSB(bus->GetData());
@@ -167,31 +167,31 @@ bool GBCpu::LD_A_addr(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetW() != *CpuRegister::AF)
+        if (context->GetW() == *CpuRegister::AF)
         {
-            bus->SetAddress(m_Registers.Double[context->GetW()]);
+            bus->SetAddress(m_PC++);
             bus->RequestRead();
         }
         else
         {
-            bus->SetAddress(m_PC++);
+            bus->SetAddress(m_Registers.Double[context->GetW()]);
             bus->RequestRead();
         }
         context->AdvanceStep();
         return false;
     case 1:
-        if (context->GetW() != *CpuRegister::AF)
-        {
-            m_Registers.Single[*CpuRegister::A] = bus->GetData();
-            return true;
-        }
-        else
+        if (context->GetW() == *CpuRegister::AF)
         {
             context->SetLSB(bus->GetData());
             bus->SetAddress(m_PC++);
             bus->RequestRead();
             context->AdvanceStep();
             return false;
+        }
+        else
+        {
+            m_Registers.Single[*CpuRegister::A] = bus->GetData();
+            return true;
         }
     case 2:
         context->SetMSB(bus->GetData());
@@ -377,20 +377,20 @@ bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetY() != *CpuRegister::F)
+        if (context->GetY() == *CpuRegister::F)
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+        else
         {
             m_Registers.Single[context->GetY()]++;
             SetFlag(Flag::Z, m_Registers.Single[context->GetY()] == 0);
             SetFlag(Flag::N, false);
             SetFlag(Flag::H, (m_Registers.Single[context->GetY()] & 0x0F) == 0);
             return true;
-        }
-        else
-        {
-            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
-            bus->RequestRead();
-            context->AdvanceStep();
-            return false;
         }
     case 1:
         //no need to set address, it is the same of previous step
@@ -447,20 +447,20 @@ bool GBCpu::DEC_r(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetY() != *CpuRegister::F)
+        if (context->GetY() == *CpuRegister::F)
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+        else
         {
             m_Registers.Single[context->GetY()]--;
             SetFlag(Flag::Z, m_Registers.Single[context->GetY()] == 0);
             SetFlag(Flag::N, false);
             SetFlag(Flag::H, (m_Registers.Single[context->GetY()] & 0x0F) != 0x0F);
             return true;
-        }
-        else
-        {
-            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
-            bus->RequestRead();
-            context->AdvanceStep();
-            return false;
         }
     case 1:
         //no need to set address, it is the same of previous step
@@ -674,6 +674,71 @@ bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
         }
         return true;
 
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetZ() == *CpuRegister::F)
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+        }
+        else
+        {
+            context->SetCarry((m_Registers.Single[context->GetZ()] & 0x80) != 0);
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        if (context->GetZ() == *CpuRegister::F)
+        {
+            context->SetCarry((bus->GetData() & 0x80) != 0);
+            context->SetLSB(bus->GetData());
+            context->AdvanceStep();
+            return false;
+        }
+        else
+        {
+            m_Registers.Single[context->GetZ()] = (m_Registers.Single[context->GetZ()] << 1) & 0xFF;
+            SetFlag(Flag::Z, m_Registers.Single[context->GetZ()] == 0);
+            SetFlag(Flag::N, false);
+            SetFlag(Flag::H, false);
+            SetFlag(Flag::C, context->GetCarry());
+            return true;
+        }
+    case 2:
+        bus->SetData((context->Get8BitData() << 1) & 0xFF);
+        SetFlag(Flag::Z, bus->GetData() == 0);
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, false);
+        SetFlag(Flag::C, context->GetCarry());
+        context->AdvanceStep();
+        return false;
+    case 3:
+        bus->RequestWrite();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, false);
+        SetFlag(Flag::C, (m_Registers.Single[*CpuRegister::A] & 0x80) != 0);
+        m_Registers.Single[*CpuRegister::A] = (m_Registers.Single[*CpuRegister::A] << 1) & 0xFF;
+        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+        return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;
