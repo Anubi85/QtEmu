@@ -308,6 +308,29 @@ bool GBCpu::PUSH(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::POP(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        bus->SetAddress(m_SP++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        m_Registers.Single[context->GetY()] = bus->GetData();
+        bus->SetAddress(m_SP++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 2:
+        m_Registers.Single[context->GetY() + 1] = bus->GetData();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
