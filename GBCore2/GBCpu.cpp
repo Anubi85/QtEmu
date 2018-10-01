@@ -280,6 +280,34 @@ bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::PUSH(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //compute the address
+        bus->SetAddress(--m_SP);
+        context->AdvanceStep();
+        return false;
+    case 1:
+        bus->SetData(m_Registers.Single[context->GetY() + 1]);
+        bus->RequestWrite();
+        context->AdvanceStep();
+        return false;
+    case 2:
+        //compute the address
+        bus->SetAddress(--m_SP);
+        context->AdvanceStep();
+        return false;
+    case 3:
+        bus->SetData(m_Registers.Single[context->GetY()]);
+        bus->RequestWrite();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())

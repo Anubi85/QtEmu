@@ -82,6 +82,7 @@ private:
     bool LD_A_addr(GBInstructionContext* context, GBBus* bus);
     bool LD_off_A(GBInstructionContext* context, GBBus* bus);
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
+    bool PUSH(GBInstructionContext* context, GBBus* bus);
     bool XOR(GBInstructionContext* context, GBBus* bus);
     bool CP(GBInstructionContext* context, GBBus* bus);
     bool INC_r(GBInstructionContext* context, GBBus* bus);
