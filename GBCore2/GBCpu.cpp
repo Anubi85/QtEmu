@@ -561,13 +561,13 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
             return false;
         }
     case 3:
-        bus->SetAddress(++m_SP);
+        bus->SetAddress(--m_SP);
         bus->SetData(static_cast<quint8>((m_PC & 0xFF00) >> 8));
         bus->RequestWrite();
         context->AdvanceStep();
         return false;
     case 4:
-        bus->SetAddress(++m_SP);
+        bus->SetAddress(--m_SP);
         bus->SetData(static_cast<quint8>(m_PC & 0x00FF));
         bus->RequestWrite();
         context->AdvanceStep();
