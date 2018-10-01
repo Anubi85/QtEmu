@@ -5,6 +5,7 @@
 #include "GBVideo.h"
 #include "GBAudio.h"
 #include "GBCartridge.h"
+#include "GBInternalRam.h"
 
 IEmulatorCore* GetCore()
 {
@@ -21,14 +22,14 @@ GBCore::GBCore()
         case Component::CPU:
             m_Components[comp] = new GBCpu();
             break;
-        case Component::BIOS:
-            m_Components[comp] = new GBBios();
-            break;
         case Component::Video:
             m_Components[comp] = new GBVideo();
             break;
         case Component::Audio:
             m_Components[comp] = new GBAudio();
+            break;
+        case Component::InternalRAM:
+            m_Components[comp] = new GBInternalRam();
             break;
         default:
             m_Components[comp] = nullptr;

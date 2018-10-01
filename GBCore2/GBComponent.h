@@ -25,6 +25,7 @@ enum class Component
     Cartridge,
     Video,
     Audio,
+    InternalRAM,
     Total
 };
 

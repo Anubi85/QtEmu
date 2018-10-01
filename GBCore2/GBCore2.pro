@@ -45,7 +45,8 @@ SOURCES += \
     GBVideo.cpp \
     GBCartridge.cpp \
     IGBCartridgeBehaviour.cpp \
-    GBCartridgeBehaviour_RomOnly.cpp
+    GBCartridgeBehaviour_RomOnly.cpp \
+    GBInternalRam.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -67,7 +68,8 @@ HEADERS += \
     GBVideo.h \
     GBCartridge.h \
     IGBCartridgeBehaviour.h \
-    GBCartridgeBehaviour_RomOnly.h
+    GBCartridgeBehaviour_RomOnly.h \
+    GBInternalRam.h
 
 unix {
     target.path = /usr/lib
