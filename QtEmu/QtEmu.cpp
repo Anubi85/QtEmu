@@ -1,5 +1,5 @@
 #include "QtEmu.h"
-#include "ui_QtGB.h"
+#include "ui_QtEmu.h"
 #include "IEmulatorCore.h"
 #include <QLibrary>
 #include <memory>

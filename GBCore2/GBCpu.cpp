@@ -414,6 +414,42 @@ bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::DEC_r(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        if (context->GetY() != *CpuRegister::F)
+        {
+            m_Registers.Single[context->GetY()]--;
+            SetFlag(Flag::Z, m_Registers.Single[context->GetY()] == 0);
+            SetFlag(Flag::N, false);
+            SetFlag(Flag::H, (m_Registers.Single[context->GetY()] & 0x0F) != 0x0F);
+            return true;
+        }
+        else
+        {
+            bus->SetAddress(m_Registers.Double[*CpuRegister::HL]);
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+    case 1:
+        //no need to set address, it is the same of previous step
+        bus->SetData(bus->GetData() - 1);
+        SetFlag(Flag::Z, bus->GetData() == 0);
+        SetFlag(Flag::N, false);
+        SetFlag(Flag::H, (bus->GetData() & 0x0F) != 0x0F);
+        context->AdvanceStep();
+        return false;
+    case 2:
+        bus->RequestWrite();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
@@ -490,7 +526,7 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
     case 2:
         context->SetMSB(bus->GetData());
         //Check if condition is specified
-        if (!context->GetBit(Bit::Bit5))
+        if (!context->GetBit(Bit::Bit0))
         {
             bool jump;
             switch (static_cast<Condition>(context->GetQ()))

@@ -25,7 +25,7 @@ CONFIG(debug, debug|release): DEFINES += DEBUG
 
 CONFIG += c++14
 
-include(../QtGB.pri)
+include(../QtEmu.pri)
 
 SOURCES += \
         GBCore.cpp \
