@@ -31,6 +31,10 @@ void GBVideo::Tick(GBBus* bus)
         {
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
+            case VideoRegister::SCY:
+                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::SCY]));
+                bus->ReadReqAck();
+                break;
             case VideoRegister::BGP:
                 bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::BGP]));
                 bus->ReadReqAck();
@@ -50,6 +54,10 @@ void GBVideo::Tick(GBBus* bus)
         {
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
+            case VideoRegister::SCY:
+                m_Registers[*VideoRegister::SCY] = static_cast<char>(bus->GetData());
+                bus->WriteReqAck();
+                break;
             case VideoRegister::BGP:
                 m_Registers[*VideoRegister::BGP] = static_cast<char>(bus->GetData());
                 bus->WriteReqAck();

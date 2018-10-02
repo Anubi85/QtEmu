@@ -10,6 +10,7 @@
 
 enum class VideoRegister
 {
+    SCY = 0xFF42 - VIDEO_REG_ADDRESS_OFFSET,
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
 };
 
