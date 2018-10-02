@@ -14,6 +14,8 @@ void GBVideo::Reset()
     GBComponent::Reset();
     m_VideoRAM.fill(0);
     m_Registers.fill(0);
+    m_Registers[*VideoRegister::LCDC] = static_cast<char>(0x91);
+    m_Registers[*VideoRegister::SCY] = static_cast<char>(0x00);
     m_Registers[*VideoRegister::BGP] = static_cast<char>(0xFC);
 }
 
@@ -31,6 +33,10 @@ void GBVideo::Tick(GBBus* bus)
         {
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
+            case VideoRegister::LCDC:
+                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::LCDC]));
+                bus->ReadReqAck();
+                break;
             case VideoRegister::SCY:
                 bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::SCY]));
                 bus->ReadReqAck();
@@ -54,6 +60,10 @@ void GBVideo::Tick(GBBus* bus)
         {
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
+            case VideoRegister::LCDC:
+                m_Registers[*VideoRegister::LCDC] = static_cast<char>(bus->GetData());
+                bus->WriteReqAck();
+                break;
             case VideoRegister::SCY:
                 m_Registers[*VideoRegister::SCY] = static_cast<char>(bus->GetData());
                 bus->WriteReqAck();
