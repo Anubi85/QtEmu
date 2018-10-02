@@ -122,7 +122,7 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        if (context->GetW() == *CpuRegister::AF)
+        if (context->GetX() == 0b11)
         {
             bus->SetAddress(m_PC++);
             bus->RequestRead();
@@ -135,7 +135,7 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
         context->AdvanceStep();
         return false;
     case 1:
-        if (context->GetW() == *CpuRegister::AF)
+        if (context->GetX() == 0b11)
         {
             context->SetLSB(bus->GetData());
             bus->SetAddress(m_PC++);
@@ -624,6 +624,100 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
         context->AdvanceStep();
         return false;
     case 5:
+        m_PC = context->Get16BitData();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::RET(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //Check if condition is specified
+        if (!context->GetBit(Bit::Bit0))
+        {
+            bool exec;
+            switch (static_cast<Condition>(context->GetQ()))
+            {
+            case Condition::Z:
+                exec = GetFlag(Flag::Z);
+                break;
+            case Condition::NZ:
+                exec = !GetFlag(Flag::Z);
+                break;
+            case Condition::C:
+                exec = GetFlag(Flag::C);
+                break;
+            case Condition::NC:
+                exec = !GetFlag(Flag::C);
+                break;
+            }
+            //Use the internal carry to store the information about condition
+            context->SetCarry(exec);
+        }
+        else
+        {
+            //No condition required, read data from stack
+            bus->SetAddress(m_SP++);
+            bus->RequestRead();
+        }
+        context->AdvanceStep();
+        return false;
+    case 1:
+        //Check if condition is specified
+        if (!context->GetBit(Bit::Bit0))
+        {
+            if (context->GetCarry())
+            {
+                //read data from stack
+                bus->SetAddress(m_SP++);
+                bus->RequestRead();
+            }
+            else
+            {
+                //condition not satisfied, complete execution
+                return true;
+            }
+        }
+        else
+        {
+            context->SetLSB(bus->GetData());
+            bus->SetAddress(m_SP++);
+            bus->RequestRead();
+        }
+        context->AdvanceStep();
+        return false;
+    case 2:
+        //Check if condition is specified
+        if (!context->GetBit(Bit::Bit0))
+        {
+            context->SetLSB(bus->GetData());
+            bus->SetAddress(m_SP++);
+            bus->RequestRead();
+        }
+        else
+        {
+            context->SetMSB(bus->GetData());
+        }
+        context->AdvanceStep();
+        return false;
+    case 3:
+        //Check if condition is specified
+        if (!context->GetBit(Bit::Bit0))
+        {
+            context->SetMSB(bus->GetData());
+            context->AdvanceStep();
+            return false;
+        }
+        else
+        {
+            m_PC = context->Get16BitData();
+            return true;
+        }
+    case 4:
         m_PC = context->Get16BitData();
         return true;
     }

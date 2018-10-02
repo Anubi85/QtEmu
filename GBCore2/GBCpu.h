@@ -92,6 +92,7 @@ private:
     bool LDD(GBInstructionContext* context, GBBus* bus);
     bool LDI(GBInstructionContext* context, GBBus* bus);
     bool CALL(GBInstructionContext* context, GBBus* bus);
+    bool RET(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);
     bool RL(GBInstructionContext* context, GBBus* bus);
