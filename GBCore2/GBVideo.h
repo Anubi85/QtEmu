@@ -2,17 +2,31 @@
 #define GBLCDDISPLAY_H
 
 #include "GBComponent.h"
+#include "GBUtils.h"
 
 #define VIDEO_REG_SIZE 0x000C
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
 #define VIDEO_RAM_SIZE 0x2000
 #define VIDEO_RAM_ADDRESS_OFFSET 0x8000
+#define VIDEO_MAX_Y_LINE_COUNT 154
+#define VIDEO_MAX_HBLANK 140
+#define VIDEO_LINE_CYCLE_COUNT 456
 
 enum class VideoRegister
 {
     LCDC = 0xFF40 - VIDEO_REG_ADDRESS_OFFSET,
+    STAT = 0xFF41 - VIDEO_REG_ADDRESS_OFFSET,
     SCY = 0xFF42 - VIDEO_REG_ADDRESS_OFFSET,
+    LY = 0xFF44 - VIDEO_REG_ADDRESS_OFFSET,
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
+};
+
+enum class VideoMode
+{
+    HBLANK = 0x00,
+    VBLANK = 0x01,
+    SCANLINE1 = 0x02,
+    SCANLINE2 = 0x03,
 };
 
 class GBVideo : public GBComponent
@@ -20,9 +34,15 @@ class GBVideo : public GBComponent
 private:
     QByteArray m_Registers;
     QByteArray m_VideoRAM;
+    quint32 m_Cycles;
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
     bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
+    bool IsDisplayEnabled() { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
+    quint16 GetModeCycles();
+    VideoMode GetVideoMode() { return static_cast<VideoMode>(m_Registers[*VideoRegister::STAT] & 0x03); }
+    void SetVideoMode(VideoMode newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<char>(newMode); }
+    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = static_cast<char>((m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT); }
 public:
     GBVideo();
     void Reset() override;
