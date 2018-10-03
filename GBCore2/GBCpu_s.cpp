@@ -243,9 +243,9 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xED
     &GBCpu::XOR,        //0xEE
     nullptr,            //0xEF
-    nullptr,            //0xF0
+    &GBCpu::LD_A_off,   //0xF0
     &GBCpu::POP,        //0xF1
-    nullptr,            //0xF2
+    &GBCpu::LD_A_off,   //0xF2
     nullptr,            //0xF3
     nullptr,            //0xF4
     &GBCpu::PUSH,       //0xF5

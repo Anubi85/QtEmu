@@ -249,6 +249,47 @@ bool GBCpu::LD_off_A(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::LD_A_off(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //Check offset source
+        if (context->GetBit(Bit::Bit1))
+        {
+            //Compute the address
+            bus->SetAddress(0xFF00 | m_Registers.Single[*CpuRegister::C]);
+        }
+        else
+        {
+            bus->SetAddress(m_PC++);
+        }
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        //Check offset source
+        if (context->GetBit(Bit::Bit1))
+        {
+            m_Registers.Single[*CpuRegister::A] = bus->GetData();
+            return true;
+        }
+        else
+        {
+            //Compute the address
+            bus->SetAddress(0xFF00 | bus->GetData());
+            bus->RequestRead();
+            context->AdvanceStep();
+            return false;
+        }
+    case 2:
+        m_Registers.Single[*CpuRegister::A] = bus->GetData();
+        return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
 bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())

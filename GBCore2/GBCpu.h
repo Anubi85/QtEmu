@@ -81,6 +81,7 @@ private:
     bool LD_addr_A(GBInstructionContext* context, GBBus* bus);
     bool LD_A_addr(GBInstructionContext* context, GBBus* bus);
     bool LD_off_A(GBInstructionContext* context, GBBus* bus);
+    bool LD_A_off(GBInstructionContext* context, GBBus* bus);
     bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
     bool PUSH(GBInstructionContext* context, GBBus* bus);
     bool POP(GBInstructionContext* context, GBBus* bus);
