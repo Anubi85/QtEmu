@@ -13,6 +13,8 @@ void GBAudio::Reset()
     m_Registers.fill(0);
     m_Registers[*AudioRegister::NR11] = static_cast<char>(0x80);
     m_Registers[*AudioRegister::NR12] = static_cast<char>(0xF3);
+    m_Registers[*AudioRegister::NR13] = static_cast<char>(0xF3);
+    m_Registers[*AudioRegister::NR14] = static_cast<char>(0x07);
     m_Registers[*AudioRegister::NR50] = static_cast<char>(0x77);
     m_Registers[*AudioRegister::NR51] = static_cast<char>(0xF3);
     m_Registers[*AudioRegister::NR52] = static_cast<char>(0x81);
@@ -33,6 +35,12 @@ void GBAudio::Tick(GBBus* bus)
             break;
         case AudioRegister::NR12:
             mask = 0x00;
+            break;
+        case AudioRegister::NR13:
+            mask = 0xFF;
+            break;
+        case AudioRegister::NR14:
+            mask = 0xBF;
             break;
         case AudioRegister::NR50:
             mask = 0x00;
@@ -60,6 +68,12 @@ void GBAudio::Tick(GBBus* bus)
             break;
         case AudioRegister::NR12:
             mask = 0xFF;
+            break;
+        case AudioRegister::NR13:
+            mask = 0xFF;
+            break;
+        case AudioRegister::NR14:
+            mask = 0xC7;
             break;
         case AudioRegister::NR50:
             mask = 0xFF;
