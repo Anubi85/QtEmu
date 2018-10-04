@@ -15,7 +15,7 @@ void GBVideo::Reset()
     m_Cycles = 0;
     m_VideoRAM.fill(0);
     m_Registers.fill(0);
-    m_Registers[*VideoRegister::LCDC] = static_cast<char>(0x91);
+    m_Registers[*VideoRegister::LCDC] = static_cast<char>(0x00);
     m_Registers[*VideoRegister::STAT] = static_cast<char>(0x02);
     m_Registers[*VideoRegister::SCY] = static_cast<char>(0x00);
     m_Registers[*VideoRegister::BGP] = static_cast<char>(0xFC);
@@ -39,7 +39,7 @@ quint16 GBVideo::GetModeCycles()
 void GBVideo::Tick(GBBus* bus)
 {
     //update video mode
-    if (++m_Cycles > GetModeCycles())
+    if (IsDisplayEnabled() && (++m_Cycles > GetModeCycles()))
     {
         switch (GetVideoMode())
         {
@@ -66,7 +66,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
+        if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
         {
             bus->SetData(static_cast<quint8>(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]));
             bus->ReadReqAck();
@@ -101,7 +101,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
+        if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
         {
             m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = static_cast<char>(bus->GetData());
             bus->WriteReqAck();
@@ -111,9 +111,12 @@ void GBVideo::Tick(GBBus* bus)
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
             case VideoRegister::LCDC:
+                if (((bus->GetData() ^ m_Registers[*VideoRegister::LCDC]) & 0x80) != 0)
+                {
+                    m_Cycles = 0;
+                    SetVideoMode(VideoMode::SCANLINE1);
+                }
                 m_Registers[*VideoRegister::LCDC] = static_cast<char>(bus->GetData());
-                //controllare se il display va disabilitato!!
-                //quando disabilitato mode = VBLANK, quando abilito mode = SCANLINE1
                 bus->WriteReqAck();
                 break;
             case VideoRegister::STAT:
