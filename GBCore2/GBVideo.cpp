@@ -15,10 +15,6 @@ void GBVideo::Reset()
     m_Cycles = 0;
     m_VideoRAM.fill(0);
     m_Registers.fill(0);
-    m_Registers[*VideoRegister::LCDC] = static_cast<char>(0x00);
-    m_Registers[*VideoRegister::STAT] = static_cast<char>(0x02);
-    m_Registers[*VideoRegister::SCY] = static_cast<char>(0x00);
-    m_Registers[*VideoRegister::BGP] = static_cast<char>(0xFC);
 }
 
 quint16 GBVideo::GetModeCycles()
