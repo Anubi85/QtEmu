@@ -147,14 +147,14 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0x8D
     nullptr,            //0x8E
     nullptr,            //0x8F
-    nullptr,            //0x90
-    nullptr,            //0x91
-    nullptr,            //0x92
-    nullptr,            //0x93
-    nullptr,            //0x94
-    nullptr,            //0x95
-    nullptr,            //0x96
-    nullptr,            //0x97
+    &GBCpu::SUB,        //0x90
+    &GBCpu::SUB,        //0x91
+    &GBCpu::SUB,        //0x92
+    &GBCpu::SUB,        //0x93
+    &GBCpu::SUB,        //0x94
+    &GBCpu::SUB,        //0x95
+    &GBCpu::SUB,        //0x96
+    &GBCpu::SUB,        //0x97
     nullptr,            //0x98
     nullptr,            //0x99
     nullptr,            //0x9A
@@ -217,7 +217,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
     nullptr,            //0xD3
     &GBCpu::CALL,       //0xD4
     &GBCpu::PUSH,       //0xD5
-    nullptr,            //0xD6
+    &GBCpu::SUB,        //0xD6
     nullptr,            //0xD7
     &GBCpu::RET,        //0xD8
     nullptr,            //0xD9

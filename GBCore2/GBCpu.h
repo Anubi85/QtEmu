@@ -86,6 +86,7 @@ private:
     bool PUSH(GBInstructionContext* context, GBBus* bus);
     bool POP(GBInstructionContext* context, GBBus* bus);
     bool XOR(GBInstructionContext* context, GBBus* bus);
+    bool SUB(GBInstructionContext* context, GBBus* bus);
     bool CP(GBInstructionContext* context, GBBus* bus);
     bool INC_r(GBInstructionContext* context, GBBus* bus);
     bool INC_rr(GBInstructionContext* context, GBBus* bus);
