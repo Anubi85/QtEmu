@@ -28,7 +28,7 @@ quint16 GBVideo::GetModeCycles()
     case VideoMode::HBLANK:
         return 204;
     case VideoMode::VBLANK:
-        return 4560;
+        return 456;
     case VideoMode::SCANLINE1:
         return 80;
     case VideoMode::SCANLINE2:
@@ -47,18 +47,18 @@ void GBVideo::Tick(GBBus* bus)
             SetVideoMode(VideoMode::SCANLINE2);
             break;
         case VideoMode::SCANLINE2:
-            SetVideoMode(VideoMode::VBLANK);
+            SetVideoMode(VideoMode::HBLANK);
             break;
         case VideoMode::HBLANK:
             IncreaseYLineCount();
             SetVideoMode(static_cast<quint8>(m_Registers[*VideoRegister::LY]) < VIDEO_MAX_HBLANK ? VideoMode::SCANLINE1 : VideoMode::VBLANK);
             break;
         case VideoMode::VBLANK:
-            if ((m_Cycles % VIDEO_LINE_CYCLE_COUNT) == 0)
+            IncreaseYLineCount();
+            if (static_cast<quint8>(m_Registers[*VideoRegister::LY]) == 0)
             {
-                IncreaseYLineCount();
+                SetVideoMode(VideoMode::SCANLINE2);
             }
-            SetVideoMode(VideoMode::SCANLINE2);
             break;
         }
         m_Cycles = 0;
