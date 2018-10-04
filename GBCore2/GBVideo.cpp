@@ -111,8 +111,9 @@ void GBVideo::Tick(GBBus* bus)
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
             case VideoRegister::LCDC:
-                if (((bus->GetData() ^ m_Registers[*VideoRegister::LCDC]) & 0x80) != 0)
+                if ((((bus->GetData() ^ m_Registers[*VideoRegister::LCDC]) & 0x80) != 0) && !IsDisplayEnabled())
                 {
+                    //enable bit changed and the display was disabled
                     m_Cycles = 0;
                     SetVideoMode(VideoMode::SCANLINE1);
                 }
