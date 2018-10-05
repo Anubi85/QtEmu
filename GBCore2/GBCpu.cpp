@@ -419,8 +419,8 @@ bool GBCpu::SUB(GBInstructionContext* context,  GBBus* bus)
         }
         else
         {
-            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetY()] & 0x0F));
-            m_Registers.Single[*CpuRegister::A] -= m_Registers.Single[context->GetY()];
+            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetZ()] & 0x0F));
+            m_Registers.Single[*CpuRegister::A] -= m_Registers.Single[context->GetZ()];
             SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
             SetFlag(Flag::N, true);
             SetFlag(Flag::C, (m_Registers.Single[*CpuRegister::A] & 0x80) == 0);
@@ -452,10 +452,10 @@ bool GBCpu::CP(GBInstructionContext* context,  GBBus* bus)
         }
         else
         {
-            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == m_Registers.Single[context->GetY()]);
+            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == m_Registers.Single[context->GetZ()]);
             SetFlag(Flag::N, true);
-            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetY()] & 0x0F));
-            SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < m_Registers.Single[context->GetY()]);
+            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetZ()] & 0x0F));
+            SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < m_Registers.Single[context->GetZ()]);
             return true;
         }
     case 1:
