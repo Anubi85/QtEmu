@@ -34,7 +34,7 @@ bool GBCartridge::Load(QString romFilePath)
             switch (static_cast<CartridgeType>(tmp.at(CARTRIDGE_TYPE_ADDRESS)))
             {
             case CartridgeType::ROM_ONLY:
-                m_Behaviour = new GBCartridgeBehaviour_RomOnly(tmp);
+                m_Behaviour = new GBCartridgeBehaviour_RomOnly(reinterpret_cast<quint8*>(tmp.data()));
                 break;
             }
             romFile.close();

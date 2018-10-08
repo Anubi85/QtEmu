@@ -1,15 +1,15 @@
 #include "GBInternalRam.h"
 #include "GBBus.h"
 
-GBInternalRam::GBInternalRam() :
-    m_Ram(INTERNAL_RAM_SIZE, 0)
+GBInternalRam::GBInternalRam()
 {
     Reset();
 }
 
 void GBInternalRam::Reset()
 {
-    m_Ram.fill(0);
+    GBComponent::Reset();
+    memset(m_Ram, 0, INTERNAL_RAM_SIZE);
 }
 
 void GBInternalRam::Tick(GBBus* bus)
@@ -18,12 +18,12 @@ void GBInternalRam::Tick(GBBus* bus)
     {
         if (bus->IsReadReqPending())
         {
-            bus->SetData(static_cast<quint8>(m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET]));
+            bus->SetData(m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET]);
             bus->ReadReqAck();
         }
         if (bus->IsWriteReqPending())
         {
-            m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET] = static_cast<char>(bus->GetData());
+            m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET] = bus->GetData();
             bus->WriteReqAck();
         }
     }

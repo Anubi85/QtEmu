@@ -1,8 +1,7 @@
 #include "GBAudio.h"
 #include "GBBus.h"
 
-GBAudio::GBAudio() :
-    m_Registers(AUDIO_MEMORY_SIZE, 0)
+GBAudio::GBAudio()
 {
     Reset();
 }
@@ -10,7 +9,7 @@ GBAudio::GBAudio() :
 void GBAudio::Reset()
 {
     GBComponent::Reset();
-    m_Registers.fill(0);
+    memset(m_Registers, 0, AUDIO_MEMORY_SIZE);
 }
 
 void GBAudio::Tick(GBBus* bus)
@@ -47,7 +46,7 @@ void GBAudio::Tick(GBBus* bus)
         default:
             return;
         }
-        bus->SetData(static_cast<quint8>(m_Registers[*reg]) | mask);
+        bus->SetData(m_Registers[*reg] | mask);
         bus->ReadReqAck();
     }
     //check if a write request is pending and the address is in range
@@ -80,7 +79,7 @@ void GBAudio::Tick(GBBus* bus)
         default:
             return;
         }
-        m_Registers[*reg] = static_cast<char>(bus->GetData() & mask);
+        m_Registers[*reg] = bus->GetData() & mask;
         bus->WriteReqAck();
     }
 }

@@ -21,7 +21,7 @@ enum class AudioRegister
 class GBAudio : public GBComponent
 {
 private:
-    QByteArray m_Registers;
+    quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
     bool IsAddressInRange(quint16 address) { return address >= AUDIO_ADDRESS_OFFSET && address < AUDIO_ADDRESS_OFFSET + AUDIO_MEMORY_SIZE; }
     bool IsAudioEnabled() { return (m_Registers[*AudioRegister::NR52] & 0x80) != 0; }

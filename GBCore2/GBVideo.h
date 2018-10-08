@@ -32,8 +32,8 @@ enum class VideoMode
 class GBVideo : public GBComponent
 {
 private:
-    QByteArray m_Registers;
-    QByteArray m_VideoRAM;
+    quint8 m_Registers[VIDEO_REG_SIZE];
+    quint8 m_VideoRAM[VIDEO_RAM_SIZE];
     quint32 m_Cycles;
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
@@ -41,8 +41,8 @@ private:
     bool IsDisplayEnabled() { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
     quint16 GetModeCycles();
     VideoMode GetVideoMode() { return static_cast<VideoMode>(m_Registers[*VideoRegister::STAT] & 0x03); }
-    void SetVideoMode(VideoMode newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<char>(newMode); }
-    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = static_cast<char>((m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT); }
+    void SetVideoMode(VideoMode newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
+    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
 public:
     GBVideo();
     void Reset() override;

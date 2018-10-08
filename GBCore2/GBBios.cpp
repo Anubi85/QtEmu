@@ -1,8 +1,7 @@
 #include "GBBios.h"
 #include "GBBus.h"
 
-GBBios::GBBios() :
-    m_Data(BIOS_SIZE, 0)
+GBBios::GBBios()
 {
     Reset();
 }
@@ -10,7 +9,7 @@ GBBios::GBBios() :
 void GBBios::Reset()
 {
     GBComponent::Reset();
-    m_Data.fill(0);
+    memset(m_Data, 0, BIOS_SIZE);
     m_IsBiosLoaded = false;
     m_IsBiosMapped = true;
 }
@@ -27,7 +26,8 @@ bool GBBios::Load(QString biosFilePath)
             {
                 if (QCryptographicHash::hash(tmp, QCryptographicHash::Md5).toHex() == BIOS_MD5)
                 {
-                    m_Data = tmp;
+                    memcpy(m_Data, tmp.data(), BIOS_SIZE);
+                    m_IsBiosLoaded = true;
                 }
                 else
                 {
@@ -49,7 +49,6 @@ bool GBBios::Load(QString biosFilePath)
     {
         m_ErrorCode = Error::BIOS_FileNotFound;
     }
-    m_IsBiosLoaded = m_Data.count('\0')!= BIOS_SIZE;
     return m_IsBiosLoaded;
 }
 

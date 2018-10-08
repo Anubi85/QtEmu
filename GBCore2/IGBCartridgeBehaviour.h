@@ -8,8 +8,9 @@ class GBBus;
 class IGBCartridgeBehaviour
 {
 protected:
-    QByteArray m_Data;
-    IGBCartridgeBehaviour(QByteArray data);
+    quint8* m_Data;
+    quint32 m_DataSize;
+    IGBCartridgeBehaviour(quint8* data, quint32 size);
 public:
     virtual ~IGBCartridgeBehaviour();
     virtual void ProcessRequests(GBBus* bus) = 0;

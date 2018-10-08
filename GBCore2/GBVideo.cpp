@@ -2,9 +2,7 @@
 #include "GBBus.h"
 #include "GBUtils.h"
 
-GBVideo::GBVideo() :
-    m_Registers(VIDEO_REG_SIZE, 0),
-    m_VideoRAM(VIDEO_RAM_SIZE, 0)
+GBVideo::GBVideo()
 {
     Reset();
 }
@@ -13,11 +11,11 @@ void GBVideo::Reset()
 {
     GBComponent::Reset();
     m_Cycles = 0;
-    m_VideoRAM.fill(0);
-    m_Registers.fill(0);
+    memset(m_VideoRAM, 0, VIDEO_RAM_SIZE);
+    memset(m_Registers, 0, VIDEO_REG_SIZE);
 }
 
-quint16 GBVideo::GetModeCycles()
+inline quint16 GBVideo::GetModeCycles()
 {
     switch (GetVideoMode())
     {
@@ -47,11 +45,11 @@ void GBVideo::Tick(GBBus* bus)
             break;
         case VideoMode::HBLANK:
             IncreaseYLineCount();
-            SetVideoMode(static_cast<quint8>(m_Registers[*VideoRegister::LY]) < VIDEO_MAX_HBLANK ? VideoMode::SCANLINE1 : VideoMode::VBLANK);
+            SetVideoMode(m_Registers[*VideoRegister::LY] < VIDEO_MAX_HBLANK ? VideoMode::SCANLINE1 : VideoMode::VBLANK);
             break;
         case VideoMode::VBLANK:
             IncreaseYLineCount();
-            if (static_cast<quint8>(m_Registers[*VideoRegister::LY]) == 0)
+            if (m_Registers[*VideoRegister::LY] == 0)
             {
                 SetVideoMode(VideoMode::SCANLINE2);
             }
@@ -64,7 +62,7 @@ void GBVideo::Tick(GBBus* bus)
     {
         if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
         {
-            bus->SetData(static_cast<quint8>(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]));
+            bus->SetData(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]);
             bus->ReadReqAck();
         }
         if (IsAddressInVideoReg(bus->GetAddress()))
@@ -72,23 +70,23 @@ void GBVideo::Tick(GBBus* bus)
             switch (static_cast<VideoRegister>(bus->GetAddress() - VIDEO_REG_ADDRESS_OFFSET))
             {
             case VideoRegister::LCDC:
-                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::LCDC]));
+                bus->SetData(m_Registers[*VideoRegister::LCDC]);
                 bus->ReadReqAck();
                 break;
             case VideoRegister::STAT:
-                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::STAT]));
+                bus->SetData(m_Registers[*VideoRegister::STAT]);
                 bus->ReadReqAck();
                 break;
             case VideoRegister::SCY:
-                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::SCY]));
+                bus->SetData(m_Registers[*VideoRegister::SCY]);
                 bus->ReadReqAck();
                 break;
             case VideoRegister::LY:
-                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::LY]));
+                bus->SetData(m_Registers[*VideoRegister::LY]);
                 bus->ReadReqAck();
                 break;
             case VideoRegister::BGP:
-                bus->SetData(static_cast<quint8>(m_Registers[*VideoRegister::BGP]));
+                bus->SetData(m_Registers[*VideoRegister::BGP]);
                 bus->ReadReqAck();
                 break;
             }
@@ -99,7 +97,7 @@ void GBVideo::Tick(GBBus* bus)
     {
         if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
         {
-            m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = static_cast<char>(bus->GetData());
+            m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = bus->GetData();
             bus->WriteReqAck();
         }
         if (IsAddressInVideoReg(bus->GetAddress()))
@@ -113,19 +111,19 @@ void GBVideo::Tick(GBBus* bus)
                     m_Cycles = 0;
                     SetVideoMode(VideoMode::SCANLINE1);
                 }
-                m_Registers[*VideoRegister::LCDC] = static_cast<char>(bus->GetData());
+                m_Registers[*VideoRegister::LCDC] = bus->GetData();
                 bus->WriteReqAck();
                 break;
             case VideoRegister::STAT:
-                m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0x03) | static_cast<char>(bus->GetData() & 0xFC);
+                m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0x03) | (bus->GetData() & 0xFC);
                 bus->WriteReqAck();
                 break;
             case VideoRegister::SCY:
-                m_Registers[*VideoRegister::SCY] = static_cast<char>(bus->GetData());
+                m_Registers[*VideoRegister::SCY] = bus->GetData();
                 bus->WriteReqAck();
                 break;
             case VideoRegister::BGP:
-                m_Registers[*VideoRegister::BGP] = static_cast<char>(bus->GetData());
+                m_Registers[*VideoRegister::BGP] = bus->GetData();
                 bus->WriteReqAck();
                 break;
             case VideoRegister::LY:

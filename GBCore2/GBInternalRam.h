@@ -10,7 +10,7 @@
 class GBInternalRam : public GBComponent
 {
 private:
-    QByteArray m_Ram;
+    quint8 m_Ram[INTERNAL_RAM_SIZE];
 
     bool IsAddressInRange(quint16 address) { return address >= INTERNAL_RAM_ADDRESS_OFFSET; }
 public:

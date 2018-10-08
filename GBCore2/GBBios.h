@@ -11,7 +11,7 @@
 class GBBios : public GBComponent
 {
 private:
-    QByteArray m_Data;
+    quint8 m_Data[BIOS_SIZE];
     bool m_IsBiosLoaded;
     bool m_IsBiosMapped;
 public:

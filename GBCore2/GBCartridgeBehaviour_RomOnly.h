@@ -11,7 +11,7 @@ class GBBus;
 class GBCartridgeBehaviour_RomOnly : public IGBCartridgeBehaviour
 {
 public:
-    GBCartridgeBehaviour_RomOnly(QByteArray data);
+    GBCartridgeBehaviour_RomOnly(quint8* data);
     void ProcessRequests(GBBus* bus) override;
 };
 
