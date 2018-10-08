@@ -112,3 +112,14 @@ bool GBCore::HasError()
     }
     return hasError;
 }
+
+void GBCore::GetScreenSize(int& width, int& height)
+{
+    width = SCREEN_WIDTH;
+    height = SCREEN_HEIGHT;
+}
+
+void GBCore::SetScreenBuffer(quint32* buffer, QMutex* bufferMutex)
+{
+
+}
