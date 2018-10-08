@@ -6,10 +6,10 @@
 
 QT       -= gui
 
-TARGET = GBCore2
+TARGET = GBCore
 TEMPLATE = lib
 
-DEFINES += GBCORE2_LIBRARY
+DEFINES += GBCORE_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
