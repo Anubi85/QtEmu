@@ -10,12 +10,14 @@ QMap<QString, QtEmu::SupportedRomType> QtEmu::s_RomTypeMap =
 QtEmu::QtEmu(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::QtEmu),
-    m_CoreLibrary()
+    m_CoreLibrary(),
+    m_VideoDataBuffer()
 {
     ui->setupUi(this);
     m_Core = nullptr;
     m_CoreExecutingThread = nullptr;
     m_StopCore = false;
+    m_VideoDataBuffer.clear();
 }
 
 QtEmu::~QtEmu()
@@ -46,6 +48,8 @@ void QtEmu::on_actionLoad_ROM_triggered()
         ui->screen->setMinimumSize(screenWidth, screenHeight);
         //fix window size
         adjustSize();
+        //prepare screen buffer
+        m_VideoDataBuffer.resize(screenWidth * screenHeight);
         //initialize emulator core
         if (m_Core->Initialize(biosFilePath, romFilePath))
         {
@@ -79,6 +83,7 @@ void QtEmu::StopEmulatorCore()
     {
         m_CoreLibrary.unload();
     }
+    m_VideoDataBuffer.clear();
 }
 
 void QtEmu::StartEmulatorCore()
@@ -95,5 +100,14 @@ void QtEmu::EmulatorLoop()
     while(!m_Core->HasError() && !m_StopCore)
     {
         m_Core->Exec();
+    }
+}
+
+void QtEmu::VideoLoop()
+{
+    while(!m_Core->HasError() && !m_StopCore)
+    {
+        memcpy(m_VideoDataBuffer.data(), m_Core->GetFrame(), static_cast<unsigned int>(m_VideoDataBuffer.size()));
+        //TODO: process frame data
     }
 }
