@@ -20,11 +20,18 @@ private slots:
     void on_actionLoad_ROM_triggered();
 
 private:
+    enum class SupportedRomType
+    {
+        gb,
+    };
+
+    static QMap<QString, SupportedRomType> s_RomTypeMap;
+
     Ui::QtEmu *ui;
+    QLibrary m_CoreLibrary;
     IEmulatorCore* m_Core;
+    bool m_StopCore;
     QThread* m_CoreExecutingThread;
-    quint32* m_ScreenBuffer;
-    QMutex* m_ScreenBuferMutex;
 
     void StopEmulatorCore();
     void StartEmulatorCore();

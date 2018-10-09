@@ -13,6 +13,7 @@ public:
     virtual bool HasError() = 0;
     virtual void GetScreenSize(int& width, int& height) = 0;
     virtual void SetScreenBuffer(quint32* buffer, QMutex* bufferMutex) = 0;
+    virtual bool Initialize(QString biosFilePath, QString romFilePath) = 0;
 };
 
 #endif //IEMULATORCORE_H
