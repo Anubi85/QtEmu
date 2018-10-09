@@ -17,26 +17,8 @@ GBCore::GBCore()
     m_Bus = new GBBus();
     for (int comp = 0; comp < *Component::Total; comp++)
     {
-        switch (static_cast<Component>(comp))
-        {
-        case Component::CPU:
-            m_Components[comp] = new GBCpu();
-            break;
-        case Component::Video:
-            m_Components[comp] = new GBVideo();
-            break;
-        case Component::Audio:
-            m_Components[comp] = new GBAudio();
-            break;
-        case Component::InternalRAM:
-            m_Components[comp] = new GBInternalRam();
-            break;
-        default:
-            m_Components[comp] = nullptr;
-            break;
-        }
+        m_Components[comp] = nullptr;
     }
-    m_Error = Error::Ok;
 }
 
 GBCore::~GBCore()
@@ -46,30 +28,6 @@ GBCore::~GBCore()
         delete m_Components[comp];
     }
     delete m_Bus;
-}
-
-bool GBCore::LoadBios(QString biosFilePath)
-{
-    GBBios* bios = new GBBios();
-    if (bios->Load(biosFilePath))
-    {
-        delete m_Components[*Component::BIOS];
-        m_Components[*Component::BIOS] = bios;
-        return true;
-    }
-    return false;
-}
-
-bool GBCore::LoadRom(QString romFilePath)
-{
-    GBCartridge* cartridge = new GBCartridge();
-    if (cartridge->Load(romFilePath))
-    {
-        delete m_Components[*Component::Cartridge];
-        m_Components[*Component::Cartridge] = cartridge;
-        return true;
-    }
-    return false;
 }
 
 void GBCore::Exec()
@@ -115,11 +73,66 @@ bool GBCore::HasError()
 
 void GBCore::GetScreenSize(int& width, int& height)
 {
-    width = SCREEN_WIDTH;
-    height = SCREEN_HEIGHT;
+    static_cast<GBVideo*>(m_Components[*Component::Video])->GetScreenSize(width, height);
 }
 
-void GBCore::SetScreenBuffer(quint32* buffer, QMutex* bufferMutex)
+bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 {
-
+    m_Bus->Clear();
+    bool res = true;
+    for (int comp = 0; comp < *Component::Total; comp++)
+    {
+        delete m_Components[comp];
+        switch (static_cast<Component>(comp))
+        {
+        case Component::CPU:
+            m_Components[comp] = new GBCpu();
+            break;
+        case Component::BIOS:
+        {
+            GBBios* bios = new GBBios();
+            if (!biosFilePath.isEmpty())
+            {
+                if (bios->Load(biosFilePath))
+                {
+                    m_Components[comp] = bios;
+                }
+                else
+                {
+                    res = false;
+                }
+            }
+            break;
+        }
+        case Component::Cartridge:
+        {
+            GBCartridge* cartridge = new GBCartridge();
+            if (!romFilePath.isEmpty())
+            {
+                if (cartridge->Load(romFilePath))
+                {
+                    m_Components[comp] = cartridge;
+                    break;
+                }
+            }
+            res = false;
+            break;
+        }
+        case Component::Video:
+            m_Components[comp] = new GBVideo();
+            break;
+        case Component::Audio:
+            m_Components[comp] = new GBAudio();
+            break;
+        case Component::InternalRAM:
+            m_Components[comp] = new GBInternalRam();
+            break;
+        default:
+            m_Components[comp] = nullptr;
+            break;
+        }
+    }
+    //TODO: handle error code in case res is false
+    m_Error = Error::Ok;
+    return res;
 }

@@ -2,7 +2,8 @@
 #include "GBBus.h"
 #include "GBUtils.h"
 
-GBVideo::GBVideo()
+GBVideo::GBVideo() :
+    m_FrameSemaphore()
 {
     Reset();
 }
@@ -13,6 +14,13 @@ void GBVideo::Reset()
     m_Cycles = 0;
     memset(m_VideoRAM, 0, VIDEO_RAM_SIZE);
     memset(m_Registers, 0, VIDEO_REG_SIZE);
+    if (m_FrameSemaphore.available() != 0)
+    {
+        m_FrameSemaphore.acquire();
+    }
+    memset(m_ScreenBuffer1, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+    memset(m_ScreenBuffer2, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+    m_ActiveScreenBufferSelector = true;
 }
 
 inline quint16 GBVideo::GetModeCycles()
@@ -133,4 +141,16 @@ void GBVideo::Tick(GBBus* bus)
             }
         }
     }
+}
+
+quint32* GBVideo::GetFrame()
+{
+    m_FrameSemaphore.acquire();
+    return m_ActiveScreenBufferSelector ? m_ScreenBuffer1 : m_ScreenBuffer2;
+}
+
+void GBVideo::CompleteFrame()
+{
+    m_ActiveScreenBufferSelector = !m_ActiveScreenBufferSelector;
+    m_FrameSemaphore.release();
 }
