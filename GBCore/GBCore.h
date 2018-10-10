@@ -19,6 +19,7 @@ public:
     void Exec() override;
     bool HasError() override;
     void GetScreenSize(int& width, int& height) override;
+    quint32* GetFrame() override;
     bool Initialize(QString biosFilePath, QString romFilePath) override;
 };
 

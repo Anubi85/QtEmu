@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>100</width>
-    <height>100</height>
+    <width>200</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -43,21 +43,12 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QLabel" name="screen">
+     <widget class="QDisplay" name="display" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string/>
       </property>
      </widget>
     </item>
@@ -68,7 +59,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>100</width>
+     <width>200</width>
      <height>20</height>
     </rect>
    </property>
@@ -93,6 +84,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QDisplay</class>
+   <extends>QWidget</extends>
+   <header>QDisplay.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

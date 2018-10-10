@@ -1,6 +1,7 @@
 #include "QtEmu.h"
 #include "ui_QtEmu.h"
 #include <QLibrary>
+#include "QDisplay.h"
 
 QMap<QString, QtEmu::SupportedRomType> QtEmu::s_RomTypeMap =
 {
@@ -10,21 +11,32 @@ QMap<QString, QtEmu::SupportedRomType> QtEmu::s_RomTypeMap =
 QtEmu::QtEmu(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::QtEmu),
-    m_CoreLibrary(),
-    m_VideoDataBuffer()
+    m_CoreLibrary()
 {
     ui->setupUi(this);
     m_Core = nullptr;
     m_CoreExecutingThread = nullptr;
+    m_VideoUpdateThread = nullptr;
     m_StopCore = false;
-    m_VideoDataBuffer.clear();
+    QObject::connect(this, &QtEmu::FrameReady, ui->display, &QDisplay::RenderFrame);
 }
 
 QtEmu::~QtEmu()
 {
     delete ui;
     delete m_Core;
-    delete m_CoreExecutingThread;
+    if (m_CoreExecutingThread != nullptr)
+    {
+        m_CoreExecutingThread->exit();
+        m_CoreExecutingThread->wait();
+        delete m_CoreExecutingThread;
+    }
+    if (m_VideoUpdateThread != nullptr)
+    {
+        m_VideoUpdateThread->exit();
+        m_VideoUpdateThread->wait();
+        delete m_VideoUpdateThread;
+    }
 }
 
 void QtEmu::on_actionLoad_ROM_triggered()
@@ -45,11 +57,9 @@ void QtEmu::on_actionLoad_ROM_triggered()
         int screenWidth, screenHeight;
         m_Core->GetScreenSize(screenWidth, screenHeight);
         //set screen size
-        ui->screen->setMinimumSize(screenWidth, screenHeight);
+        ui->display->setMinimumSize(screenWidth, screenHeight);
         //fix window size
         adjustSize();
-        //prepare screen buffer
-        m_VideoDataBuffer.resize(screenWidth * screenHeight);
         //initialize emulator core
         if (m_Core->Initialize(biosFilePath, romFilePath))
         {
@@ -71,11 +81,16 @@ void QtEmu::StopEmulatorCore()
 {
     if (m_Core != nullptr)
     {
+        m_StopCore = true;
         if (m_CoreExecutingThread != nullptr && m_CoreExecutingThread->isRunning())
         {
-            m_StopCore = true;
             m_CoreExecutingThread->wait();
             delete m_CoreExecutingThread;
+        }
+        if (m_VideoUpdateThread != nullptr && m_VideoUpdateThread->isRunning())
+        {
+            m_VideoUpdateThread->wait();
+            delete m_VideoUpdateThread;
         }
         delete m_Core;
     }
@@ -83,7 +98,6 @@ void QtEmu::StopEmulatorCore()
     {
         m_CoreLibrary.unload();
     }
-    m_VideoDataBuffer.clear();
 }
 
 void QtEmu::StartEmulatorCore()
@@ -91,7 +105,9 @@ void QtEmu::StartEmulatorCore()
     if (m_Core != nullptr)
     {
         m_CoreExecutingThread = QThread::create([this] { EmulatorLoop(); });
+        m_VideoUpdateThread = QThread::create([this] { VideoLoop(); });
         m_CoreExecutingThread->start(QThread::HighestPriority);
+        m_VideoUpdateThread->start(QThread::HighestPriority);
     }
 }
 
@@ -107,7 +123,6 @@ void QtEmu::VideoLoop()
 {
     while(!m_Core->HasError() && !m_StopCore)
     {
-        memcpy(m_VideoDataBuffer.data(), m_Core->GetFrame(), static_cast<unsigned int>(m_VideoDataBuffer.size()));
         //TODO: process frame data
     }
 }

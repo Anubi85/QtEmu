@@ -76,6 +76,11 @@ void GBCore::GetScreenSize(int& width, int& height)
     static_cast<GBVideo*>(m_Components[*Component::Video])->GetScreenSize(width, height);
 }
 
+quint32* GBCore::GetFrame()
+{
+    return static_cast<GBVideo*>(m_Components[*Component::Video])->GetFrame();
+}
+
 bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 {
     m_Bus->Clear();

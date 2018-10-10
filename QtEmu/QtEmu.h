@@ -16,6 +16,9 @@ public:
     explicit QtEmu(QWidget *parent = nullptr);
     ~QtEmu();
 
+signals:
+    void FrameReady(QImage* frame);
+
 private slots:
     void on_actionLoad_ROM_triggered();
 
@@ -32,7 +35,7 @@ private:
     IEmulatorCore* m_Core;
     bool m_StopCore;
     QThread* m_CoreExecutingThread;
-    QVector<quint32> m_VideoDataBuffer;
+    QThread* m_VideoUpdateThread;
 
     void StopEmulatorCore();
     void StartEmulatorCore();

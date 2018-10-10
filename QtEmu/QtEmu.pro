@@ -26,11 +26,13 @@ include(../QtEmu.pri)
 
 SOURCES += \
         main.cpp \
-    QtEmu.cpp
+    QtEmu.cpp \
+    QDisplay.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
-    QtEmu.h
+    QtEmu.h \
+    QDisplay.h
 
 FORMS += \
     QtEmu.ui

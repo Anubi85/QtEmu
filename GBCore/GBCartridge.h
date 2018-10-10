@@ -19,6 +19,7 @@ private:
     IGBCartridgeBehaviour* m_Behaviour;
 public:
     GBCartridge();
+    ~GBCartridge() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
     bool Load(QString romFilePath);

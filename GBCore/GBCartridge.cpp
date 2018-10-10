@@ -7,6 +7,11 @@ GBCartridge::GBCartridge()
     m_Behaviour = nullptr;
 }
 
+GBCartridge::~GBCartridge()
+{
+    delete m_Behaviour;
+}
+
 void GBCartridge::Reset()
 {
     delete m_Behaviour;

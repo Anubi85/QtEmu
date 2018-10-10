@@ -8,6 +8,16 @@ GBVideo::GBVideo() :
     Reset();
 }
 
+GBVideo::~GBVideo()
+{
+    if (m_FrameSemaphore.available() == 0)
+    {
+        m_FrameSemaphore.release();
+        //give time to release the semaphore before destroy it
+        QThread::usleep(100);
+    }
+}
+
 void GBVideo::Reset()
 {
     GBComponent::Reset();
@@ -18,9 +28,7 @@ void GBVideo::Reset()
     {
         m_FrameSemaphore.acquire();
     }
-    memset(m_ScreenBuffer1, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-    memset(m_ScreenBuffer2, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-    m_ActiveScreenBufferSelector = true;
+    memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
 inline quint16 GBVideo::GetModeCycles()
@@ -146,11 +154,5 @@ void GBVideo::Tick(GBBus* bus)
 quint32* GBVideo::GetFrame()
 {
     m_FrameSemaphore.acquire();
-    return m_ActiveScreenBufferSelector ? m_ScreenBuffer1 : m_ScreenBuffer2;
-}
-
-void GBVideo::CompleteFrame()
-{
-    m_ActiveScreenBufferSelector = !m_ActiveScreenBufferSelector;
-    m_FrameSemaphore.release();
+    return m_ScreenBuffer;
 }

@@ -38,9 +38,7 @@ private:
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
     quint32 m_Cycles;
-    quint32 m_ScreenBuffer1[SCREEN_WIDTH * SCREEN_HEIGHT];
-    quint32 m_ScreenBuffer2[SCREEN_WIDTH * SCREEN_HEIGHT];
-    bool m_ActiveScreenBufferSelector; //true for buffer 1, false for buffer 2
+    quint32 m_ScreenBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
     QSemaphore m_FrameSemaphore;
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
@@ -50,13 +48,13 @@ private:
     VideoMode GetVideoMode() { return static_cast<VideoMode>(m_Registers[*VideoRegister::STAT] & 0x03); }
     void SetVideoMode(VideoMode newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
     void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
-    quint32* GetFrame();
-    void CompleteFrame();
 public:
     GBVideo();
+    ~GBVideo() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
+    quint32* GetFrame();
 };
 
 #endif // GBLCDDISPLAY_H
