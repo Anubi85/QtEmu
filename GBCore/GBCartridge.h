@@ -1,7 +1,7 @@
 #ifndef IGBCARTRIDGE_H
 #define IGBCARTRIDGE_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "GBComponent.h"
 
 #define CARTRIDGE_TYPE_ADDRESS 0x0147

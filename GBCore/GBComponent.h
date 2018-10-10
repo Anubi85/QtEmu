@@ -1,7 +1,8 @@
 #ifndef GBCOMPONENT_H
 #define GBCOMPONENT_H
 
-#include <QtCore>
+#include <QtGlobal>
+#include <QString>
 
 enum class Error : quint16
 {

@@ -1,3 +1,4 @@
+#include <QThread>
 #include "GBVideo.h"
 #include "GBBus.h"
 #include "GBUtils.h"

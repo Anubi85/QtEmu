@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "IEmulatorCore.h"
+#include <memory>
+#include <QLibrary>
 
 namespace Ui {
 class QtEmu;
@@ -17,7 +19,7 @@ public:
     ~QtEmu();
 
 signals:
-    void FrameReady(QImage* frame);
+    void FrameReady(std::shared_ptr<QImage> frame);
 
 private slots:
     void on_actionLoad_ROM_triggered();

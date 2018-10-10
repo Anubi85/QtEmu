@@ -1,7 +1,7 @@
 #ifndef GBROM_H
 #define GBROM_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "GBComponent.h"
 
 #define BIOS_SIZE 0x0100

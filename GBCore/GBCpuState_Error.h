@@ -1,7 +1,8 @@
 #ifndef GBCPUSTATE_ERROR_H
 #define GBCPUSTATE_ERROR_H
 
-#include <QtCore>
+#include <QtGlobal>
+#include <QString>
 #include "IGBCpuState.h"
 
 class GBCpuState_Error : public IGBCpuState

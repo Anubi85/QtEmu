@@ -1,7 +1,7 @@
 #ifndef IGBCARTRIDGEBEHAVIOUR_H
 #define IGBCARTRIDGEBEHAVIOUR_H
 
-#include <QtCore>
+#include <QtGlobal>
 
 class GBBus;
 

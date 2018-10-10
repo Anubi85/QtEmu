@@ -1,7 +1,7 @@
 #ifndef GBINTERNALRAM_H
 #define GBINTERNALRAM_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "GBComponent.h"
 
 #define INTERNAL_RAM_SIZE 0x0080

@@ -1,6 +1,7 @@
 #ifndef GBLCDDISPLAY_H
 #define GBLCDDISPLAY_H
 
+#include <QSemaphore>
 #include "GBComponent.h"
 #include "GBUtils.h"
 

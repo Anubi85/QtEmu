@@ -1,7 +1,7 @@
 #ifndef GBCARTRIDGEBEHAVIOUR_ROMONLY_H
 #define GBCARTRIDGEBEHAVIOUR_ROMONLY_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "IGBCartridgeBehaviour.h"
 
 #define ROM_ONLY_SIZE 0x8000

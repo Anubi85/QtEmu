@@ -1,3 +1,4 @@
+#include <QFile>
 #include "GBCartridge.h"
 #include "IGBCartridgeBehaviour.h"
 #include "GBCartridgeBehaviour_RomOnly.h"

@@ -1,6 +1,9 @@
+#include <QLibrary>
+#include <QThread>
+#include <QFileInfo>
+#include <QException>
 #include "QtEmu.h"
 #include "ui_QtEmu.h"
-#include <QLibrary>
 #include "QDisplay.h"
 
 QMap<QString, QtEmu::SupportedRomType> QtEmu::s_RomTypeMap =

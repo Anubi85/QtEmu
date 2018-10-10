@@ -1,7 +1,7 @@
 #ifndef GBINSTRUCTIONCONTEXT_H
 #define GBINSTRUCTIONCONTEXT_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "GBUtils.h"
 
 /* Opcode bits

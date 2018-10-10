@@ -6,7 +6,7 @@ QDisplay::QDisplay(QWidget *parent) :
 
 }
 
-void QDisplay::RenderFrame(QImage* frame)
+void QDisplay::RenderFrame(std::shared_ptr<QImage> frame)
 {
 
 }

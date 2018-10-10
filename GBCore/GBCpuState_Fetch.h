@@ -1,7 +1,7 @@
 #ifndef GBCPUSTATE_FETCH_H
 #define GBCPUSTATE_FETCH_H
 
-#include <QtCore>
+#include <QtGlobal>
 #include "IGBCpuState.h"
 
 #define INTERRUPT_NUM 5

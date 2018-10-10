@@ -1,7 +1,8 @@
 #ifndef GBCPU_H
 #define GBCPU_H
 
-#include <QtCore>
+#include <QtGlobal>
+#include <QtEndian>
 #include "GBComponent.h"
 #include "GBInstruction.h"
 #include "GBUtils.h"

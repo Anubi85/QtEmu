@@ -2,6 +2,7 @@
 #define QDISPLAY_H
 
 #include <QOpenGLWidget>
+#include <memory>
 
 class QDisplay : public QOpenGLWidget
 {
@@ -12,7 +13,7 @@ public:
 signals:
 
 public slots:
-    void RenderFrame(QImage* frame);
+    void RenderFrame(std::shared_ptr<QImage> frame);
 };
 
 #endif // QDISPLAY_H

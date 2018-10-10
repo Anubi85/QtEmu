@@ -1,7 +1,7 @@
 #ifndef IEMULATORCORE_H
 #define IEMULATORCORE_H
 
-#include <QtCore>
+#include <QtGlobal>
 
 class IEmulatorCore
 {

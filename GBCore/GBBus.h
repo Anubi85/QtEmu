@@ -1,7 +1,7 @@
 #ifndef GBBUS_H
 #define GBBUS_H
 
-#include <QtCore>
+#include <QtGlobal>
 
 class GBBus
 {

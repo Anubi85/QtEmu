@@ -1,3 +1,6 @@
+#include <QString>
+#include <QFile>
+#include <QCryptographicHash>
 #include "GBBios.h"
 #include "GBBus.h"
 
