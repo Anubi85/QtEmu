@@ -26,7 +26,7 @@ QtEmu::QtEmu(QWidget *parent) :
 
 QtEmu::~QtEmu()
 {
-    delete ui;
+    m_StopCore = true;
     delete m_Core;
     if (m_CoreExecutingThread != nullptr)
     {
@@ -40,6 +40,7 @@ QtEmu::~QtEmu()
         m_VideoUpdateThread->wait();
         delete m_VideoUpdateThread;
     }
+    delete ui;
 }
 
 void QtEmu::on_actionLoad_ROM_triggered()
@@ -124,8 +125,11 @@ void QtEmu::EmulatorLoop()
 
 void QtEmu::VideoLoop()
 {
+    int screenWidth, screenHeight;
+    m_Core->GetScreenSize(screenWidth, screenHeight);
     while(!m_Core->HasError() && !m_StopCore)
     {
-        //TODO: process frame data
+        std::shared_ptr<QImage> img(new QImage(reinterpret_cast<uchar*>(m_Core->GetFrame()), screenWidth, screenHeight, QImage::Format_ARGB32));
+        emit FrameReady(img);
     }
 }

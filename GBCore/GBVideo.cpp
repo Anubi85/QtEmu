@@ -6,6 +6,7 @@
 GBVideo::GBVideo() :
     m_FrameSemaphore()
 {
+    m_DeleteMe = false;
     Reset();
 }
 
@@ -29,7 +30,7 @@ void GBVideo::Reset()
     {
         m_FrameSemaphore.acquire();
     }
-    memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+    memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
 }
 
 inline quint16 GBVideo::GetModeCycles()
@@ -68,6 +69,16 @@ void GBVideo::Tick(GBBus* bus)
             IncreaseYLineCount();
             if (m_Registers[*VideoRegister::LY] == 0)
             {
+                quint32 color = m_DeleteMe ? 0xFF00FF00 : 0xFF0000FF;
+                m_DeleteMe = !m_DeleteMe;
+                for(int i = 0; i < SCREEN_HEIGHT; i++)
+                {
+                    for (int j = 0; j < SCREEN_WIDTH; j++)
+                    {
+                        m_ScreenBuffer[i*SCREEN_WIDTH+j] = color;
+                    }
+                }
+                m_FrameSemaphore.release();
                 SetVideoMode(VideoMode::SCANLINE2);
             }
             break;

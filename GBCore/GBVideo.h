@@ -36,6 +36,7 @@ enum class VideoMode
 class GBVideo : public GBComponent
 {
 private:
+    bool m_DeleteMe;
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
     quint32 m_Cycles;
