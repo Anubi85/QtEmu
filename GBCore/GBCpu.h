@@ -75,6 +75,11 @@ private:
     void SetState(IGBCpuState* newState);
     void SetFlag(Flag flagMask, bool value);
     bool GetFlag(Flag flagMask) { return (m_Registers.Single[*CpuRegister::F] & *flagMask) != 0; }
+    quint8 GetHighNibble(quint8 val) { return (val & 0xF0) >> 4; }
+    quint8 GetLowNibble(quint8 val) { return val & 0x0F; }
+    quint8 ByteFromNibbles(quint8 high, quint8 low) { return static_cast<quint8>(high << 4) | (low & 0x0F); }
+    bool HasCarry(quint8 nibble) { return (nibble & 0x10) != 0; }
+    quint8 AddSub(quint8 value1, quint8 value2, bool isSub);
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);

@@ -59,9 +59,11 @@ void GBVideo::Tick(GBBus* bus)
             SetVideoMode(VideoMode::SCANLINE2);
             break;
         case VideoMode::SCANLINE2:
+            //TODO: Access VRAM and prepare data for rendering!
             SetVideoMode(VideoMode::HBLANK);
             break;
         case VideoMode::HBLANK:
+            //TODO: Render line
             IncreaseYLineCount();
             SetVideoMode(m_Registers[*VideoRegister::LY] < VIDEO_MAX_HBLANK ? VideoMode::SCANLINE1 : VideoMode::VBLANK);
             break;
@@ -88,7 +90,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
+        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
         {
             bus->SetData(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]);
             bus->ReadReqAck();
@@ -123,7 +125,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && (GetVideoMode() != VideoMode::SCANLINE2 || !IsDisplayEnabled()))
+        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
         {
             m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = bus->GetData();
             bus->WriteReqAck();

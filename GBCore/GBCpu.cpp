@@ -48,6 +48,18 @@ void GBCpu::SetFlag(Flag flagMask, bool value)
     }
 }
 
+quint8 GBCpu::AddSub(quint8 value1, quint8 value2, bool isSub)
+{
+    quint8 nibbleL = GetLowNibble(value1) + GetLowNibble(isSub ? ~value2 : value2) + isSub;
+    quint8 nibbleH = GetHighNibble(value1) + GetHighNibble(isSub ? ~value2 : value2) + HasCarry(nibbleL);
+    quint8 res = ByteFromNibbles(nibbleH, nibbleL);
+    SetFlag(Flag::Z, res == 0);
+    SetFlag(Flag::N, isSub);
+    SetFlag(Flag::H, isSub ^ HasCarry(nibbleL));
+    SetFlag(Flag::C, isSub ^ HasCarry(nibbleH));
+    return res;
+}
+
 bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
@@ -407,7 +419,6 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
 
 bool GBCpu::ADD(GBInstructionContext* context,  GBBus* bus)
 {
-    quint8 tmp;
     switch (context->GetStep())
     {
     case 0:
@@ -420,21 +431,11 @@ bool GBCpu::ADD(GBInstructionContext* context,  GBBus* bus)
         }
         else
         {
-            tmp = m_Registers.Single[*CpuRegister::A];
-            m_Registers.Single[*CpuRegister::A] += m_Registers.Single[context->GetZ()];
-            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
-            SetFlag(Flag::N, false);
-            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x10) != 0);
-            SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < tmp);
+            m_Registers.Single[*CpuRegister::A] = AddSub(m_Registers.Single[*CpuRegister::A], m_Registers.Single[context->GetZ()], false);
             return true;
         }
     case 1:
-        tmp = m_Registers.Single[*CpuRegister::A];
-        m_Registers.Single[*CpuRegister::A] += bus->GetData();
-        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
-        SetFlag(Flag::N, false);
-        SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x10) != 0);
-        SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < tmp);
+        m_Registers.Single[*CpuRegister::A] = AddSub(m_Registers.Single[*CpuRegister::A], bus->GetData(), false);
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
@@ -455,19 +456,11 @@ bool GBCpu::SUB(GBInstructionContext* context,  GBBus* bus)
         }
         else
         {
-            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetZ()] & 0x0F));
-            m_Registers.Single[*CpuRegister::A] -= m_Registers.Single[context->GetZ()];
-            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
-            SetFlag(Flag::N, true);
-            SetFlag(Flag::C, (m_Registers.Single[*CpuRegister::A] & 0x80) == 0);
+            m_Registers.Single[*CpuRegister::A] = AddSub(m_Registers.Single[*CpuRegister::A], m_Registers.Single[context->GetZ()], true);
             return true;
         }
     case 1:
-        SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (bus->GetData() & 0x0F));
-        m_Registers.Single[*CpuRegister::A] -= bus->GetData();
-        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
-        SetFlag(Flag::N, true);
-        SetFlag(Flag::C, (m_Registers.Single[*CpuRegister::A] & 0x80) == 0);
+        m_Registers.Single[*CpuRegister::A] = AddSub(m_Registers.Single[*CpuRegister::A], bus->GetData(), true);
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
@@ -488,17 +481,11 @@ bool GBCpu::CP(GBInstructionContext* context,  GBBus* bus)
         }
         else
         {
-            SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == m_Registers.Single[context->GetZ()]);
-            SetFlag(Flag::N, true);
-            SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (m_Registers.Single[context->GetZ()] & 0x0F));
-            SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < m_Registers.Single[context->GetZ()]);
+            AddSub(m_Registers.Single[*CpuRegister::A], m_Registers.Single[context->GetZ()], true);
             return true;
         }
     case 1:
-        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == bus->GetData());
-        SetFlag(Flag::N, true);
-        SetFlag(Flag::H, (m_Registers.Single[*CpuRegister::A] & 0x0F) < (bus->GetData() & 0x0F));
-        SetFlag(Flag::C, m_Registers.Single[*CpuRegister::A] < bus->GetData());
+        AddSub(m_Registers.Single[*CpuRegister::A], bus->GetData(), true);
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
