@@ -43,7 +43,6 @@ enum class CpuRegister
         AF = 0x03,
 };
 
-//Forward class declarations
 class IGBCpuState;
 
 class GBCpu : public GBComponent

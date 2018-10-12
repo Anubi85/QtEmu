@@ -46,7 +46,13 @@ SOURCES += \
     GBCartridge.cpp \
     IGBCartridgeBehaviour.cpp \
     GBCartridgeBehaviour_RomOnly.cpp \
-    GBInternalRam.cpp
+    GBInternalRam.cpp \
+    IGBVideoState.cpp \
+    GBVideoState_Scanline1.cpp \
+    GBVideoState_Suspended.cpp \
+    GBVideoState_Scanline2.cpp \
+    GBVideoState_HBlank.cpp \
+    GBVideoState_VBlank.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -69,7 +75,13 @@ HEADERS += \
     GBCartridge.h \
     IGBCartridgeBehaviour.h \
     GBCartridgeBehaviour_RomOnly.h \
-    GBInternalRam.h
+    GBInternalRam.h \
+    IGBVideoState.h \
+    GBVideoState_Scanline1.h \
+    GBVideoState_Suspended.h \
+    GBVideoState_Scanline2.h \
+    GBVideoState_HBlank.h \
+    GBVideoState_VBlank.h
 
 unix {
     target.path = /usr/lib

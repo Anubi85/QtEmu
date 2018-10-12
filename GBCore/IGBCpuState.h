@@ -4,7 +4,7 @@
 class GBBus;
 class GBCpu;
 
-enum class State
+enum class CpuState
 {
     Fetch,
     Decode,
@@ -21,7 +21,7 @@ protected:
 public:
     virtual ~IGBCpuState();
     virtual void Update(GBBus* bus) = 0;
-    virtual State GetStateID() = 0;
+    virtual CpuState GetStateID() = 0;
 };
 
 #endif // IGBCPUSTATE_H

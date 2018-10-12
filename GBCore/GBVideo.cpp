@@ -2,6 +2,7 @@
 #include "GBVideo.h"
 #include "GBBus.h"
 #include "GBUtils.h"
+#include "GBVideoState_Suspended.h"
 
 GBVideo::GBVideo() :
     m_FrameSemaphore()
@@ -12,6 +13,7 @@ GBVideo::GBVideo() :
 
 GBVideo::~GBVideo()
 {
+    delete m_State;
     if (m_FrameSemaphore.available() == 0)
     {
         m_FrameSemaphore.release();
@@ -31,43 +33,60 @@ void GBVideo::Reset()
         m_FrameSemaphore.acquire();
     }
     memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
+    delete m_State;
+    m_State = new GBVideoState_Suspended(this);
+}
+
+void GBVideo::SetState(IGBVideoState* newState)
+{
+    if (newState->GetStateID() == VideoState::Suspended)
+    {
+        memset(m_ScreenBuffer, 0xFF, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
+        m_FrameSemaphore.release();
+    }
+    delete m_State;
+    m_State = newState;
 }
 
 inline quint16 GBVideo::GetModeCycles()
 {
     switch (GetVideoMode())
     {
-    case VideoMode::HBLANK:
+    case VideoState::HBlank:
         return 204;
-    case VideoMode::VBLANK:
+    case VideoState::VBlank:
         return 456;
-    case VideoMode::SCANLINE1:
+    case VideoState::Scanline1:
         return 80;
-    case VideoMode::SCANLINE2:
+    case VideoState::Scanline2:
         return 172;
     }
 }
 
 void GBVideo::Tick(GBBus* bus)
 {
+    //update VRAM from standard bus
+    m_State->Tick();
+    //update VRAM from internal bus
+
     //update video mode
     if (IsDisplayEnabled() && (++m_Cycles > GetModeCycles()))
     {
         switch (GetVideoMode())
         {
-        case VideoMode::SCANLINE1:
-            SetVideoMode(VideoMode::SCANLINE2);
+        case VideoState::Scanline1:
+            SetVideoMode(VideoState::Scanline2);
             break;
-        case VideoMode::SCANLINE2:
+        case VideoState::Scanline2:
             //TODO: Access VRAM and prepare data for rendering!
-            SetVideoMode(VideoMode::HBLANK);
+            SetVideoMode(VideoState::HBlank);
             break;
-        case VideoMode::HBLANK:
+        case VideoState::HBlank:
             //TODO: Render line
             IncreaseYLineCount();
-            SetVideoMode(m_Registers[*VideoRegister::LY] < VIDEO_MAX_HBLANK ? VideoMode::SCANLINE1 : VideoMode::VBLANK);
+            SetVideoMode(m_Registers[*VideoRegister::LY] < VIDEO_MAX_HBLANK ? VideoState::Scanline1 : VideoState::VBlank);
             break;
-        case VideoMode::VBLANK:
+        case VideoState::VBlank:
             IncreaseYLineCount();
             if (m_Registers[*VideoRegister::LY] == 0)
             {
@@ -81,7 +100,7 @@ void GBVideo::Tick(GBBus* bus)
                     }
                 }
                 m_FrameSemaphore.release();
-                SetVideoMode(VideoMode::SCANLINE2);
+                SetVideoMode(VideoState::Scanline2);
             }
             break;
         }
@@ -90,7 +109,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
+        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoState::Scanline2)
         {
             bus->SetData(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]);
             bus->ReadReqAck();
@@ -125,7 +144,7 @@ void GBVideo::Tick(GBBus* bus)
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending())
     {
-        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoMode::SCANLINE2)
+        if (IsAddressInVideoRAM(bus->GetAddress()) && GetVideoMode() != VideoState::Scanline2)
         {
             m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = bus->GetData();
             bus->WriteReqAck();
@@ -139,7 +158,7 @@ void GBVideo::Tick(GBBus* bus)
                 {
                     //enable bit changed and the display was disabled
                     m_Cycles = 0;
-                    SetVideoMode(VideoMode::SCANLINE1);
+                    SetVideoMode(VideoState::Scanline1);
                 }
                 m_Registers[*VideoRegister::LCDC] = bus->GetData();
                 bus->WriteReqAck();

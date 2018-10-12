@@ -12,7 +12,7 @@ private:
 public:
     GBCpuState_Error(GBCpu* context, const QString errorDescription);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::Error; }
+    CpuState GetStateID() override { return CpuState::Error; }
 };
 
 #endif // GBCPUSTATE_ERROR_H

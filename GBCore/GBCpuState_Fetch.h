@@ -15,7 +15,7 @@ private:
 public:
     GBCpuState_Fetch(GBCpu* context, bool isCB);
     void Update(GBBus* bus) override;
-    State GetStateID() override { return State::Fetch; }
+    CpuState GetStateID() override { return CpuState::Fetch; }
 };
 
 #endif // GBCPUSTATE_FETCH_H

@@ -21,12 +21,13 @@ void GBCpu::Reset()
     m_PC = 0;
     m_SP = 0;
     m_Registers.All = 0;
+    delete m_State;
     m_State = new GBCpuState_Fetch(this, false);
 }
 
 void GBCpu::Tick(GBBus* bus)
 {
-    if (m_State->GetStateID() == State::Error)
+    if (m_State->GetStateID() == CpuState::Error)
     {
         m_ErrorCode = Error::CPU_OpCodeNotImplemented;
     }

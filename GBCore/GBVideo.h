@@ -25,18 +25,14 @@ enum class VideoRegister
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
 };
 
-enum class VideoMode
-{
-    HBLANK = 0x00,
-    VBLANK = 0x01,
-    SCANLINE1 = 0x02,
-    SCANLINE2 = 0x03,
-};
+class IGBVideoState;
+enum class VideoState;
 
 class GBVideo : public GBComponent
 {
 private:
     bool m_DeleteMe;
+    IGBVideoState* m_State;
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
     quint32 m_Cycles;
@@ -45,11 +41,9 @@ private:
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
     bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
-    bool IsDisplayEnabled() { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
     quint16 GetModeCycles();
-    VideoMode GetVideoMode() { return static_cast<VideoMode>(m_Registers[*VideoRegister::STAT] & 0x03); }
-    void SetVideoMode(VideoMode newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
-    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
+    VideoState GetVideoMode() { return static_cast<VideoState>(m_Registers[*VideoRegister::STAT] & 0x03); }
+    void SetVideoMode(VideoState newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
 public:
     GBVideo();
     ~GBVideo() override;
@@ -57,6 +51,12 @@ public:
     void Tick(GBBus* bus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
     quint32* GetFrame();
+    bool IsDisplayEnabled() { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
+    quint32 PerformCycle() { return ++m_Cycles; }
+    void ResetCycles() { m_Cycles = 0; }
+    quint8 GetYLineCount() { return m_Registers[*VideoRegister::LY]; }
+    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
+    void SetState(IGBVideoState* newState);
 };
 
 #endif // GBLCDDISPLAY_H
