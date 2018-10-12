@@ -1,6 +1,7 @@
 #include "GBVideo.h"
 #include "GBVideoState_VBlank.h"
 #include "GBVideoState_Scanline1.h"
+#include "GBVideoState_Suspended.h"
 
 GBVideoState_VBlank::GBVideoState_VBlank(GBVideo* context) :
     IGBVideoState(context)
@@ -8,9 +9,13 @@ GBVideoState_VBlank::GBVideoState_VBlank(GBVideo* context) :
 
 }
 
-void GBVideoState_VBlank::Tick()
+void GBVideoState_VBlank::Tick(GBBus* bus)
 {
-    if(m_Context->PerformCycle() == 456)
+    if (!m_Context->IsDisplayEnabled())
+    {
+        m_Context->SetState(new GBVideoState_Suspended(m_Context));
+    }
+    else if(m_Context->PerformCycle() == 456)
     {
         m_Context->ResetCycles();
         m_Context->IncreaseYLineCount();

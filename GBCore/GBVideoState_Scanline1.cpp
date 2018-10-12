@@ -8,7 +8,7 @@ GBVideoState_Scanline1::GBVideoState_Scanline1(GBVideo* context) :
 
 }
 
-void GBVideoState_Scanline1::Tick()
+void GBVideoState_Scanline1::Tick(GBBus* bus)
 {
     if (m_Context->PerformCycle() == 80)
     {

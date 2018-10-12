@@ -1,9 +1,9 @@
 #include "GBCpuState_InterruptCheck.h"
 #include "GBCpuState_Fetch.h"
 #include "GBBus.h"
-#include "GBCpu.h"
+#include "IGBCpuStateContext.h"
 
-GBCpuState_InterruptCheck::GBCpuState_InterruptCheck(GBCpu* context) :
+GBCpuState_InterruptCheck::GBCpuState_InterruptCheck(IGBCpuStateContext* context) :
     IGBCpuState (context)
 {
 

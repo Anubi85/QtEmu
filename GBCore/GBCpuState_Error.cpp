@@ -1,7 +1,7 @@
 #include "GBCpuState_Error.h"
 #include "GBBus.h"
 
-GBCpuState_Error::GBCpuState_Error(GBCpu* context, const QString errorDescription) :
+GBCpuState_Error::GBCpuState_Error(IGBCpuStateContext* context, const QString errorDescription) :
     IGBCpuState (context)
 {
     m_LastErrorDescription = errorDescription;

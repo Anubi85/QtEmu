@@ -13,7 +13,7 @@ private:
     GBInstructionContext* m_InstructionContext;
     int m_Count;
 public:
-    GBCpuState_Execute(GBCpu* context, GBInstruction inst, GBInstructionContext* instContext);
+    GBCpuState_Execute(IGBCpuStateContext* context, GBInstruction inst, GBInstructionContext* instContext);
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::Execute; }
 };

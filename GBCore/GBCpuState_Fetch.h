@@ -13,7 +13,7 @@ private:
 
     int m_Count;
 public:
-    GBCpuState_Fetch(GBCpu* context, bool isCB);
+    GBCpuState_Fetch(IGBCpuStateContext* context, bool isCB);
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::Fetch; }
 };

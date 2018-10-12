@@ -6,6 +6,7 @@
 #include "GBComponent.h"
 #include "GBInstruction.h"
 #include "GBUtils.h"
+#include "IGBCpuStateContext.h"
 
 #define REG8_NUM 8
 #define REG16_NUM 4
@@ -45,7 +46,7 @@ enum class CpuRegister
 
 class IGBCpuState;
 
-class GBCpu : public GBComponent
+class GBCpu : IGBCpuStateContext, public GBComponent
 {
 private:
     static GBInstruction s_InstructionTable[INSTRUCTIONS_NUM];
@@ -101,12 +102,11 @@ public:
     ~GBCpu() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
-    void SetState(IGBCpuState* newState);
-    bool GetImeFlag() { return m_IME; }
-    quint16 GetPcAndIncrement() { return m_PC++; }
-
-    static GBInstruction* GetInstructionTable() { return s_InstructionTable; }
-    static GBInstruction* GetCBInstructionTable() { return s_CBInstructionTable; }
+    void SetState(IGBCpuState* newState) override;
+    bool GetImeFlag() override { return m_IME; }
+    quint16 GetPcAndIncrement() override { return m_PC++; }
+    GBInstruction* GetInstructionTable() override { return s_InstructionTable; }
+    GBInstruction* GetCBInstructionTable() override { return s_CBInstructionTable; }
 };
 
 #endif // GBCPU_H

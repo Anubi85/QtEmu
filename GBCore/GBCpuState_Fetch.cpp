@@ -1,7 +1,7 @@
 #include "GBCpuState_Fetch.h"
 #include "GBCpuState_Decode.h"
 #include "GBBus.h"
-#include "GBCpu.h"
+#include "IGBCpuStateContext.h"
 
 quint16 GBCpuState_Fetch::s_InterruptRoutineAddress[INTERRUPT_NUM] =
 {
@@ -12,7 +12,7 @@ quint16 GBCpuState_Fetch::s_InterruptRoutineAddress[INTERRUPT_NUM] =
     0x0060, //Hi-Lo of P10-P13
 };
 
-GBCpuState_Fetch::GBCpuState_Fetch(GBCpu* context, bool isCB) :
+GBCpuState_Fetch::GBCpuState_Fetch(IGBCpuStateContext* context, bool isCB) :
     IGBCpuState (context)
 {
     m_Count = isCB ? 3 : 0;
@@ -22,7 +22,7 @@ void GBCpuState_Fetch::Update(GBBus* bus)
 {
     if (--m_Count <= 0)
     {
-        quint16 address;
+        quint16 address = 0; //it will aways be override by the following code
         //manage interrupts
         if (m_Count != 0 && m_Context->GetImeFlag() && bus->GetData() != 0)
         {

@@ -11,6 +11,7 @@ enum class VideoState
 };
 
 class GBVideo;
+class GBBus;
 
 class IGBVideoState
 {
@@ -19,7 +20,7 @@ protected:
     IGBVideoState(GBVideo* context);
 public:
     virtual ~IGBVideoState();
-    virtual void Tick() = 0;
+    virtual void Tick(GBBus* bus) = 0;
     virtual VideoState GetStateID() = 0;
 };
 

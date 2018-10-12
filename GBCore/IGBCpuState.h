@@ -2,7 +2,7 @@
 #define IGBCPUSTATE_H
 
 class GBBus;
-class GBCpu;
+class IGBCpuStateContext;
 
 enum class CpuState
 {
@@ -16,8 +16,8 @@ enum class CpuState
 class IGBCpuState
 {
 protected:
-    GBCpu* m_Context;
-    IGBCpuState(GBCpu* context);
+    IGBCpuStateContext* m_Context;
+    IGBCpuState(IGBCpuStateContext* context);
 public:
     virtual ~IGBCpuState();
     virtual void Update(GBBus* bus) = 0;

@@ -1,6 +1,6 @@
 #include "IGBCpuState.h"
 
-IGBCpuState::IGBCpuState(GBCpu* context)
+IGBCpuState::IGBCpuState(IGBCpuStateContext* context)
 {
     m_Context = context;
 }

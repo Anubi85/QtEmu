@@ -10,7 +10,7 @@ class GBCpuState_Error : public IGBCpuState
 private:
     QString m_LastErrorDescription;
 public:
-    GBCpuState_Error(GBCpu* context, const QString errorDescription);
+    GBCpuState_Error(IGBCpuStateContext* context, const QString errorDescription);
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::Error; }
 };

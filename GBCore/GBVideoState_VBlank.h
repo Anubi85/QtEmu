@@ -7,7 +7,7 @@ class GBVideoState_VBlank : public IGBVideoState
 {
 public:
     GBVideoState_VBlank(GBVideo* context);
-    void Tick() override;
+    void Tick(GBBus* bus) override;
     VideoState GetStateID() override { return VideoState::VBlank; }
 };
 

@@ -31,7 +31,7 @@ enum class VideoState;
 class GBVideo : public GBComponent
 {
 private:
-    bool m_DeleteMe;
+    GBBus* m_InternalBus;
     IGBVideoState* m_State;
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
@@ -41,9 +41,12 @@ private:
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
     bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
-    quint16 GetModeCycles();
     VideoState GetVideoMode() { return static_cast<VideoState>(m_Registers[*VideoRegister::STAT] & 0x03); }
     void SetVideoMode(VideoState newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
+    void ReadVideoRAM(GBBus* bus, bool modeOverride);
+    void WriteVideoRAM(GBBus* bus);
+    void ReadVideoRegister(GBBus* bus);
+    void WriteVideoRegister(GBBus* bus);
 public:
     GBVideo();
     ~GBVideo() override;

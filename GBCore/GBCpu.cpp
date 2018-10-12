@@ -5,6 +5,7 @@
 
 GBCpu::GBCpu()
 {
+    m_State = nullptr;
     Reset();
 }
 

@@ -1,9 +1,9 @@
 #include "GBCpuState_Execute.h"
 #include "GBCpuState_InterruptCheck.h"
 #include "GBInstructionContext.h"
-#include "GBCpu.h"
+#include "IGBCpuStateContext.h"
 
-GBCpuState_Execute::GBCpuState_Execute(GBCpu* context, GBInstruction inst, GBInstructionContext* instContext) :
+GBCpuState_Execute::GBCpuState_Execute(IGBCpuStateContext* context, GBInstruction inst, GBInstructionContext* instContext) :
     IGBCpuState (context)
 {
     m_Instruction = inst;

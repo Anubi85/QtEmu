@@ -9,7 +9,7 @@ GBVideoState_HBlank::GBVideoState_HBlank(GBVideo* context) :
 
 }
 
-void GBVideoState_HBlank::Tick()
+void GBVideoState_HBlank::Tick(GBBus* bus)
 {
     if ((m_Context->PerformCycle() % 456) == 0)
     {
