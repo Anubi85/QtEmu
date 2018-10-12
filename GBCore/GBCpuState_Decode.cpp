@@ -20,7 +20,7 @@ void GBCpuState_Decode::Update(GBBus* bus)
     }
     else
     {
-        GBInstruction inst = m_IsCB ? GBCpu::s_CBInstructionTable[bus->GetData()] : GBCpu::s_InstructionTable[bus->GetData()];
+        GBInstruction inst = m_IsCB ? GBCpu::GetCBInstructionTable()[bus->GetData()] : GBCpu::GetInstructionTable()[bus->GetData()];
         if (inst != nullptr)
         {
             m_Context->SetState(new GBCpuState_Execute(
@@ -30,7 +30,6 @@ void GBCpuState_Decode::Update(GBBus* bus)
         }
         else
         {
-            m_Context->m_ErrorCode = Error::CPU_OpCodeNotImplemented;
             QString msg("Op Code %1 not implemented");
             m_Context->SetState(new GBCpuState_Error(m_Context, msg.arg(m_IsCB ? "0xCB 0x%1" : "0x%1").arg(bus->GetData(), 2, 16, QLatin1Char('0'))));
         }

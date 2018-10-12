@@ -26,8 +26,15 @@ void GBCpu::Reset()
 
 void GBCpu::Tick(GBBus* bus)
 {
-    m_State->Update(bus);
-    m_Cycles++;
+    if (m_State->GetStateID() == State::Error)
+    {
+        m_ErrorCode = Error::CPU_OpCodeNotImplemented;
+    }
+    else
+    {
+        m_State->Update(bus);
+        m_Cycles++;
+    }
 }
 
 void GBCpu::SetState(IGBCpuState* newState)

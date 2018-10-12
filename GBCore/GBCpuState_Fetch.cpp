@@ -24,7 +24,7 @@ void GBCpuState_Fetch::Update(GBBus* bus)
     {
         quint16 address;
         //manage interrupts
-        if (m_Count != 0 && m_Context->m_IME && bus->GetData() != 0)
+        if (m_Count != 0 && m_Context->GetImeFlag() && bus->GetData() != 0)
         {
             for (int mask = 0x01, idx = 0; idx < INTERRUPT_NUM; idx ++, mask <<= idx)
             {
@@ -37,7 +37,7 @@ void GBCpuState_Fetch::Update(GBBus* bus)
         }
         else
         {
-            address = m_Context->m_PC++;
+            address = m_Context->GetPcAndIncrement();
         }
         bus->SetAddress(address);
         bus->RequestRead();

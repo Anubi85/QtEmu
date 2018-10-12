@@ -45,17 +45,9 @@ enum class CpuRegister
 
 //Forward class declarations
 class IGBCpuState;
-class GBCpuState_Fetch;
-class GBCpuState_Decode;
-class GBCpuState_Execute;
-class GBCpuState_InterruptCheck;
 
 class GBCpu : public GBComponent
 {
-    friend GBCpuState_Fetch;
-    friend GBCpuState_Decode;
-    friend GBCpuState_Execute;
-    friend GBCpuState_InterruptCheck;
 private:
     static GBInstruction s_InstructionTable[INSTRUCTIONS_NUM];
     static GBInstruction s_CBInstructionTable[INSTRUCTIONS_NUM];
@@ -72,7 +64,6 @@ private:
     bool m_IME;
     IGBCpuState* m_State;
 
-    void SetState(IGBCpuState* newState);
     void SetFlag(Flag flagMask, bool value);
     bool GetFlag(Flag flagMask) { return (m_Registers.Single[*CpuRegister::F] & *flagMask) != 0; }
     quint8 GetHighNibble(quint8 val) { return (val & 0xF0) >> 4; }
@@ -111,6 +102,12 @@ public:
     ~GBCpu() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
+    void SetState(IGBCpuState* newState);
+    bool GetImeFlag() { return m_IME; }
+    quint16 GetPcAndIncrement() { return m_PC++; }
+
+    static GBInstruction* GetInstructionTable() { return s_InstructionTable; }
+    static GBInstruction* GetCBInstructionTable() { return s_CBInstructionTable; }
 };
 
 #endif // GBCPU_H
