@@ -15,7 +15,7 @@ void GBCpuState_Execute::Update(GBBus* bus)
 {
     if (m_Count-- == 0)
     {
-        if ((m_Context->*m_Instruction)(m_InstructionContext, bus))
+		if (m_Context->ExecuteOpCode(m_Instruction, m_InstructionContext, bus))
         {
             delete m_InstructionContext;
             m_Context->SetState(new GBCpuState_InterruptCheck(m_Context));

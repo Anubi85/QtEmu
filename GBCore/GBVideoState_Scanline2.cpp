@@ -1,8 +1,8 @@
-#include "GBVideo.h"
+#include "IGBVideoStateContext.h"
 #include "GBVideoState_Scanline2.h"
 #include "GBVideoState_HBlank.h"
 
-GBVideoState_Scanline2::GBVideoState_Scanline2(GBVideo* context) :
+GBVideoState_Scanline2::GBVideoState_Scanline2(IGBVideoStateContext* context) :
     IGBVideoState(context)
 {
     m_Count = -6; //first 6 cycles are dummy cycles!

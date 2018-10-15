@@ -6,7 +6,7 @@
 class GBVideoState_Scanline1 : public IGBVideoState
 {
 public:
-    GBVideoState_Scanline1(GBVideo* context);
+	GBVideoState_Scanline1(IGBVideoStateContext* context);
     void Tick(GBBus* bus) override;
     VideoState GetStateID() override { return VideoState::Scanline1; }
 };

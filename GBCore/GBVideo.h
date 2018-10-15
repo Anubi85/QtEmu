@@ -4,17 +4,12 @@
 #include <QSemaphore>
 #include "GBComponent.h"
 #include "GBUtils.h"
+#include "IGBVideoStateContext.h"
 
 #define VIDEO_REG_SIZE 0x000C
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
 #define VIDEO_RAM_SIZE 0x2000
 #define VIDEO_RAM_ADDRESS_OFFSET 0x8000
-#define VIDEO_MAX_Y_LINE_COUNT 154
-#define VIDEO_MAX_HBLANK 144
-#define VIDEO_LINE_CYCLE_COUNT 456
-
-#define SCREEN_WIDTH  160
-#define SCREEN_HEIGHT 144
 
 enum class VideoRegister
 {
@@ -28,7 +23,7 @@ enum class VideoRegister
 class IGBVideoState;
 enum class VideoState;
 
-class GBVideo : public GBComponent
+class GBVideo : IGBVideoStateContext, public GBComponent
 {
 private:
     GBBus* m_InternalBus;
@@ -47,6 +42,12 @@ private:
     void WriteVideoRAM(GBBus* bus);
     void ReadVideoRegister(GBBus* bus);
     void WriteVideoRegister(GBBus* bus);
+	quint32 PerformCycle() override { return ++m_Cycles; }
+	void SetState(IGBVideoState* newState) override;
+	bool IsDisplayEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
+	void ResetCycles() override { m_Cycles = 0; }
+	void IncreaseYLineCount() override { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
+	quint8 GetYLineCount() override { return m_Registers[*VideoRegister::LY]; }
 public:
     GBVideo();
     ~GBVideo() override;
@@ -54,12 +55,6 @@ public:
     void Tick(GBBus* bus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
     quint32* GetFrame();
-    bool IsDisplayEnabled() { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
-    quint32 PerformCycle() { return ++m_Cycles; }
-    void ResetCycles() { m_Cycles = 0; }
-    quint8 GetYLineCount() { return m_Registers[*VideoRegister::LY]; }
-    void IncreaseYLineCount() { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
-    void SetState(IGBVideoState* newState);
 };
 
 #endif // GBLCDDISPLAY_H

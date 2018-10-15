@@ -6,7 +6,7 @@
 class GBVideoState_Suspended : public IGBVideoState
 {
 public:
-    GBVideoState_Suspended(GBVideo* context);
+	GBVideoState_Suspended(IGBVideoStateContext* context);
     void Tick(GBBus* bus) override;
     VideoState GetStateID() override { return VideoState::Suspended; }
 };

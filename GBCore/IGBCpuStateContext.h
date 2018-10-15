@@ -16,6 +16,7 @@ public:
     virtual quint16 GetPcAndIncrement() = 0;
     virtual GBInstruction* GetInstructionTable() = 0;
     virtual GBInstruction* GetCBInstructionTable() = 0;
+	virtual bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) = 0;
 };
 
 #endif // IGBCPUSTATECONTEXT_H

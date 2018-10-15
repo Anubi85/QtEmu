@@ -30,18 +30,18 @@ enum class Condition
 
 enum class CpuRegister
 {
-         B = 0x00,
-         C = 0x01,
-         D = 0x02,
-         E = 0x03,
-         H = 0x04,
-         L = 0x05,
-         F = 0x06,
-         A = 0x07,
-        BC = 0x00,
-        DE = 0x01,
-        HL = 0x02,
-        AF = 0x03,
+	 B = 0x00,
+	 C = 0x01,
+	 D = 0x02,
+	 E = 0x03,
+	 H = 0x04,
+	 L = 0x05,
+	 F = 0x06,
+	 A = 0x07,
+	BC = 0x00,
+	DE = 0x01,
+	HL = 0x02,
+	AF = 0x03,
 };
 
 class IGBCpuState;
@@ -71,6 +71,12 @@ private:
     quint8 ByteFromNibbles(quint8 high, quint8 low) { return static_cast<quint8>(high << 4) | (low & 0x0F); }
     bool HasCarry(quint8 nibble) { return (nibble & 0x10) != 0; }
     quint8 AddSub(quint8 value1, quint8 value2, bool isSub);
+	void SetState(IGBCpuState* newState) override;
+	bool GetImeFlag() override { return m_IME; }
+	quint16 GetPcAndIncrement() override { return m_PC++; }
+	GBInstruction* GetInstructionTable() override { return s_InstructionTable; }
+	GBInstruction* GetCBInstructionTable() override { return s_CBInstructionTable; }
+	bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) override { return (this->*inst)(ctx, bus); }
 
     //instructions
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
@@ -102,11 +108,6 @@ public:
     ~GBCpu() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
-    void SetState(IGBCpuState* newState) override;
-    bool GetImeFlag() override { return m_IME; }
-    quint16 GetPcAndIncrement() override { return m_PC++; }
-    GBInstruction* GetInstructionTable() override { return s_InstructionTable; }
-    GBInstruction* GetCBInstructionTable() override { return s_CBInstructionTable; }
 };
 
 #endif // GBCPU_H

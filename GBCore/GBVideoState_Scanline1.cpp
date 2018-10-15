@@ -1,8 +1,8 @@
-#include "GBVideo.h"
+#include "IGBVideoStateContext.h"
 #include "GBVideoState_Scanline1.h"
 #include "GBVideoState_Scanline2.h"
 
-GBVideoState_Scanline1::GBVideoState_Scanline1(GBVideo* context) :
+GBVideoState_Scanline1::GBVideoState_Scanline1(IGBVideoStateContext* context) :
     IGBVideoState(context)
 {
 

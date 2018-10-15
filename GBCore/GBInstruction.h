@@ -3,8 +3,8 @@
 
 class GBInstructionContext;
 class GBBus;
-class IGBCpuStateContext;
+class GBCpu;
 
-typedef bool (IGBCpuStateContext::*GBInstruction)(GBInstructionContext*, GBBus*);
+typedef bool (GBCpu::*GBInstruction)(GBInstructionContext*, GBBus*);
 
 #endif // GBINSTRUCTION_H

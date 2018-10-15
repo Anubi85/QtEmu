@@ -3,10 +3,12 @@
 
 #include "IGBVideoState.h"
 
+#define VIDEO_MAX_HBLANK 144
+
 class GBVideoState_HBlank : public IGBVideoState
 {
 public:
-    GBVideoState_HBlank(GBVideo* context);
+	GBVideoState_HBlank(IGBVideoStateContext* context);
     void Tick(GBBus* bus) override;
     VideoState GetStateID() override { return VideoState::HBlank; }
 };

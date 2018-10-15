@@ -10,14 +10,14 @@ enum class VideoState
     Suspended
 };
 
-class GBVideo;
+class IGBVideoStateContext;
 class GBBus;
 
 class IGBVideoState
 {
 protected:
-    GBVideo* m_Context;
-    IGBVideoState(GBVideo* context);
+	IGBVideoStateContext* m_Context;
+	IGBVideoState(IGBVideoStateContext* context);
 public:
     virtual ~IGBVideoState();
     virtual void Tick(GBBus* bus) = 0;

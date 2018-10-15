@@ -53,7 +53,8 @@ SOURCES += \
     GBVideoState_Scanline2.cpp \
     GBVideoState_HBlank.cpp \
     GBVideoState_VBlank.cpp \
-    IGBCpuStateContext.cpp
+    IGBCpuStateContext.cpp \
+    IGBVideoStateContext.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -83,7 +84,8 @@ HEADERS += \
     GBVideoState_Scanline2.h \
     GBVideoState_HBlank.h \
     GBVideoState_VBlank.h \
-    IGBCpuStateContext.h
+    IGBCpuStateContext.h \
+    IGBVideoStateContext.h
 
 unix {
     target.path = /usr/lib
