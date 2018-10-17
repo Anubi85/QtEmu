@@ -1,6 +1,6 @@
 #include "IGBVideoState.h"
 
-IGBVideoState::IGBVideoState(GBVideo* context)
+IGBVideoState::IGBVideoState(IGBVideoStateContext* context)
 {
     m_Context = context;
 }

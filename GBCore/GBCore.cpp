@@ -6,6 +6,7 @@
 #include "GBAudio.h"
 #include "GBCartridge.h"
 #include "GBInternalRam.h"
+#include "GBUtils.h"
 
 IEmulatorCore* GetCore()
 {
@@ -15,7 +16,7 @@ IEmulatorCore* GetCore()
 GBCore::GBCore()
 {
     m_Bus = new GBBus();
-    for (int comp = 0; comp < *Component::Total; comp++)
+    for (int comp = 0; comp < COMPONENT_NUM; comp++)
     {
         m_Components[comp] = nullptr;
     }
@@ -23,7 +24,7 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-    for (int comp = 0; comp < *Component::Total; comp++)
+    for (int comp = 0; comp < COMPONENT_NUM; comp++)
     {
         delete m_Components[comp];
     }
@@ -48,7 +49,7 @@ void GBCore::Exec()
     }
     else
     {
-        for (int comp = 0; comp < *Component::Total; comp++)
+        for (int comp = 0; comp < COMPONENT_NUM; comp++)
         {
             if (m_Components[comp] != nullptr)
             {
@@ -61,7 +62,7 @@ void GBCore::Exec()
 bool GBCore::HasError()
 {
     bool hasError = m_Error != Error::Ok;
-    for (int comp = 0; comp < *Component::Total; comp++)
+    for (int comp = 0; comp < COMPONENT_NUM; comp++)
     {
         if (m_Components[comp] != nullptr)
         {
@@ -85,7 +86,7 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 {
     m_Bus->Clear();
     bool res = true;
-    for (int comp = 0; comp < *Component::Total; comp++)
+    for (int comp = 0; comp < COMPONENT_NUM; comp++)
     {
         delete m_Components[comp];
         switch (static_cast<Component>(comp))

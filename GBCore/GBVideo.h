@@ -10,6 +10,8 @@
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
 #define VIDEO_RAM_SIZE 0x2000
 #define VIDEO_RAM_ADDRESS_OFFSET 0x8000
+#define PALETTE_NUM 9
+#define PALETTE_SIZE 4
 
 enum class VideoRegister
 {
@@ -21,12 +23,27 @@ enum class VideoRegister
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
 };
 
+enum class Palette
+{
+    Monochrome,
+    RedLight,
+    RedDark,
+    YellowLight,
+    YellowDark,
+    GreenLight,
+    GreenDark,
+    BlueLight,
+    BlueDark,
+};
+
 class IGBVideoState;
 enum class VideoState;
 
 class GBVideo : IGBVideoStateContext, public GBComponent
 {
 private:
+    static quint32 s_Palettes[PALETTE_NUM][PALETTE_SIZE];
+
     GBBus* m_InternalBus;
     IGBVideoState* m_State;
     quint8 m_Registers[VIDEO_REG_SIZE];
@@ -50,8 +67,11 @@ private:
 	void IncreaseYLineCount() override { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
 	quint8 GetYLineCount() override { return m_Registers[*VideoRegister::LY]; }
     bool GetBackgroundTileMap() override { return (m_Registers[*VideoRegister::LCDC] & 0x08) != 0; }
+    bool GetBackgroundTileID() override { return (m_Registers[*VideoRegister::LCDC] & 0x10) != 0; }
     quint8 GetYScroll() override { return m_Registers[*VideoRegister::SCY]; }
     quint8 GetXScroll() override { return m_Registers[*VideoRegister::SCX]; }
+    void SetPixel(quint8 pixelIdx, quint8 pixelValue) override;
+    void FrameReady() override { m_FrameSemaphore.release(); }
 public:
     GBVideo();
     ~GBVideo() override;

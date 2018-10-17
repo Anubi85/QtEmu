@@ -19,8 +19,9 @@ void GBVideoState_VBlank::Tick(GBBus* bus)
     {
         m_Context->ResetCycles();
         m_Context->IncreaseYLineCount();
-        if (m_Context->GetYLineCount() == VIDEO_MAX_Y_LINE_COUNT)
+        if (m_Context->GetYLineCount() == 0)
         {
+            m_Context->FrameReady();
             m_Context->SetState(new GBVideoState_Scanline1(m_Context));
         }
     }

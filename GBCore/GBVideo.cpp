@@ -172,3 +172,25 @@ quint32* GBVideo::GetFrame()
     m_FrameSemaphore.acquire();
     return m_ScreenBuffer;
 }
+
+void GBVideo::SetPixel(quint8 pixelIdx, quint8 pixelValue)
+{
+    quint8 paletteColor = 0;
+    //Get palette color
+    switch (pixelValue)
+    {
+    case 0b00:
+        paletteColor = m_Registers[*VideoRegister::BGP] & 0x03;
+        break;
+    case 0b01:
+        paletteColor = (m_Registers[*VideoRegister::BGP] & 0x0C) >> 2;
+        break;
+    case 0b10:
+        paletteColor = (m_Registers[*VideoRegister::BGP] & 0x30) >> 4;
+        break;
+    case 0b11:
+        paletteColor = (m_Registers[*VideoRegister::BGP] & 0xC0) >> 6;
+        break;
+    }
+    m_ScreenBuffer[m_Registers[*VideoRegister::LY] * SCREEN_WIDTH + pixelIdx] = s_Palettes[*Palette::Monochrome][paletteColor];
+}

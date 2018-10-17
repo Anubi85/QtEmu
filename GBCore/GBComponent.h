@@ -4,6 +4,8 @@
 #include <QtGlobal>
 #include <QString>
 
+#define COMPONENT_NUM 6
+
 enum class Error : quint16
 {
     Ok = 0x0000,
@@ -27,7 +29,6 @@ enum class Component
     Video,
     Audio,
     InternalRAM,
-    Total
 };
 
 class GBBus;

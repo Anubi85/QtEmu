@@ -54,7 +54,8 @@ SOURCES += \
     GBVideoState_HBlank.cpp \
     GBVideoState_VBlank.cpp \
     IGBCpuStateContext.cpp \
-    IGBVideoStateContext.cpp
+    IGBVideoStateContext.cpp \
+    GBVideo_s.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
