@@ -1,12 +1,17 @@
 #include "IGBVideoStateContext.h"
 #include "GBVideoState_Scanline2.h"
 #include "GBVideoState_HBlank.h"
+#include "GBBus.h"
 
 GBVideoState_Scanline2::GBVideoState_Scanline2(IGBVideoStateContext* context) :
     IGBVideoState(context)
 {
     m_Count = -6; //first 6 cycles are dummy cycles!
     m_PixelCount = 0;
+    m_BaseBackgroundTileMapAddress = 0x9800;
+    m_BaseBackgroundTileMapAddress |= m_Context->GetBackgroundTileMap() << 11;
+    m_BaseBackgroundTileMapAddress |= ((m_Context->GetYLineCount() + m_Context->GetYScroll()) & 0xF8) << 2;
+    m_XScroll = m_Context->GetXScroll() >> 3;
 }
 
 void GBVideoState_Scanline2::Tick(GBBus* bus)
@@ -15,7 +20,9 @@ void GBVideoState_Scanline2::Tick(GBBus* bus)
     {
     case -6:
     case 0:
-        //put read request to buffer
+        //build the address for the first tyle byte
+        bus->SetAddress(GetBackgroundTileAddress());
+        bus->RequestRead();
         break;
     case -5:
     case 1:

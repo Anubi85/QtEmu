@@ -100,6 +100,10 @@ void GBVideo::ReadVideoRegister(GBBus* bus)
             bus->SetData(m_Registers[*VideoRegister::SCY]);
             bus->ReadReqAck();
             break;
+        case VideoRegister::SCX:
+            bus->SetData(m_Registers[*VideoRegister::SCX]);
+            bus->ReadReqAck();
+            break;
         case VideoRegister::LY:
             bus->SetData(m_Registers[*VideoRegister::LY]);
             bus->ReadReqAck();
@@ -129,6 +133,10 @@ void GBVideo::WriteVideoRegister(GBBus* bus)
             break;
         case VideoRegister::SCY:
             m_Registers[*VideoRegister::SCY] = bus->GetData();
+            bus->WriteReqAck();
+            break;
+        case VideoRegister::SCX:
+            m_Registers[*VideoRegister::SCX] = bus->GetData();
             bus->WriteReqAck();
             break;
         case VideoRegister::BGP:

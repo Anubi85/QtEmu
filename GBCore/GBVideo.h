@@ -16,6 +16,7 @@ enum class VideoRegister
     LCDC = 0xFF40 - VIDEO_REG_ADDRESS_OFFSET,
     STAT = 0xFF41 - VIDEO_REG_ADDRESS_OFFSET,
     SCY = 0xFF42 - VIDEO_REG_ADDRESS_OFFSET,
+    SCX = 0xFF43 - VIDEO_REG_ADDRESS_OFFSET,
     LY = 0xFF44 - VIDEO_REG_ADDRESS_OFFSET,
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
 };
@@ -48,6 +49,9 @@ private:
 	void ResetCycles() override { m_Cycles = 0; }
 	void IncreaseYLineCount() override { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
 	quint8 GetYLineCount() override { return m_Registers[*VideoRegister::LY]; }
+    bool GetBackgroundTileMap() override { return (m_Registers[*VideoRegister::LCDC] & 0x08) != 0; }
+    quint8 GetYScroll() override { return m_Registers[*VideoRegister::SCY]; }
+    quint8 GetXScroll() override { return m_Registers[*VideoRegister::SCX]; }
 public:
     GBVideo();
     ~GBVideo() override;

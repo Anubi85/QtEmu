@@ -20,6 +20,9 @@ public:
 	virtual void ResetCycles() = 0;
 	virtual void IncreaseYLineCount() = 0;
 	virtual quint8 GetYLineCount() = 0;
+    virtual bool GetBackgroundTileMap() = 0;
+    virtual quint8 GetYScroll() = 0;
+    virtual quint8 GetXScroll() = 0;
 };
 
 #endif // IGBVIDEOSTATECONTEXT_H
