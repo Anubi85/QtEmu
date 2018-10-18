@@ -550,6 +550,7 @@ bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
         }
         else
         {
+            context->SetCarry(m_Registers.Single[context->GetY() + 1] == 0xFF);
             m_Registers.Single[context->GetY() + 1]++;
         }
         context->AdvanceStep();
@@ -929,7 +930,7 @@ bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
         }
         else
         {
-            m_Registers.Single[context->GetZ()] = (m_Registers.Single[context->GetZ()] << 1) & 0xFF;
+            m_Registers.Single[context->GetZ()] = ((m_Registers.Single[context->GetZ()] << 1) & 0xFF) | GetFlag(Flag::C);
             SetFlag(Flag::Z, m_Registers.Single[context->GetZ()] == 0);
             SetFlag(Flag::N, false);
             SetFlag(Flag::H, false);
@@ -937,7 +938,7 @@ bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
             return true;
         }
     case 2:
-        bus->SetData((context->Get8BitData() << 1) & 0xFF);
+        bus->SetData(((context->Get8BitData() << 1) & 0xFF) | GetFlag(Flag::C));
         SetFlag(Flag::Z, bus->GetData() == 0);
         SetFlag(Flag::N, false);
         SetFlag(Flag::H, false);
@@ -958,11 +959,12 @@ bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
+        context->SetCarry((m_Registers.Single[*CpuRegister::A] & 0x80) != 0);
+        m_Registers.Single[*CpuRegister::A] = ((m_Registers.Single[*CpuRegister::A] << 1) & 0xFF) | GetFlag(Flag::C);
+        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
         SetFlag(Flag::N, false);
         SetFlag(Flag::H, false);
-        SetFlag(Flag::C, (m_Registers.Single[*CpuRegister::A] & 0x80) != 0);
-        m_Registers.Single[*CpuRegister::A] = (m_Registers.Single[*CpuRegister::A] << 1) & 0xFF;
-        SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+        SetFlag(Flag::C, context->GetCarry());
         return true;
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
