@@ -14,6 +14,7 @@ GBVideoState_Scanline2::GBVideoState_Scanline2(IGBVideoStateContext* context) :
     m_XScroll = m_Context->GetXScroll() >> 3;
     m_FineXScroll = m_Context->GetXScroll() & 0x07;
     m_FineYScroll = m_Context->GetYScroll() & 0x07;
+    m_Context->VideoRAMDump();
 }
 
 quint16 GBVideoState_Scanline2::GetBackgroundTileDataAddress(quint8 tileID)
@@ -74,10 +75,14 @@ void GBVideoState_Scanline2::Tick(GBBus* bus)
     }
     if (++m_Count >= 0)
     {
-        if (--m_FineXScroll <= 0)
+        if (m_FineXScroll == 0)
         {
             //write pixel to screen buffer
             m_Context->SetPixel(m_PixelCount++, 2 * (m_TileByte2 & 0x01) + (m_TileByte1 & 0x01));
+        }
+        else
+        {
+            m_FineXScroll--;
         }
     }
     m_TileByte1 >>= 1;

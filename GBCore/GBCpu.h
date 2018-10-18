@@ -71,6 +71,7 @@ private:
     quint8 ByteFromNibbles(quint8 high, quint8 low) { return static_cast<quint8>(high << 4) | (low & 0x0F); }
     bool HasCarry(quint8 nibble) { return (nibble & 0x10) != 0; }
     quint8 AddSub(quint8 value1, quint8 value2, bool isSub);
+    //IGBCpuStateContext
 	void SetState(IGBCpuState* newState) override;
 	bool GetImeFlag() override { return m_IME; }
 	quint16 GetPcAndIncrement() override { return m_PC++; }

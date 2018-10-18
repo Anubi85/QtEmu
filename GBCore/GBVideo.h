@@ -60,6 +60,7 @@ private:
     void WriteVideoRAM(GBBus* bus);
     void ReadVideoRegister(GBBus* bus);
     void WriteVideoRegister(GBBus* bus);
+    //IGBVideoStateContext
 	quint32 PerformCycle() override { return ++m_Cycles; }
 	void SetState(IGBVideoState* newState) override;
 	bool IsDisplayEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
@@ -72,6 +73,7 @@ private:
     quint8 GetXScroll() override { return m_Registers[*VideoRegister::SCX]; }
     void SetPixel(quint8 pixelIdx, quint8 pixelValue) override;
     void FrameReady() override { m_FrameSemaphore.release(); }
+    void VideoRAMDump() override;
 public:
     GBVideo();
     ~GBVideo() override;

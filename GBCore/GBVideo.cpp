@@ -3,6 +3,7 @@
 #include "GBBus.h"
 #include "GBUtils.h"
 #include "GBVideoState_Suspended.h"
+#include <QFile>
 
 GBVideo::GBVideo() :
     m_FrameSemaphore()
@@ -193,4 +194,12 @@ void GBVideo::SetPixel(quint8 pixelIdx, quint8 pixelValue)
         break;
     }
     m_ScreenBuffer[m_Registers[*VideoRegister::LY] * SCREEN_WIDTH + pixelIdx] = s_Palettes[*Palette::Monochrome][paletteColor];
+}
+
+void GBVideo::VideoRAMDump()
+{
+    QFile f("VRAM.dump");
+    f.open(QFile::WriteOnly);
+    f.write(reinterpret_cast<char*>(m_VideoRAM), VIDEO_RAM_SIZE);
+    f.close();
 }
