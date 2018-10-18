@@ -26,7 +26,6 @@ public:
     virtual quint8 GetXScroll() = 0;
     virtual void SetPixel(quint8 pixelIdx, quint8 pixelValue) = 0;
     virtual void FrameReady() = 0;
-    virtual void VideoRAMDump() = 0;
 };
 
 #endif // IGBVIDEOSTATECONTEXT_H
