@@ -2,6 +2,7 @@
 #include "GBBus.h"
 #include "GBCpu.h"
 #include "GBBios.h"
+#include "GBRam.h"
 #include "GBVideo.h"
 #include "GBAudio.h"
 #include "GBCartridge.h"
@@ -110,6 +111,9 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
             }
             break;
         }
+        case Component::RAM:
+            m_Components[comp] = new GBRam();
+            break;
         case Component::Cartridge:
         {
             GBCartridge* cartridge = new GBCartridge();

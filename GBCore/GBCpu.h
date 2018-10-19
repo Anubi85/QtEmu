@@ -80,6 +80,7 @@ private:
 	bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) override { return (this->*inst)(ctx, bus); }
 
     //instructions
+    bool NOP(GBInstructionContext* context, GBBus* bus);
     bool LD_r_n(GBInstructionContext* context, GBBus* bus);
     bool LD_r1_r2(GBInstructionContext* context, GBBus* bus);
     bool LD_addr_A(GBInstructionContext* context, GBBus* bus);
@@ -101,6 +102,7 @@ private:
     bool CALL(GBInstructionContext* context, GBBus* bus);
     bool RET(GBInstructionContext* context, GBBus* bus);
     bool BIT(GBInstructionContext* context, GBBus* bus);
+    bool JP(GBInstructionContext* context, GBBus* bus);
     bool JR(GBInstructionContext* context, GBBus* bus);
     bool RL(GBInstructionContext* context, GBBus* bus);
     bool RLA(GBInstructionContext* context, GBBus* bus);

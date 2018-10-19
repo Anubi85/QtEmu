@@ -3,7 +3,7 @@
 GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 {
     //Regular instruction set
-	nullptr,            //0x00
+    &GBCpu::NOP,        //0x00
 	&GBCpu::LD_rr_nn,   //0x01
 	&GBCpu::LD_addr_A,  //0x02
 	&GBCpu::INC_rr,     //0x03
@@ -197,15 +197,15 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::CP,         //0xBF
 	&GBCpu::RET,        //0xC0
 	&GBCpu::POP,        //0xC1
-	nullptr,            //0xC2
-	nullptr,            //0xC3
+    &GBCpu::JP,         //0xC2
+    &GBCpu::JP,         //0xC3
 	&GBCpu::CALL,       //0xC4
 	&GBCpu::PUSH,       //0xC5
 	&GBCpu::ADD,        //0xC6
 	nullptr,            //0xC7
 	&GBCpu::RET,        //0xC8
 	&GBCpu::RET,        //0xC9
-	nullptr,            //0xCA
+    &GBCpu::JP,         //0xCA
 	nullptr,            //0xCB
 	&GBCpu::CALL,       //0xCC
 	&GBCpu::CALL,       //0xCD
@@ -213,7 +213,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	nullptr,            //0xCF
 	&GBCpu::RET,        //0xD0
 	&GBCpu::POP,        //0xD1
-	nullptr,            //0xD2
+    &GBCpu::JP,         //0xD2
 	nullptr,            //0xD3
 	&GBCpu::CALL,       //0xD4
 	&GBCpu::PUSH,       //0xD5
@@ -221,7 +221,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	nullptr,            //0xD7
 	&GBCpu::RET,        //0xD8
 	nullptr,            //0xD9
-	nullptr,            //0xDA
+    &GBCpu::JP,         //0xDA
 	nullptr,            //0xDB
 	&GBCpu::CALL,       //0xDC
 	nullptr,            //0xDD

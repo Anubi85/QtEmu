@@ -69,6 +69,13 @@ quint8 GBCpu::AddSub(quint8 value1, quint8 value2, bool isSub)
     return res;
 }
 
+bool GBCpu::NOP(GBInstructionContext* context, GBBus* bus)
+{
+    Q_UNUSED(context)
+    Q_UNUSED(bus)
+    return true;
+}
+
 bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
 {
     switch (context->GetStep())
@@ -857,6 +864,56 @@ bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
         SetFlag(Flag::N, false);
         SetFlag(Flag::H, true);
         return true;
+    }
+    m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+    return true;
+}
+
+bool GBCpu::JP(GBInstructionContext* context, GBBus* bus)
+{
+    switch (context->GetStep())
+    {
+    case 0:
+        //read the address from memory
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 1:
+        context->SetLSB(bus->GetData());
+        //read the address from memory
+        bus->SetAddress(m_PC++);
+        bus->RequestRead();
+        context->AdvanceStep();
+        return false;
+    case 2:
+        context->SetMSB(bus->GetData());
+        //check if conditional jump
+        bool jump = true;
+        if (!context->GetBit(Bit::Bit0))
+        {
+            switch (static_cast<Condition>(context->GetQ()))
+            {
+            case Condition::NZ:
+                jump = !GetFlag(Flag::Z);
+                break;
+            case Condition::Z:
+                jump = GetFlag(Flag::Z);
+                break;
+            case Condition::NC:
+                jump = !GetFlag(Flag::C);
+                break;
+            case Condition::C:
+                jump = GetFlag(Flag::C);
+                break;
+            }
+        }
+        if (jump)
+        {
+            m_PC = context->Get16BitData();
+        }
+        return true;
+
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;

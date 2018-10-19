@@ -71,5 +71,6 @@ void GBBios::Tick(GBBus* bus)
     if (bus->IsWriteReqPending() && (bus->GetAddress() == BIOS_UNMAP))
     {
         m_IsBiosMapped = (bus->GetData() & 0x01) == 0;
+        bus->WriteReqAck();
     }
 }

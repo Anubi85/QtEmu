@@ -4,7 +4,7 @@
 #include <QtGlobal>
 #include <QString>
 
-#define COMPONENT_NUM 6
+#define COMPONENT_NUM 7
 
 enum class Error : quint16
 {
@@ -25,6 +25,7 @@ enum class Component
 {
     CPU,
     BIOS,
+    RAM,
     Cartridge,
     Video,
     Audio,
