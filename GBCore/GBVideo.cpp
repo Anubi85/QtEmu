@@ -193,5 +193,5 @@ void GBVideo::SetPixel(quint8 pixelIdx, quint8 pixelValue)
         paletteColor = (m_Registers[*VideoRegister::BGP] & 0xC0) >> 6;
         break;
     }
-    m_ScreenBuffer[m_Registers[*VideoRegister::LY] * SCREEN_WIDTH + pixelIdx] = s_Palettes[*Palette::Monochrome][paletteColor];
+    m_ScreenBuffer[m_Registers[*VideoRegister::LY] * SCREEN_WIDTH + pixelIdx] = s_Palettes[*Palette::MonochromeInverted][paletteColor];
 }

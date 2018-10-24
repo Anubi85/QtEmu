@@ -10,7 +10,7 @@
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
 #define VIDEO_RAM_SIZE 0x2000
 #define VIDEO_RAM_ADDRESS_OFFSET 0x8000
-#define PALETTE_NUM 9
+#define PALETTE_NUM 10
 #define PALETTE_SIZE 4
 
 enum class VideoRegister
@@ -26,6 +26,7 @@ enum class VideoRegister
 enum class Palette
 {
     Monochrome,
+    MonochromeInverted,
     RedLight,
     RedDark,
     YellowLight,

@@ -8,8 +8,9 @@ class IGBCpuState;
 
 class IGBCpuStateContext
 {
-public:
+protected:
     IGBCpuStateContext();
+public:
     virtual ~IGBCpuStateContext();
     virtual void SetState(IGBCpuState* newState) = 0;
     virtual bool GetImeFlag() = 0;

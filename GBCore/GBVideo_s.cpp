@@ -9,6 +9,13 @@ quint32 GBVideo::s_Palettes[PALETTE_NUM][PALETTE_SIZE] =
         0xFF555555, //Color 0b10 [R: 85 G: 85 B: 85]
         0xFF000000, //Color 0b11 [R:  0 G:  0 B:  0]
     },
+    //Monochrome Inverted palette
+    {
+        0xFF000000, //Color 0b11 [R:  0 G:  0 B:  0]
+        0xFF555555, //Color 0b10 [R: 85 G: 85 B: 85]
+        0xFFAAAAAA, //Color 0b01 [R:170 G:170 B:170]
+        0xFFFFFFFF, //Color 0b00 [R:255 G:255 B:255]
+    },
     //Red Light palette
     {
         0xFFFFFFFF, //Color 0b00 [R:255 G:255 B:255]

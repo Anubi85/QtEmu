@@ -11,8 +11,9 @@ class IGBVideoState;
 
 class IGBVideoStateContext
 {
-public:
+protected:
 	IGBVideoStateContext();
+public:
 	virtual ~IGBVideoStateContext();
 	virtual quint32 PerformCycle() = 0;
 	virtual void SetState(IGBVideoState* newState) = 0;

@@ -56,7 +56,11 @@ SOURCES += \
     IGBCpuStateContext.cpp \
     IGBVideoStateContext.cpp \
     GBVideo_s.cpp \
-    GBRam.cpp
+    GBRam.cpp \
+    GBAudioChannel_SweepSquare.cpp \
+    GBAudioChannelBase.cpp \
+    GBAudioChannel_Square.cpp \
+    GBAudioChannel_Square_s.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -88,7 +92,10 @@ HEADERS += \
     GBVideoState_VBlank.h \
     IGBCpuStateContext.h \
     IGBVideoStateContext.h \
-    GBRam.h
+    GBRam.h \
+    GBAudioChannel_SweepSquare.h \
+    GBAudioChannelBase.h \
+    GBAudioChannel_Square.h
 
 unix {
     target.path = /usr/lib
