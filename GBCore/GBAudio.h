@@ -3,6 +3,7 @@
 
 #include "GBComponent.h"
 #include "GBUtils.h"
+#include "GBAudioChannel_Square.h"
 
 #define AUDIO_MEMORY_SIZE 0x2F
 #define AUDIO_ADDRESS_OFFSET 0xFF10
@@ -21,6 +22,7 @@ enum class AudioRegister
 class GBAudio : public GBComponent
 {
 private:
+    GBAudioChannel_Square m_AudioChannel2;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
     bool IsAddressInRange(quint16 address) { return address >= AUDIO_ADDRESS_OFFSET && address < AUDIO_ADDRESS_OFFSET + AUDIO_MEMORY_SIZE; }

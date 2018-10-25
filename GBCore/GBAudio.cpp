@@ -10,6 +10,7 @@ void GBAudio::Reset()
 {
     GBComponent::Reset();
     memset(m_Registers, 0, AUDIO_MEMORY_SIZE);
+    m_AudioChannel2.Reset();
 }
 
 void GBAudio::Tick(GBBus* bus)
@@ -81,5 +82,12 @@ void GBAudio::Tick(GBBus* bus)
         }
         m_Registers[*reg] = bus->GetData() & mask;
         bus->WriteReqAck();
+    }
+    if (IsAudioEnabled())
+    {
+        m_AudioChannel2.Tick(bus);
+        //mix audio channels
+        //generate right and left output
+        //apply master volume
     }
 }

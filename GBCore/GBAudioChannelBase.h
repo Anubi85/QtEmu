@@ -5,6 +5,7 @@
 #include "GBUtils.h"
 
 #define AUDIO_CHANNEL_REG_SIZE 5
+#define AUDIO_CHANNEL_FREQUENCY_RATIO 0x1FFF
 
 enum class AudioChannelRegister
 {
@@ -22,13 +23,18 @@ class GBAudioChannelBase
 private:
     const quint16 c_RegisterAddressOffset;
 
+    quint16 m_Cycles;
+
     bool IsAddressInRegisterRange(quint16 address) { return address >= c_RegisterAddressOffset && address < (c_RegisterAddressOffset + AUDIO_CHANNEL_REG_SIZE); }
 protected:
     bool m_Enabled;
     bool m_LengthCounterEnabled;
     quint16 m_Frequency;
-    quint16 m_FrequencyTimer;
+    quint16 m_FrequencyCounter;
     quint8 m_LengthCount;
+    quint8 m_AudioCycles;
+    quint8 m_BaseAudioSample;
+    quint8 m_Output;
 
     GBAudioChannelBase(quint16 addressOffset);
     virtual void ProcessReadRequest(GBBus* bus) { Q_UNUSED(bus) }
@@ -48,6 +54,7 @@ public:
     virtual ~GBAudioChannelBase();
     void Tick(GBBus* bus);
     virtual void Reset();
+    quint8 GetOutput() { return m_Output; }
 };
 
 #endif // GBAUDIOCHANNELBASE_H

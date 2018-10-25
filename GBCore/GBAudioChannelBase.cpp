@@ -14,7 +14,10 @@ void GBAudioChannelBase::Reset()
     m_Enabled = false;
     m_LengthCounterEnabled = false;
     m_Frequency = 0;
-    m_FrequencyTimer = 0;
+    m_FrequencyCounter = 0;
+    m_Cycles = 0;
+    m_AudioCycles = 0;
+    m_BaseAudioSample = 0;
 }
 
 void GBAudioChannelBase::Tick(GBBus* bus)
@@ -80,5 +83,10 @@ void GBAudioChannelBase::Tick(GBBus* bus)
         }
     }
     //process audio modules
-    ProcessModules();
+    ++m_Cycles &= AUDIO_CHANNEL_FREQUENCY_RATIO;
+    if (m_Cycles == 0)
+    {
+        ++m_AudioCycles &= 0x7;
+        ProcessModules();
+    }
 }
