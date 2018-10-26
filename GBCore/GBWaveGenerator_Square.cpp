@@ -22,7 +22,7 @@ void GBWaveGenerator_Square::Tick(bool performSweep)
 {
     if (performSweep)
     {
-        if (--m_SweepPeriodCounter == 0)
+        if ((m_SweepShift != 0) && ((m_SweepPeriod == 0) || (--m_SweepPeriodCounter == 0)))
         {
             m_SweepPeriodCounter = m_SweepPeriod;
             quint16 newFrequency = m_Frequency + static_cast<quint16>((m_SweepDecrease ? -1 : 1) * (m_Frequency >> m_SweepPeriod));
