@@ -13,11 +13,16 @@ private:
 
     quint8 m_SampleIdx;
     quint8 m_DutyIdx;
+    quint8 m_SweepPeriod;
+    quint8 m_SweepPeriodCounter;
+    quint8 m_SweepShift;
+    bool m_SweepDecrease;
 public:
     GBWaveGenerator_Square();
     void Reset() override;
-    void SetPeriod(quint16 frequency) override { m_Period = (2048 - frequency) * 4; }
+    void SetPeriod(quint16 frequency) override { m_Frequency = frequency; }
     void SetDutyCicle(quint8 dutyCycle) { m_DutyIdx = dutyCycle; }
+    void SetSweep(quint8 value);
     void Tick(bool performSweep) override;
 };
 
