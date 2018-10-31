@@ -5,6 +5,7 @@
 #include "GBUtils.h"
 #include "IGBAudioChannelContext.h"
 #include "GBAudioChannel.h"
+#include "GBAudioFrameSequencer.h"
 
 #define AUDIO_MEMORY_SIZE 0x2F
 #define AUDIO_ADDRESS_OFFSET 0xFF10
@@ -37,6 +38,7 @@ enum class AudioRegister
 class GBAudio : IGBAudioChannelContext, public GBComponent
 {
 private:
+    GBAudioFrameSequencer m_FrameSequencer;
     GBAudioChannel m_AudioChannel1;
     GBAudioChannel m_AudioChannel2;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];

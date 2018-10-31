@@ -119,8 +119,9 @@ void GBAudio::Tick(GBBus* bus)
     }
     if (IsAudioEnabled())
     {
-        m_AudioChannel1.Tick();
-        m_AudioChannel2.Tick();
+        m_FrameSequencer.Tick();
+        m_AudioChannel1.Tick(m_FrameSequencer.IsSweepTick());
+        m_AudioChannel2.Tick(m_FrameSequencer.IsSweepTick());
         //mix audio channels
         //generate right and left output
         //apply master volume

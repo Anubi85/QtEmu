@@ -22,9 +22,9 @@ void GBAudioChannel::Reset()
     m_WaveGenerator->Reset();
 }
 
-void GBAudioChannel::Tick()
+void GBAudioChannel::Tick(bool isSweepTick)
 {
-    if (m_FrequencySweeper != nullptr)
+    if ((m_FrequencySweeper != nullptr) && isSweepTick)
     {
         quint16 frequency = 0;
         m_FrequencySweeper->Tick(0x00, &frequency);

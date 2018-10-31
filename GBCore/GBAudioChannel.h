@@ -15,7 +15,7 @@ public:
     GBAudioChannel(IGBAudioChannelContext* context, GBFrequencySweeper* frequencySweeper, IGBWaveGenerator* waveGenerator);
     ~GBAudioChannel();
     void Reset();
-    void Tick();
+    void Tick(bool isSweepTick);
 };
 
 #endif // GBAUDIOCHANNEL_H

@@ -66,7 +66,8 @@ SOURCES += \
     GBWaveGenerator_Square_s.cpp \
     IGBAudioChannelContext.cpp \
     GBAudioChannel.cpp \
-    GBFrequencySweeper.cpp
+    GBFrequencySweeper.cpp \
+    GBAudioFrameSequencer.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -106,7 +107,8 @@ HEADERS += \
     GBWaveGenerator_Square.h \
     IGBAudioChannelContext.h \
     GBAudioChannel.h \
-    GBFrequencySweeper.h
+    GBFrequencySweeper.h \
+    GBAudioFrameSequencer.h
 
 unix {
     target.path = /usr/lib
