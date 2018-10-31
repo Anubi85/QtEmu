@@ -37,6 +37,7 @@ enum class AudioRegister
 class GBAudio : IGBAudioChannelContext, public GBComponent
 {
 private:
+    GBAudioChannel m_AudioChannel1;
     GBAudioChannel m_AudioChannel2;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
