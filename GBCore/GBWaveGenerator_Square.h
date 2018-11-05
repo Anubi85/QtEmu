@@ -1,6 +1,7 @@
 #ifndef GBWAVEGENERATOR_SQUARE_H
 #define GBWAVEGENERATOR_SQUARE_H
 
+#include "GBAudioCommonDefs.h"
 #include "IGBWaveGenerator.h"
 
 #define DUTY_CYCLES_NUM 4
@@ -12,18 +13,13 @@ private:
     static quint8 s_DutyCycles[DUTY_CYCLES_NUM][DUTY_CYCLES_SAMPLES_NUM];
 
     quint8 m_SampleIdx;
-    quint8 m_DutyIdx;
-    quint8 m_SweepPeriod;
-    quint8 m_SweepPeriodCounter;
-    quint8 m_SweepShift;
-    bool m_SweepDecrease;
+
+    quint16 GetFrequency() { return static_cast<quint16>((((m_Registers[AUDIO_CHANNEL_NR4_IDX]) << 8) & 0x03) | m_Registers[AUDIO_CHANNEL_NR3_IDX]); }
+    quint8 GetDutyCicle() { return (m_Registers[AUDIO_CHANNEL_NR1_IDX] >> 6) & 0x03; }
 public:
-    GBWaveGenerator_Square();
+    GBWaveGenerator_Square(quint8* registers);
     void Reset() override;
-    void SetPeriod(quint16 frequency) override { m_Frequency = frequency; }
-    void SetDutyCicle(quint8 dutyCycle) { m_DutyIdx = dutyCycle; }
-    void SetSweep(quint8 value);
-    void Tick(bool performSweep) override;
+    void Tick() override;
 };
 
 #endif // GBWAVEGENERATOR_SQUARE_H

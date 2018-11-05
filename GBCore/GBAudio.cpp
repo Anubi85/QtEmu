@@ -2,10 +2,11 @@
 #include "GBBus.h"
 #include "GBFrequencySweeper.h"
 #include "GBWaveGenerator_Square.h"
+#include "GBLengthCounter.h"
 
 GBAudio::GBAudio() :
-    m_AudioChannel1(this, new GBFrequencySweeper(), new GBWaveGenerator_Square()),
-    m_AudioChannel2(this, nullptr, new GBWaveGenerator_Square())
+    m_AudioChannel1(this, new GBFrequencySweeper(m_Registers), new GBWaveGenerator_Square(m_Registers), new GBLengthCounter(0x3F, m_Registers)),
+    m_AudioChannel2(this, nullptr, new GBWaveGenerator_Square(m_Registers + AUDIO_CHANNEL_REG_NUM), new GBLengthCounter(0x3F, m_Registers + AUDIO_CHANNEL_REG_NUM))
 {
     Reset();
 }
@@ -119,9 +120,8 @@ void GBAudio::Tick(GBBus* bus)
     }
     if (IsAudioEnabled())
     {
-        m_FrameSequencer.Tick();
-        m_AudioChannel1.Tick(m_FrameSequencer.IsSweepTick());
-        m_AudioChannel2.Tick(m_FrameSequencer.IsSweepTick());
+        m_AudioChannel1.Tick();
+        m_AudioChannel2.Tick();
         //mix audio channels
         //generate right and left output
         //apply master volume

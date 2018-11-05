@@ -67,7 +67,7 @@ SOURCES += \
     IGBAudioChannelContext.cpp \
     GBAudioChannel.cpp \
     GBFrequencySweeper.cpp \
-    GBAudioFrameSequencer.cpp
+    GBLengthCounter.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -108,7 +108,8 @@ HEADERS += \
     IGBAudioChannelContext.h \
     GBAudioChannel.h \
     GBFrequencySweeper.h \
-    GBAudioFrameSequencer.h
+    GBAudioCommonDefs.h \
+    GBLengthCounter.h
 
 unix {
     target.path = /usr/lib

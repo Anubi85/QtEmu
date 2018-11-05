@@ -2,32 +2,41 @@
 #include "IGBAudioChannelContext.h"
 #include "GBFrequencySweeper.h"
 #include "IGBWaveGenerator.h"
+#include "GBLengthCounter.h"
 
-GBAudioChannel::GBAudioChannel(IGBAudioChannelContext* context, GBFrequencySweeper* frequencySweeper, IGBWaveGenerator* waveGenerator)
+GBAudioChannel::GBAudioChannel(IGBAudioChannelContext* context, GBFrequencySweeper* frequencySweeper, IGBWaveGenerator* waveGenerator, GBLengthCounter* lengthCounter)
 {
     m_Context = context;
     m_FrequencySweeper = frequencySweeper;
     m_WaveGenerator = waveGenerator;
+    m_LengthCounter = lengthCounter;
 }
 
 GBAudioChannel::~GBAudioChannel()
 {
     delete m_FrequencySweeper;
     delete m_WaveGenerator;
+    delete  m_LengthCounter;
 }
 
 void GBAudioChannel::Reset()
 {
+    m_TickCounter = 0;
     m_FrequencySweeper->Reset();
     m_WaveGenerator->Reset();
+    m_LengthCounter->Reset();
 }
 
-void GBAudioChannel::Tick(bool isSweepTick)
+void GBAudioChannel::Tick()
 {
-    if ((m_FrequencySweeper != nullptr) && isSweepTick)
+    m_TickCounter++;
+    if ((m_FrequencySweeper != nullptr) && IsSweepTick())
     {
-        quint16 frequency = 0;
-        m_FrequencySweeper->Tick(0x00, &frequency);
+        m_FrequencySweeper->Tick();
     }
-    m_WaveGenerator->Tick(false);
+    m_WaveGenerator->Tick();
+    if (IsLengthCounterTick())
+    {
+        m_LengthCounter->Tick();
+    }
 }
