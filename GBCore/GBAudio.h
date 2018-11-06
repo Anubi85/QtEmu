@@ -4,7 +4,6 @@
 #include "GBComponent.h"
 #include "GBUtils.h"
 #include "GBAudioCommonDefs.h"
-#include "IGBAudioChannelContext.h"
 #include "GBAudioChannel.h"
 
 #define AUDIO_MEMORY_SIZE 0x2F
@@ -35,15 +34,13 @@ enum class AudioRegister
     NR52 = 0xFF26 - AUDIO_ADDRESS_OFFSET,
 };
 
-class GBAudio : IGBAudioChannelContext, public GBComponent
+class GBAudio : public GBComponent
 {
 private:
-    GBAudioChannel m_AudioChannel1;
-    GBAudioChannel m_AudioChannel2;
+    GBAudioChannel* m_AudioChannel1;
+    GBAudioChannel* m_AudioChannel2;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
-    quint8 GetRegister(quint16 address) override { return m_Registers[address - AUDIO_ADDRESS_OFFSET]; }
-    void SetRegister(quint16 address, quint8 value) override { m_Registers[address - AUDIO_ADDRESS_OFFSET] = value; }
     quint8 ReadAudioRegister(quint8 regAddress);
     void WriteAudioRegister(quint8 regAddress, quint8 value);
     bool IsAddressInRange(quint16 address) { return address >= AUDIO_ADDRESS_OFFSET && address < AUDIO_ADDRESS_OFFSET + AUDIO_MEMORY_SIZE; }
