@@ -57,14 +57,13 @@ SOURCES += \
     IGBVideoStateContext.cpp \
     GBVideo_s.cpp \
     GBRam.cpp \
-    IGBWaveGenerator.cpp \
-    GBWaveGenerator_Square.cpp \
-    GBWaveGenerator_Square_s.cpp \
     GBAudioChannel.cpp \
-    GBFrequencySweeper.cpp \
-    GBLengthCounter.cpp \
-    IGBVolumeManager.cpp \
-    GBVolumeManager_Envelope.cpp
+    IGBAudioModule.cpp \
+    GBAudioModule_FrequencySweeper.cpp \
+    GBAudioModule_SquareWaveGenerator_s.cpp \
+    GBAudioModule_SquareWaveGenerator.cpp \
+    GBAudioModule_LengthCounter.cpp \
+    GBAudioModule_EnvelopeVolumeManager.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -97,14 +96,13 @@ HEADERS += \
     IGBCpuStateContext.h \
     IGBVideoStateContext.h \
     GBRam.h \
-    IGBWaveGenerator.h \
-    GBWaveGenerator_Square.h \
     GBAudioChannel.h \
-    GBFrequencySweeper.h \
     GBAudioCommonDefs.h \
-    GBLengthCounter.h \
-    IGBVolumeManager.h \
-    GBVolumeManager_Envelope.h
+    IGBAudioModule.h \
+    GBAudioModule_FrequencySweeper.h \
+    GBAudioModule_SquareWaveGenerator.h \
+    GBAudioModule_LengthCounter.h \
+    GBAudioModule_EnvelopeVolumeManager.h
 
 unix {
     target.path = /usr/lib

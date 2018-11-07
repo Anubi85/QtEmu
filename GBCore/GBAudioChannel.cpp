@@ -1,16 +1,15 @@
 #include "GBAudioChannel.h"
-#include "GBFrequencySweeper.h"
-#include "IGBWaveGenerator.h"
-#include "GBWaveGenerator_Square.h"
-#include "GBLengthCounter.h"
-#include "IGBVolumeManager.h"
-#include "GBVolumeManager_Envelope.h"
+#include "IGBAudioModule.h"
+#include "GBAudioModule_FrequencySweeper.h"
+#include "GBAudioModule_SquareWaveGenerator.h"
+#include "GBAudioModule_LengthCounter.h"
+#include "GBAudioModule_EnvelopeVolumeManager.h"
 
 GBAudioChannel::GBAudioChannel(
-        GBFrequencySweeper* frequencySweeper,
-        IGBWaveGenerator* waveGenerator,
-        GBLengthCounter* lengthCounter,
-        IGBVolumeManager* volumeManager)
+        IGBAudioModule* frequencySweeper,
+        IGBAudioModule* waveGenerator,
+        IGBAudioModule* lengthCounter,
+        IGBAudioModule* volumeManager)
 {
     m_FrequencySweeper = frequencySweeper;
     m_WaveGenerator = waveGenerator;
@@ -29,19 +28,19 @@ GBAudioChannel::~GBAudioChannel()
 GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8* registers)
 {
     return new GBAudioChannel(
-                new GBFrequencySweeper(registers),
-                new GBWaveGenerator_Square(registers),
-                new GBLengthCounter(0x3F, registers),
-                new GBVolumeManager_Envelope(registers));
+                new GBAudioModule_FrequencySweeper(registers),
+                new GBAudioModule_SquareWaveGenerator(registers),
+                new GBAudioModule_LengthCounter(0x3F, registers),
+                new GBAudioModule_EnvelopeVolumeManager(registers));
 }
 
 GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8* registers)
 {
     return new GBAudioChannel(
                 nullptr,
-                new GBWaveGenerator_Square(registers),
-                new GBLengthCounter(0x3F, registers),
-                new GBVolumeManager_Envelope(registers));
+                new GBAudioModule_SquareWaveGenerator(registers),
+                new GBAudioModule_LengthCounter(0x3F, registers),
+                new GBAudioModule_EnvelopeVolumeManager(registers));
 }
 
 void GBAudioChannel::Reset()
@@ -67,6 +66,6 @@ void GBAudioChannel::Tick()
     }
     if (IsVolumeManagerTick())
     {
-        m_VolumeManager->Tick(m_WaveGenerator->GetSample());
+        m_VolumeManager->Tick();
     }
 }

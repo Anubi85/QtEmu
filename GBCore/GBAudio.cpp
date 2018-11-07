@@ -1,14 +1,20 @@
 #include "GBAudio.h"
 #include "GBBus.h"
-#include "GBFrequencySweeper.h"
-#include "GBWaveGenerator_Square.h"
-#include "GBLengthCounter.h"
+#include "GBAudioModule_FrequencySweeper.h"
+#include "GBAudioModule_SquareWaveGenerator.h"
+#include "GBAudioModule_LengthCounter.h"
 
 GBAudio::GBAudio()
 {
     m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(m_Registers);
     m_AudioChannel2 = GBAudioChannel::GetSquareChannel(m_Registers + AUDIO_CHANNEL_REG_NUM);
     Reset();
+}
+
+GBAudio::~GBAudio()
+{
+    delete m_AudioChannel1;
+    delete m_AudioChannel2;
 }
 
 void GBAudio::Reset()

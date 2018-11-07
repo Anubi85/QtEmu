@@ -1,18 +1,17 @@
-#include "GBFrequencySweeper.h"
+#include "GBAudioModule_FrequencySweeper.h"
 
-GBFrequencySweeper::GBFrequencySweeper(quint8* registers)
+GBAudioModule_FrequencySweeper::GBAudioModule_FrequencySweeper(quint8* registers) :
+    IGBAudioModule(registers)
 {
-    m_Registers = registers;
-    Reset();
 }
 
-void GBFrequencySweeper::Reset()
+void GBAudioModule_FrequencySweeper::Reset()
 {
+    IGBAudioModule::Reset();
     m_PeriodCounter = 0;
-    m_IsEnabled = true;
 }
 
-void GBFrequencySweeper::Tick()
+void GBAudioModule_FrequencySweeper::Tick()
 {
     quint8 shift = GetShift(m_Registers[AUDIO_CHANNEL_NR0_IDX]);
     quint8 period = GetPeriod(m_Registers[AUDIO_CHANNEL_NR0_IDX]);
@@ -26,14 +25,18 @@ void GBFrequencySweeper::Tick()
         {
             m_Registers[AUDIO_CHANNEL_NR3_IDX] |= 0xFF;
             m_Registers[AUDIO_CHANNEL_NR4_IDX] |= 0x07;
-            m_IsEnabled = false;
+            m_Sample = 0;
         }
         else
         {
             m_Registers[AUDIO_CHANNEL_NR3_IDX] = newFrequency & 0xFF;
             m_Registers[AUDIO_CHANNEL_NR4_IDX] &= 0xF8;
             m_Registers[AUDIO_CHANNEL_NR4_IDX] |= (newFrequency >> 8) & 0x03;
+            m_Sample = 1;
         }
     }
-    m_IsEnabled = true;
+    else
+    {
+        m_Sample = 1;
+    }
 }

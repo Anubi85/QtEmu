@@ -47,6 +47,7 @@ private:
     bool IsAudioEnabled() { return (m_Registers[*AudioRegister::NR52] & 0x80) != 0; }
 public:
     GBAudio();
+    ~GBAudio();
     void Reset() override;
     void Tick(GBBus* bus) override;
 };

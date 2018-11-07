@@ -3,25 +3,22 @@
 
 #include <QtGlobal>
 
-class GBFrequencySweeper;
-class IGBWaveGenerator;
-class GBLengthCounter;
-class IGBVolumeManager;
+class IGBAudioModule;
 
 class GBAudioChannel
 {
 private:
-    GBFrequencySweeper* m_FrequencySweeper;
-    IGBWaveGenerator* m_WaveGenerator;
-    GBLengthCounter* m_LengthCounter;
-    IGBVolumeManager* m_VolumeManager;
+    IGBAudioModule* m_FrequencySweeper;
+    IGBAudioModule* m_WaveGenerator;
+    IGBAudioModule* m_LengthCounter;
+    IGBAudioModule* m_VolumeManager;
     quint16 m_TickCounter;
 
     GBAudioChannel(
-            GBFrequencySweeper* frequencySweeper,
-            IGBWaveGenerator* waveGenerator,
-            GBLengthCounter* lengthCounter,
-            IGBVolumeManager* volumeManager);
+            IGBAudioModule* frequencySweeper,
+            IGBAudioModule* waveGenerator,
+            IGBAudioModule* lengthCounter,
+            IGBAudioModule* volumeManager);
     bool IsSweepTick() { return ((m_TickCounter >> 13) & 0x03) == 0x02; }
     bool IsLengthCounterTick() { return ((m_TickCounter >> 13) & 0x01) == 0x00; }
     bool IsVolumeManagerTick() { return ((m_TickCounter >> 13) & 0x07) == 0x07; }
