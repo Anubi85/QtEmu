@@ -1,5 +1,6 @@
 #include "GBAudioChannel.h"
 #include "IGBAudioModule.h"
+#include "GBAudioModule_Constant.h"
 #include "GBAudioModule_FrequencySweeper.h"
 #include "GBAudioModule_SquareWaveGenerator.h"
 #include "GBAudioModule_LengthCounter.h"
@@ -37,7 +38,7 @@ GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8* registers)
 GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8* registers)
 {
     return new GBAudioChannel(
-                nullptr,
+                new GBAudioModule_Constant(1),
                 new GBAudioModule_SquareWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
                 new GBAudioModule_EnvelopeVolumeManager(registers));
@@ -55,7 +56,7 @@ void GBAudioChannel::Reset()
 void GBAudioChannel::Tick()
 {
     m_TickCounter++;
-    if ((m_FrequencySweeper != nullptr) && IsSweepTick())
+    if (IsSweepTick())
     {
         m_FrequencySweeper->Tick();
     }
