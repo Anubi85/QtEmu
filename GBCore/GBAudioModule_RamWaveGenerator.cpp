@@ -29,6 +29,7 @@ void GBAudioModule_RamWaveGenerator::Tick()
             m_Sample >>= 4;
         }
         m_Sample &= 0x0F;
+        m_Sample >>= s_VolumeFactors[GetVolume()];
         ++m_SampleIdx &= (AUDIO_SAMPLES_NUM - 1);
     }
 }

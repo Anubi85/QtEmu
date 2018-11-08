@@ -7,7 +7,6 @@
 #include "GBAudioModule_NoiseWaveGenerator.h"
 #include "GBAudioModule_LengthCounter.h"
 #include "GBAudioModule_EnvelopeVolumeManager.h"
-#include "GBAudioModule_DividerVolumeManager.h"
 
 GBAudioChannel::GBAudioChannel(
         IGBAudioModule* frequencySweeper,
@@ -53,7 +52,7 @@ GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8* registers)
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_RamWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0xFF, registers),
-                new GBAudioModule_DividerVolumeManager(registers));
+                new GBAudioModule_Constant(1));
 }
 
 GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8* registers)

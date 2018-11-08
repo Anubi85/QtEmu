@@ -66,9 +66,8 @@ SOURCES += \
     GBAudioModule_EnvelopeVolumeManager.cpp \
     GBAudioModule_Constant.cpp \
     GBAudioModule_RamWaveGenerator.cpp \
-    GBAudioModule_DividerVolumeManager.cpp \
-    GBAudioModule_DividerVolumeManager_s.cpp \
-    GBAudioModule_NoiseWaveGenerator.cpp
+    GBAudioModule_NoiseWaveGenerator.cpp \
+    GBAudioModule_RamWaveGenerator_s.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -110,7 +109,6 @@ HEADERS += \
     GBAudioModule_EnvelopeVolumeManager.h \
     GBAudioModule_Constant.h \
     GBAudioModule_RamWaveGenerator.h \
-    GBAudioModule_DividerVolumeManager.h \
     GBAudioModule_NoiseWaveGenerator.h
 
 unix {
