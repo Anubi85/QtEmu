@@ -10,7 +10,7 @@ void GBAudioModule_SquareWaveGenerator::Reset()
 {
     IGBAudioModule::Reset();
     m_SampleIdx = 0;
-    m_Counter = 0;
+    m_Counter = (2048 - GetFrequency()) * 4;
 }
 
 void GBAudioModule_SquareWaveGenerator::Tick()

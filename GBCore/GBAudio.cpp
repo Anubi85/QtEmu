@@ -8,6 +8,8 @@ GBAudio::GBAudio()
 {
     m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(m_Registers);
     m_AudioChannel2 = GBAudioChannel::GetSquareChannel(m_Registers + AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel3 = GBAudioChannel::GetWaveChannel(m_Registers + 2 * AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel4 = GBAudioChannel::GetNoiseChannel(m_Registers + 3 * AUDIO_CHANNEL_REG_NUM);
     Reset();
 }
 
@@ -15,6 +17,8 @@ GBAudio::~GBAudio()
 {
     delete m_AudioChannel1;
     delete m_AudioChannel2;
+    delete m_AudioChannel3;
+    delete  m_AudioChannel4;
 }
 
 void GBAudio::Reset()
@@ -23,6 +27,8 @@ void GBAudio::Reset()
     memset(m_Registers, 0, AUDIO_MEMORY_SIZE);
     m_AudioChannel1->Reset();
     m_AudioChannel2->Reset();
+    m_AudioChannel3->Reset();
+    m_AudioChannel4->Reset();
 }
 
 quint8 GBAudio::ReadAudioRegister(quint8 regAddress)
@@ -128,6 +134,8 @@ void GBAudio::Tick(GBBus* bus)
     {
         m_AudioChannel1->Tick();
         m_AudioChannel2->Tick();
+        m_AudioChannel3->Tick();
+        m_AudioChannel4->Tick();
         //mix audio channels
         //generate right and left output
         //apply master volume

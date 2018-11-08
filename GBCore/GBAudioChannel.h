@@ -29,6 +29,8 @@ public:
 
     static GBAudioChannel* GetSweepSquareChannel(quint8* registers);
     static GBAudioChannel* GetSquareChannel(quint8* registers);
+    static GBAudioChannel* GetWaveChannel(quint8* registers);
+    static GBAudioChannel* GetNoiseChannel(quint8* registers);
 };
 
 #endif // GBAUDIOCHANNEL_H

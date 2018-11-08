@@ -39,6 +39,8 @@ class GBAudio : public GBComponent
 private:
     GBAudioChannel* m_AudioChannel1;
     GBAudioChannel* m_AudioChannel2;
+    GBAudioChannel* m_AudioChannel3;
+    GBAudioChannel* m_AudioChannel4;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
     quint8 ReadAudioRegister(quint8 regAddress);

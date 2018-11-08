@@ -1,6 +1,7 @@
 #ifndef GBAUDIOMODULE_SQUAREWAVEGENERATOR_H
 #define GBAUDIOMODULE_SQUAREWAVEGENERATOR_H
 
+#include <QtGlobal>
 #include "GBAudioCommonDefs.h"
 #include "IGBAudioModule.h"
 

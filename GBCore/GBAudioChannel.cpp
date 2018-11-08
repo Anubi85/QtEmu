@@ -3,8 +3,11 @@
 #include "GBAudioModule_Constant.h"
 #include "GBAudioModule_FrequencySweeper.h"
 #include "GBAudioModule_SquareWaveGenerator.h"
+#include "GBAudioModule_RamWaveGenerator.h"
+#include "GBAudioModule_NoiseWaveGenerator.h"
 #include "GBAudioModule_LengthCounter.h"
 #include "GBAudioModule_EnvelopeVolumeManager.h"
+#include "GBAudioModule_DividerVolumeManager.h"
 
 GBAudioChannel::GBAudioChannel(
         IGBAudioModule* frequencySweeper,
@@ -40,6 +43,24 @@ GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8* registers)
     return new GBAudioChannel(
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_SquareWaveGenerator(registers),
+                new GBAudioModule_LengthCounter(0x3F, registers),
+                new GBAudioModule_EnvelopeVolumeManager(registers));
+}
+
+GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8* registers)
+{
+    return new GBAudioChannel(
+                new GBAudioModule_Constant(1),
+                new GBAudioModule_RamWaveGenerator(registers),
+                new GBAudioModule_LengthCounter(0xFF, registers),
+                new GBAudioModule_DividerVolumeManager(registers));
+}
+
+GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8* registers)
+{
+    return new GBAudioChannel(
+                new GBAudioModule_Constant(1),
+                new GBAudioModule_NoiseWaveGenerator (registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
                 new GBAudioModule_EnvelopeVolumeManager(registers));
 }

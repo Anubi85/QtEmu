@@ -64,7 +64,11 @@ SOURCES += \
     GBAudioModule_SquareWaveGenerator.cpp \
     GBAudioModule_LengthCounter.cpp \
     GBAudioModule_EnvelopeVolumeManager.cpp \
-    GBAudioModule_Constant.cpp
+    GBAudioModule_Constant.cpp \
+    GBAudioModule_RamWaveGenerator.cpp \
+    GBAudioModule_DividerVolumeManager.cpp \
+    GBAudioModule_DividerVolumeManager_s.cpp \
+    GBAudioModule_NoiseWaveGenerator.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -104,7 +108,10 @@ HEADERS += \
     GBAudioModule_SquareWaveGenerator.h \
     GBAudioModule_LengthCounter.h \
     GBAudioModule_EnvelopeVolumeManager.h \
-    GBAudioModule_Constant.h
+    GBAudioModule_Constant.h \
+    GBAudioModule_RamWaveGenerator.h \
+    GBAudioModule_DividerVolumeManager.h \
+    GBAudioModule_NoiseWaveGenerator.h
 
 unix {
     target.path = /usr/lib
