@@ -67,7 +67,8 @@ SOURCES += \
     GBAudioModule_Constant.cpp \
     GBAudioModule_RamWaveGenerator.cpp \
     GBAudioModule_NoiseWaveGenerator.cpp \
-    GBAudioModule_RamWaveGenerator_s.cpp
+    GBAudioModule_RamWaveGenerator_s.cpp \
+    GBAudioModule_NoiseWaveGenerator_s.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \

@@ -8,35 +8,40 @@ GBAudioModule_FrequencySweeper::GBAudioModule_FrequencySweeper(quint8* registers
 void GBAudioModule_FrequencySweeper::Reset()
 {
     IGBAudioModule::Reset();
+    m_ShadowFrequency = 0;
     m_PeriodCounter = 0;
+}
+
+void GBAudioModule_FrequencySweeper::Trigger()
+{
+    if ((m_Registers[AUDIO_CHANNEL_NR4_IDX] & 0x80) != 0)
+    {
+        m_ShadowFrequency = GetFrequency();
+        m_PeriodCounter = GetPeriod();
+        m_Enabled = (GetPeriod() != 0) || (GetShift() != 0);
+        ComputeNewFrequency();
+    }
+}
+
+void GBAudioModule_FrequencySweeper::ComputeNewFrequency()
+{
+    if (GetShift() != 0)
+    {
+        m_ShadowFrequency >>= GetShift();
+        m_ShadowFrequency = m_ShadowFrequency + (ShallNegate() ? -m_ShadowFrequency : m_ShadowFrequency);
+        m_ShadowFrequency = (m_ShadowFrequency > FREQUENCY_MAX_VALUE) ? FREQUENCY_MAX_VALUE : m_ShadowFrequency;
+        m_Enabled = m_ShadowFrequency < FREQUENCY_MAX_VALUE;
+    }
 }
 
 void GBAudioModule_FrequencySweeper::Tick()
 {
-    quint8 shift = GetShift(m_Registers[AUDIO_CHANNEL_NR0_IDX]);
-    quint8 period = GetPeriod(m_Registers[AUDIO_CHANNEL_NR0_IDX]);
-    bool shallIncrease = ShallIncrease(m_Registers[AUDIO_CHANNEL_NR0_IDX]);
-    quint16 frequency = static_cast<quint16>(((m_Registers[AUDIO_CHANNEL_NR4_IDX] & 0x03) << 8) | m_Registers[AUDIO_CHANNEL_NR3_IDX]);
-    if ((shift != 0) && ((period == 0) || (--m_PeriodCounter == 0)))
+    if (m_Enabled && (--m_PeriodCounter == 0))
     {
-        m_PeriodCounter = period;
-        quint16 newFrequency = frequency + static_cast<quint16>((shallIncrease ? 1 : -1) * (frequency >> period));
-        if (newFrequency >= 0x0800)
-        {
-            m_Registers[AUDIO_CHANNEL_NR3_IDX] |= 0xFF;
-            m_Registers[AUDIO_CHANNEL_NR4_IDX] |= 0x07;
-            m_Sample = 0;
-        }
-        else
-        {
-            m_Registers[AUDIO_CHANNEL_NR3_IDX] = newFrequency & 0xFF;
-            m_Registers[AUDIO_CHANNEL_NR4_IDX] &= 0xF8;
-            m_Registers[AUDIO_CHANNEL_NR4_IDX] |= (newFrequency >> 8) & 0x03;
-            m_Sample = 1;
-        }
-    }
-    else
-    {
-        m_Sample = 1;
+        m_PeriodCounter = GetPeriod();
+        ComputeNewFrequency();
+        m_Registers[AUDIO_CHANNEL_NR3_IDX] = m_ShadowFrequency & 0xFF;
+        m_Registers[AUDIO_CHANNEL_NR4_IDX] &= 0xF8;
+        m_Registers[AUDIO_CHANNEL_NR4_IDX] |= (m_ShadowFrequency >> 8) & 0x03;
     }
 }

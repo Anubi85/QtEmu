@@ -17,11 +17,13 @@ private:
     quint16 m_Counter;
 
     quint16 GetFrequency() { return static_cast<quint16>((((m_Registers[AUDIO_CHANNEL_NR4_IDX]) << 8) & 0x03) | m_Registers[AUDIO_CHANNEL_NR3_IDX]); }
+    quint16 GetCounterValue() { return (2048 - GetFrequency()) * 4; }
     quint8 GetDutyCicle() { return (m_Registers[AUDIO_CHANNEL_NR1_IDX] >> 6) & 0x03; }
 public:
     GBAudioModule_SquareWaveGenerator(quint8* registers);
     void Reset() override;
     void Tick() override;
+    void Trigger() override;
 };
 
 #endif // GBAUDIOMODULE_SQUAREWAVEGENERATOR_H

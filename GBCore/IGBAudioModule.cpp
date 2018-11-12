@@ -11,4 +11,5 @@ IGBAudioModule::~IGBAudioModule() {}
 void IGBAudioModule::Reset()
 {
     m_Sample = 0;
+    m_Enabled = false;
 }

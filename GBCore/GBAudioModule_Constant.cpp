@@ -6,3 +6,9 @@ GBAudioModule_Constant::GBAudioModule_Constant(quint8 sampleValue) :
 {
 
 }
+
+void GBAudioModule_Constant::Reset()
+{
+     m_Sample = c_SampleValue;
+     m_Enabled = true;
+}

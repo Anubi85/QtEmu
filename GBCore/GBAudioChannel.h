@@ -8,6 +8,8 @@ class IGBAudioModule;
 class GBAudioChannel
 {
 private:
+    const quint8 c_EnableBitMask;
+
     IGBAudioModule* m_FrequencySweeper;
     IGBAudioModule* m_WaveGenerator;
     IGBAudioModule* m_LengthCounter;
@@ -15,6 +17,7 @@ private:
     quint16 m_TickCounter;
 
     GBAudioChannel(
+            quint8 enableBitMask,
             IGBAudioModule* frequencySweeper,
             IGBAudioModule* waveGenerator,
             IGBAudioModule* lengthCounter,
@@ -26,11 +29,12 @@ public:
     ~GBAudioChannel();
     void Reset();
     void Tick();
+    void Trigger();
 
-    static GBAudioChannel* GetSweepSquareChannel(quint8* registers);
-    static GBAudioChannel* GetSquareChannel(quint8* registers);
-    static GBAudioChannel* GetWaveChannel(quint8* registers);
-    static GBAudioChannel* GetNoiseChannel(quint8* registers);
+    static GBAudioChannel* GetSweepSquareChannel(quint8 enableBitMask, quint8* registers);
+    static GBAudioChannel* GetSquareChannel(quint8 enableBitMask, quint8* registers);
+    static GBAudioChannel* GetWaveChannel(quint8 enableBitMask, quint8* registers, quint8* samplesRam);
+    static GBAudioChannel* GetNoiseChannel(quint8 enableBitMask, quint8* registers);
 };
 
 #endif // GBAUDIOCHANNEL_H

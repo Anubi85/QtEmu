@@ -13,6 +13,7 @@ public:
     GBAudioModule_EnvelopeVolumeManager(quint8* registers);
     void Reset() override;
     void Tick() override;
+    void Trigger() override;
 };
 
 #endif // GBAUDIOMODULE_ENVELOPEVOLUMEMANAGER_H

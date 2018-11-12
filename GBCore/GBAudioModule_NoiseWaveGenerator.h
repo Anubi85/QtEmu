@@ -24,6 +24,7 @@ public:
     GBAudioModule_NoiseWaveGenerator(quint8* registers);
     void Reset() override;
     void Tick() override;
+    void Trigger() override;
 };
 
 #endif // GBAUDIOMODULE_NOISEWAVEGENERATOR_H

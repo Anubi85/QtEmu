@@ -6,10 +6,10 @@
 
 GBAudio::GBAudio()
 {
-    m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(m_Registers);
-    m_AudioChannel2 = GBAudioChannel::GetSquareChannel(m_Registers + AUDIO_CHANNEL_REG_NUM);
-    m_AudioChannel3 = GBAudioChannel::GetWaveChannel(m_Registers + 2 * AUDIO_CHANNEL_REG_NUM);
-    m_AudioChannel4 = GBAudioChannel::GetNoiseChannel(m_Registers + 3 * AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(0x01, m_Registers);
+    m_AudioChannel2 = GBAudioChannel::GetSquareChannel(0x02, m_Registers + AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel3 = GBAudioChannel::GetWaveChannel(0x04, m_Registers + 2 * AUDIO_CHANNEL_REG_NUM, m_Registers + AUDIO_SAMPLES_RAM_OFFSET);
+    m_AudioChannel4 = GBAudioChannel::GetNoiseChannel(0x08, m_Registers + 3 * AUDIO_CHANNEL_REG_NUM);
     Reset();
 }
 
@@ -90,11 +90,6 @@ void GBAudio::WriteAudioRegister(quint8 regAddress, quint8 value)
     case *AudioRegister::NR51:
         m_Registers[regAddress] = value;
         break;
-    case *AudioRegister::NR14:
-    case *AudioRegister::NR24:
-    case *AudioRegister::NR34:
-        m_Registers[regAddress] = value & 0xC7;
-        break;
     case *AudioRegister::NR30:
         m_Registers[regAddress] = value & 0x80;
         break;
@@ -104,8 +99,21 @@ void GBAudio::WriteAudioRegister(quint8 regAddress, quint8 value)
     case *AudioRegister::NR41:
         m_Registers[regAddress] = value & 0x3F;
         break;
+    case *AudioRegister::NR14:
+        m_Registers[regAddress] = value & 0xC7;
+        m_AudioChannel1->Trigger();
+        break;
+    case *AudioRegister::NR24:
+        m_Registers[regAddress] = value & 0xC7;
+        m_AudioChannel2->Trigger();
+        break;
+    case *AudioRegister::NR34:
+        m_Registers[regAddress] = value & 0xC7;
+        m_AudioChannel3->Trigger();
+        break;
     case *AudioRegister::NR44:
         m_Registers[regAddress] = value & 0xC0;
+        m_AudioChannel4->Trigger();
         break;
     case *AudioRegister::NR52:
         m_Registers[regAddress] &= 0x7F;

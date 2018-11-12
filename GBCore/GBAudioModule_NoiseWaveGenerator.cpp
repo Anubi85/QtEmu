@@ -32,9 +32,19 @@ quint16 GBAudioModule_NoiseWaveGenerator::GetFrequency()
     return counter * 8;
 }
 
+void GBAudioModule_NoiseWaveGenerator::Trigger()
+{
+    if ((m_Registers[AUDIO_CHANNEL_NR4_IDX] & 0x80) != 0)
+    {
+        m_Counter = GetFrequency();
+        m_LFSR = 0x7FFF;
+        m_Enabled = GetFrequencyShift() < 0x0E;
+    }
+}
+
 void GBAudioModule_NoiseWaveGenerator::Tick()
 {
-    if (--m_Counter == 0)
+    if (m_Enabled && (--m_Counter == 0))
     {
         m_Counter = GetFrequency();
         UpdateLFSR();

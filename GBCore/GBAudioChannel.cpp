@@ -9,10 +9,12 @@
 #include "GBAudioModule_EnvelopeVolumeManager.h"
 
 GBAudioChannel::GBAudioChannel(
+        quint8 enableBitMask,
         IGBAudioModule* frequencySweeper,
         IGBAudioModule* waveGenerator,
         IGBAudioModule* lengthCounter,
-        IGBAudioModule* volumeManager)
+        IGBAudioModule* volumeManager) :
+    c_EnableBitMask(enableBitMask)
 {
     m_FrequencySweeper = frequencySweeper;
     m_WaveGenerator = waveGenerator;
@@ -28,36 +30,40 @@ GBAudioChannel::~GBAudioChannel()
     delete m_VolumeManager;
 }
 
-GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8* registers)
+GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8 enableBitMask, quint8* registers)
 {
     return new GBAudioChannel(
+                enableBitMask,
                 new GBAudioModule_FrequencySweeper(registers),
                 new GBAudioModule_SquareWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
                 new GBAudioModule_EnvelopeVolumeManager(registers));
 }
 
-GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8* registers)
+GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8 enableBitMask, quint8* registers)
 {
     return new GBAudioChannel(
+                enableBitMask,
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_SquareWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
                 new GBAudioModule_EnvelopeVolumeManager(registers));
 }
 
-GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8* registers)
+GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8 enableBitMask, quint8* registers, quint8* samplesRam)
 {
     return new GBAudioChannel(
+                enableBitMask,
                 new GBAudioModule_Constant(1),
-                new GBAudioModule_RamWaveGenerator(registers),
+                new GBAudioModule_RamWaveGenerator(registers, samplesRam),
                 new GBAudioModule_LengthCounter(0xFF, registers),
                 new GBAudioModule_Constant(1));
 }
 
-GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8* registers)
+GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8 enableBitMask, quint8* registers)
 {
     return new GBAudioChannel(
+                enableBitMask,
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_NoiseWaveGenerator (registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
@@ -71,6 +77,14 @@ void GBAudioChannel::Reset()
     m_WaveGenerator->Reset();
     m_LengthCounter->Reset();
     m_VolumeManager->Reset();
+}
+
+void GBAudioChannel::Trigger()
+{
+    m_FrequencySweeper->Trigger();
+    m_WaveGenerator->Trigger();
+    m_LengthCounter->Trigger();
+    m_VolumeManager->Trigger();
 }
 
 void GBAudioChannel::Tick()

@@ -8,6 +8,7 @@
 
 #define AUDIO_MEMORY_SIZE 0x2F
 #define AUDIO_ADDRESS_OFFSET 0xFF10
+#define AUDIO_SAMPLES_RAM_OFFSET 0x20
 
 enum class AudioRegister
 {
@@ -49,7 +50,7 @@ private:
     bool IsAudioEnabled() { return (m_Registers[*AudioRegister::NR52] & 0x80) != 0; }
 public:
     GBAudio();
-    ~GBAudio();
+    ~GBAudio() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
 };

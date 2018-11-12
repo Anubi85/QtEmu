@@ -1,9 +1,9 @@
 #include "GBAudioModule_RamWaveGenerator.h"
 
-GBAudioModule_RamWaveGenerator::GBAudioModule_RamWaveGenerator(quint8* registers) :
+GBAudioModule_RamWaveGenerator::GBAudioModule_RamWaveGenerator(quint8* registers, quint8* samplesRam) :
     IGBAudioModule(registers)
 {
-    m_SamplesRAM = registers + AUDIO_SAMPLES_OFFSET;
+    m_SamplesRAM = samplesRam;
     Reset();
 }
 
@@ -11,18 +11,23 @@ void GBAudioModule_RamWaveGenerator::Reset()
 {
     IGBAudioModule::Reset();
     m_SampleIdx = 0;
-    m_Counter = (2048 - GetFrequency()) * 2;
+    m_Counter = 0;
+    m_Enabled = false;
+}
+
+void GBAudioModule_RamWaveGenerator::Trigger()
+{
+
+    m_SampleIdx = 0;
+    m_Counter = GetCounterValue();
+    m_Enabled = (m_Registers[AUDIO_CHANNEL_NR0_IDX] & 0x80) == 0;
 }
 
 void GBAudioModule_RamWaveGenerator::Tick()
 {
-    if ((m_Registers[AUDIO_CHANNEL_NR0_IDX] & 0x80) == 0)
+    if (m_Enabled && (--m_Counter == 0))
     {
-        m_Sample = 0;
-    }
-    else if ((GetFrequency() == 0) || (--m_Counter == 0))
-    {
-        m_Counter = (2048 - GetFrequency()) * 2;
+        m_Counter = GetCounterValue();
         m_Sample = m_SamplesRAM[m_SampleIdx >> 1];
         if ((m_SampleIdx & 0x01) == 0)
         {

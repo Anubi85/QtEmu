@@ -10,8 +10,9 @@ private:
     const quint8 c_SampleValue;
 public:
     GBAudioModule_Constant(quint8 sampleValue);
-    void Reset() override { m_Sample = c_SampleValue; }
+    void Reset() override;
     void Tick() override {}
+    void Trigger() override {}
 };
 
 #endif // GBAUDIOMODULE_CONSTANT_H

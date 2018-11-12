@@ -10,9 +10,19 @@ GBAudioModule_EnvelopeVolumeManager::GBAudioModule_EnvelopeVolumeManager(quint8*
 void GBAudioModule_EnvelopeVolumeManager::Reset()
 {
     IGBAudioModule::Reset();
-    m_Counter = m_Registers[AUDIO_CHANNEL_NR2_IDX] & 0x07;
-    m_Sample = (m_Registers[AUDIO_CHANNEL_NR2_IDX] >> 4) & 0x0F;
-    m_UpdateVolume = true;
+    m_Counter = 0;
+    m_UpdateVolume = false;
+}
+
+void GBAudioModule_EnvelopeVolumeManager::Trigger()
+{
+    if ((m_Registers[AUDIO_CHANNEL_NR4_IDX] & 0x80) != 0)
+    {
+        m_Counter = m_Registers[AUDIO_CHANNEL_NR2_IDX] & 0x07;
+        m_Sample = (m_Registers[AUDIO_CHANNEL_NR2_IDX] >> 4) & 0x0F;
+        m_UpdateVolume = true;
+        m_Enabled = true;
+    }
 }
 
 void GBAudioModule_EnvelopeVolumeManager::Tick()
