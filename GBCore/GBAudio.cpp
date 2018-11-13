@@ -6,10 +6,10 @@
 
 GBAudio::GBAudio()
 {
-    m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(0x01, m_Registers);
-    m_AudioChannel2 = GBAudioChannel::GetSquareChannel(0x02, m_Registers + AUDIO_CHANNEL_REG_NUM);
-    m_AudioChannel3 = GBAudioChannel::GetWaveChannel(0x04, m_Registers + 2 * AUDIO_CHANNEL_REG_NUM, m_Registers + AUDIO_SAMPLES_RAM_OFFSET);
-    m_AudioChannel4 = GBAudioChannel::GetNoiseChannel(0x08, m_Registers + 3 * AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel1 = GBAudioChannel::GetSweepSquareChannel(0x01, &m_Registers[*AudioRegister::NR52], m_Registers);
+    m_AudioChannel2 = GBAudioChannel::GetSquareChannel(0x02, &m_Registers[*AudioRegister::NR52], m_Registers + AUDIO_CHANNEL_REG_NUM);
+    m_AudioChannel3 = GBAudioChannel::GetWaveChannel(0x04, &m_Registers[*AudioRegister::NR52], m_Registers + 2 * AUDIO_CHANNEL_REG_NUM, m_Registers + AUDIO_SAMPLES_RAM_OFFSET);
+    m_AudioChannel4 = GBAudioChannel::GetNoiseChannel(0x08, &m_Registers[*AudioRegister::NR52], m_Registers + 3 * AUDIO_CHANNEL_REG_NUM);
     Reset();
 }
 
