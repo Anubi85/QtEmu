@@ -3,6 +3,7 @@
 GBAudioModule_FrequencySweeper::GBAudioModule_FrequencySweeper(quint8* registers) :
     IGBAudioModule(registers)
 {
+    Reset();
 }
 
 void GBAudioModule_FrequencySweeper::Reset()
@@ -10,6 +11,7 @@ void GBAudioModule_FrequencySweeper::Reset()
     IGBAudioModule::Reset();
     m_ShadowFrequency = 0;
     m_PeriodCounter = 0;
+    m_Sample = 1; //fixed value
 }
 
 void GBAudioModule_FrequencySweeper::Trigger()

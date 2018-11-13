@@ -3,6 +3,9 @@
 
 #include <QtGlobal>
 
+#define DAC_OFFSET -1.0
+#define DAC_FACTOR 2.0/15.0
+
 class IGBAudioModule;
 
 class GBAudioChannel
@@ -36,6 +39,7 @@ public:
     void Reset();
     void Tick();
     void Trigger();
+    qreal GetSample();
 
     static GBAudioChannel* GetSweepSquareChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers);
     static GBAudioChannel* GetSquareChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers);

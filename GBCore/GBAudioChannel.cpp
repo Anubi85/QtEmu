@@ -115,3 +115,15 @@ void GBAudioChannel::Tick()
     PerformModuleTick(IsLengthCounterTick(), m_LengthCounter);
     PerformModuleTick(IsVolumeManagerTick(), m_VolumeManager);
 }
+
+qreal GBAudioChannel::GetSample()
+{
+    if (IsChannelEnabled())
+    {
+        return (m_FrequencySweeper->GetSample() * m_WaveGenerator->GetSample() * m_LengthCounter->GetSample() * m_VolumeManager->GetSample()) * DAC_FACTOR + DAC_OFFSET;
+    }
+    else
+    {
+        return 0.0;
+    }
+}

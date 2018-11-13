@@ -16,6 +16,7 @@ private:
     void DecreaseLength();
 public:
     GBAudioModule_LengthCounter(quint8 lengthMask, quint8* registers);
+    void Reset() override;
     void Tick() override;
     void Trigger() override;
 };

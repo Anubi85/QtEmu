@@ -7,6 +7,12 @@ GBAudioModule_LengthCounter::GBAudioModule_LengthCounter(quint8 lengthMask, quin
     Reset();
 }
 
+void GBAudioModule_LengthCounter::Reset()
+{
+    IGBAudioModule::Reset();
+    m_Sample = 1; //fixed value
+}
+
 void inline GBAudioModule_LengthCounter::SetLength(quint8 value)
 {
     m_Registers[AUDIO_CHANNEL_NR1_IDX] &= !c_LengthMask;
