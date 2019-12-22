@@ -27,6 +27,7 @@ private slots:
 private:
     enum class SupportedRomType
     {
+		unknown,
         gb,
     };
 
@@ -39,6 +40,7 @@ private:
     QThread* m_CoreExecutingThread;
     QThread* m_VideoUpdateThread;
 
+	void LoadCore(SupportedRomType romType);
     void StopEmulatorCore();
     void StartEmulatorCore();
     void EmulatorLoop();
