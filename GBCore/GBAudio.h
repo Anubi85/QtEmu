@@ -5,8 +5,9 @@
 #include "GBUtils.h"
 #include "GBAudioCommonDefs.h"
 #include "GBAudioChannel.h"
+#include "GBAudioMixer.h"
 
-#define AUDIO_MEMORY_SIZE 0x2F
+#define AUDIO_MEMORY_SIZE 0x30
 #define AUDIO_ADDRESS_OFFSET 0xFF10
 #define AUDIO_SAMPLES_RAM_OFFSET 0x20
 
@@ -42,11 +43,14 @@ private:
     GBAudioChannel* m_AudioChannel2;
     GBAudioChannel* m_AudioChannel3;
     GBAudioChannel* m_AudioChannel4;
+	GBAudioMixer* m_AudioMixer;
     quint8 m_Registers[AUDIO_MEMORY_SIZE];
 
+	void InitSamplesRam();
     quint8 ReadAudioRegister(quint8 regAddress);
     void WriteAudioRegister(quint8 regAddress, quint8 value);
     bool IsAddressInRange(quint16 address) { return address >= AUDIO_ADDRESS_OFFSET && address < AUDIO_ADDRESS_OFFSET + AUDIO_MEMORY_SIZE; }
+	bool IsSamplesRamRegister(quint8 regAddress);
     bool IsAudioEnabled() { return (m_Registers[*AudioRegister::NR52] & 0x80) != 0; }
 public:
     GBAudio();

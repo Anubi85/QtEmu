@@ -3,30 +3,30 @@
 
 #include <QtGlobal>
 
-#define DAC_OFFSET -1.0
-#define DAC_FACTOR 2.0/15.0
-
 class IGBAudioModule;
+class GBAudioDac;
 
 class GBAudioChannel
 {
 private:
     const quint8 c_EnableBitMask;
 
-    IGBAudioModule* m_FrequencySweeper;
+	IGBAudioModule* m_FrequencySweeper;
     IGBAudioModule* m_WaveGenerator;
     IGBAudioModule* m_LengthCounter;
     IGBAudioModule* m_VolumeManager;
+	GBAudioDac* m_Dac;
     quint8* m_ChannelsState;
     quint16 m_TickCounter;
 
     GBAudioChannel(
             quint8 enableBitMask,
             quint8* channelsState,
-            IGBAudioModule* frequencySweeper,
+			IGBAudioModule* frequencySweeper,
             IGBAudioModule* waveGenerator,
             IGBAudioModule* lengthCounter,
-            IGBAudioModule* volumeManager);
+			IGBAudioModule* volumeManager,
+			GBAudioDac* dac);
     bool IsSweepTick() { return ((m_TickCounter >> 13) & 0x03) == 0x02; }
     bool IsLengthCounterTick() { return ((m_TickCounter >> 13) & 0x01) == 0x00; }
     bool IsVolumeManagerTick() { return ((m_TickCounter >> 13) & 0x07) == 0x07; }

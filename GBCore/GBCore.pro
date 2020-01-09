@@ -28,6 +28,15 @@ CONFIG += c++14
 include(../QtEmu.pri)
 
 SOURCES += \
+    GBApu/GBApu.cpp \
+    GBApu/GBApu_ChannelBase.cpp \
+    GBApu/GBApu_LengthCounterModule.cpp \
+    GBApu/GBApu_Mixer.cpp \
+    GBApu/GBApu_SquareWaveModule.cpp \
+    GBApu/GBApu_SquareWaveModule_s.cpp \
+    GBApu/GBApu_SweepSquareChannel.cpp \
+    GBAudioDac.cpp \
+    GBAudioMixer.cpp \
     GBBus.cpp \
     GBComponent.cpp \
     GBBios.cpp \
@@ -72,6 +81,18 @@ SOURCES += \
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
+    GBApu/GBApu.h \
+    GBApu/GBApuCommonDefs.h \
+    GBApu/GBApu_ChannelBase.h \
+    GBApu/GBApu_ChannelModuleBase.h \
+    GBApu/GBApu_Dac.h \
+    GBApu/GBApu_FrameSequencer.h \
+    GBApu/GBApu_LengthCounterModule.h \
+    GBApu/GBApu_Mixer.h \
+    GBApu/GBApu_SquareWaveModule.h \
+    GBApu/GBApu_SweepSquareChannel.h \
+    GBAudioDac.h \
+    GBAudioMixer.h \
     GBBus.h \
     GBComponent.h \
     GBBios.h \
@@ -116,3 +137,5 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+DISTFILES +=
