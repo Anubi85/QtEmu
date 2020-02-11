@@ -1,5 +1,4 @@
-#ifndef GBAPU_SWEEPSQUARECHANNEL_H
-#define GBAPU_SWEEPSQUARECHANNEL_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBApuCommonDefs.h"
@@ -7,10 +6,12 @@
 
 class GBApu_LengthCounterModule;
 class GBApu_SquareWaveModule;
+class GBApu_FrequencySweeperModule;
 
 class GBApu_SweepSquareChannel : public GBApu_ChannelBase
 {
 private:
+    GBApu_FrequencySweeperModule* m_FrequencySweeper;
 	GBApu_SquareWaveModule* m_SquareWave;
 	GBApu_LengthCounterModule* m_LengthCounter;
 
@@ -23,5 +24,3 @@ public:
 	void Reset() override;
 	void Tick(GBApu_FrameSequencer *sequencer) override;
 };
-
-#endif // GBAPU_SWEEPSQUARECHANNEL_H

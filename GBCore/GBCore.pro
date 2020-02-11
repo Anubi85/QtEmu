@@ -99,6 +99,7 @@ HEADERS += \
     GBComponent.h \
     GBBios.h \
     GBCpu.h \
+    GBUtility/GBCounter.h \
     IGBCpuState.h \
     GBCpuState_Fetch.h \
     GBCore.h \
