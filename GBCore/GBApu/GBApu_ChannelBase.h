@@ -1,5 +1,4 @@
-#ifndef GBAUDIOCHANNEL_H
-#define GBAUDIOCHANNEL_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBApuCommonDefs.h"
@@ -27,5 +26,3 @@ public:
 	virtual void WriteRegister(GBBus* bus);
 	qreal GetSample() { return m_Dac->GetSample(); }
 };
-
-#endif // GBAUDIOCHANNEL_H

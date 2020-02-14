@@ -1,25 +1,25 @@
-#ifndef GBAPU_FRAMESEQUENCER_H
-#define GBAPU_FRAMESEQUENCER_H
+#pragma once
 
 #include <QtGlobal>
+#include "GBCounter.h"
+
+#define LENGTH_COUNT 0x04000
+#define VOLUME_COUNT 0x10000
+#define FREQUENCY_COUNT 0x08000
 
 class GBApu_FrameSequencer
 {
 private:
-	/*
-	 * tttccccccccccccc
-	 * c = counter bits (13), produces a 512 Hz sequenser tick
-	 * t = tick bits (3), max 8 tick, after that it will reset to zero
-	*/
-	quint16 m_TickCounter;
-public:
-	GBApu_FrameSequencer(){ m_TickCounter = 0; }
-	~GBApu_FrameSequencer();
-	void Tick() { m_TickCounter++; }
-	bool IsLengthCounterTick() { return (m_TickCounter & 0x3FFF) == 0; } // even sequencer tick
-	bool IsVolumeEnvelopeTick() { return m_TickCounter == 0xE000; } // sequencer tick 8
-	bool IsFrequencySweepTick() { return (m_TickCounter & 0x7FFF) == 0x4000; } // sequencer tick 2 and 6
-	void Reset(){ m_TickCounter &= 0x1FFF; }
-};
+    GBCounter m_LengthCounter;
+    GBCounter m_VolumeCounter;
+    GBCounter m_FrequencyCounter;
 
-#endif // GBAPU_FRAMESEQUENCER_H
+public:
+    GBApu_FrameSequencer(){ }
+	~GBApu_FrameSequencer();
+    void Tick();
+    bool IsLengthCounterTick() { return m_LengthCounter.IsZero(); }
+    bool IsVolumeEnvelopeTick() { return m_VolumeCounter.IsZero(); }
+    bool IsFrequencySweepTick() { return m_FrequencyCounter.IsZero(); }
+    void Reset();
+};

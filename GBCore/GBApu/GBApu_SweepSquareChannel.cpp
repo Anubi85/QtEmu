@@ -1,16 +1,18 @@
 #include "GBBus.h"
 #include "GBApu_FrameSequencer.h"
 #include "GBApu_SweepSquareChannel.h"
-#include "GBApu_FrequencySweeperModule.h"
+#include "GBApu_FrequencySweepModule.h"
 #include "GBApu_SquareWaveModule.h"
 #include "GBApu_LengthCounterModule.h"
+#include "GBApu_VolumeEnvelopeModule.h"
 
 GBApu_SweepSquareChannel::GBApu_SweepSquareChannel(quint8& apuStatus) :
 	GBApu_ChannelBase(AUDIO_REG_ADDRESS_OFFSET, apuStatus)
 {
-    m_FrequencySweeper = new GBApu_FrequencySweeperModule(0x01, apuStatus, m_Registers);
+    m_FrequencySweeper = new GBApu_FrequencySweepModule(AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
 	m_SquareWave = new GBApu_SquareWaveModule(m_Registers);
-	m_LengthCounter = new GBApu_LengthCounterModule(0x3F, 0x01, apuStatus, m_Registers);
+    m_LengthCounter = new GBApu_LengthCounterModule(0x3F, AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
+    m_VolumeEnvelope = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
 GBApu_SweepSquareChannel::~GBApu_SweepSquareChannel()
@@ -18,6 +20,7 @@ GBApu_SweepSquareChannel::~GBApu_SweepSquareChannel()
     delete m_FrequencySweeper;
 	delete m_SquareWave;
 	delete m_LengthCounter;
+    delete m_VolumeEnvelope;
 }
 
 void GBApu_SweepSquareChannel::ReadRegister(GBBus *bus)
@@ -77,6 +80,7 @@ void GBApu_SweepSquareChannel::Reset()
     m_FrequencySweeper->Reset();
 	m_SquareWave->Reset();
 	m_LengthCounter->Reset();
+    m_VolumeEnvelope->Reset();
 }
 
 void GBApu_SweepSquareChannel::Trigger()
@@ -86,14 +90,18 @@ void GBApu_SweepSquareChannel::Trigger()
         m_FrequencySweeper->Trigger();
 		m_SquareWave->Trigger();
 		m_LengthCounter->Trigger();
+        m_VolumeEnvelope->Trigger();
 	}
 }
 
 void GBApu_SweepSquareChannel::Tick(GBApu_FrameSequencer *sequencer)
 {
 	m_Sample = 0;
-    m_FrequencySweeper->Tick(sequencer->IsFrequencySweepTick(), &m_Sample);
-	m_SquareWave->Tick(true, &m_Sample);
-	m_LengthCounter->Tick(sequencer->IsLengthCounterTick(), &m_Sample);
-	//m_Modules[3]->Tick(sequencer->IsVolumeEnvelopeTick(), &m_Sample);
+    if ((m_ApuStatus & AUDIO_CHANNEL1_ENABLE_MASK) != 0)
+    {
+        m_FrequencySweeper->Tick(sequencer->IsFrequencySweepTick(), &m_Sample);
+        m_SquareWave->Tick(true, &m_Sample);
+        m_LengthCounter->Tick(sequencer->IsLengthCounterTick(), &m_Sample);
+        m_VolumeEnvelope->Tick(sequencer->IsVolumeEnvelopeTick(), &m_Sample);
+    }
 }

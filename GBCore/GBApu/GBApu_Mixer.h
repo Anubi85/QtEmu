@@ -1,5 +1,4 @@
-#ifndef GBAPU_MIXER_H
-#define GBAPU_MIXER_H
+#pragma once
 
 #include <QtGlobal>
 #include <qmap.h>
@@ -30,5 +29,3 @@ public:
 	qreal GetSampleR() { return m_SampleR; }
 	qreal GetSampleL() { return m_SampleL; }
 };
-
-#endif // GBAPU_MIXER_H

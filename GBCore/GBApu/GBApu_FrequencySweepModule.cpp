@@ -1,18 +1,18 @@
-#include "GBApu_FrequencySweeperModule.h"
+#include "GBApu_FrequencySweepModule.h"
 
-GBApu_FrequencySweeperModule::GBApu_FrequencySweeperModule(quint8 channelMask, quint8& apuStatus, quint8 (&registers)[AUDIO_CHANNEL_REG_NUM]) :
+GBApu_FrequencySweepModule::GBApu_FrequencySweepModule(quint8 channelMask, quint8& apuStatus, quint8 (&registers)[AUDIO_CHANNEL_REG_NUM]) :
     GBApu_ChannelModuleBase(registers),
     c_ChannelMask(channelMask),
     m_ApuStatus(apuStatus)
 {
 }
 
-void GBApu_FrequencySweeperModule::Reset()
+void GBApu_FrequencySweepModule::Reset()
 {
     m_ShadowFrequency = 0;
 }
 
-void GBApu_FrequencySweeperModule::Trigger()
+void GBApu_FrequencySweepModule::Trigger()
 {
     m_ShadowFrequency = GetFrequency();
     quint8 sweepCount = GetSweepCount();
@@ -30,13 +30,13 @@ void GBApu_FrequencySweeperModule::Trigger()
     OverflowCheck(newFrequency);
 }
 
-void GBApu_FrequencySweeperModule::Tick(bool doAction, quint8 *sample)
+void GBApu_FrequencySweepModule::Tick(bool doAction, quint8 *sample)
 {
     Q_UNUSED(sample)
     if (doAction)
     {
         m_Counter.Tick();
-        if (m_Counter.IsElapsed())
+        if (m_Counter.IsZero())
         {
             m_Counter.Reload(GetSweepCount());
             quint16 newFrequency = ComputeNewFrequency();
@@ -47,11 +47,15 @@ void GBApu_FrequencySweeperModule::Tick(bool doAction, quint8 *sample)
                 m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] &= 0xF8;
                 m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] |= (newFrequency >> 8) & 0x03;
             }
+            else
+            {
+                *sample = 0;
+            }
         }
     }
 }
 
-quint16 GBApu_FrequencySweeperModule::ComputeNewFrequency()
+quint16 GBApu_FrequencySweepModule::ComputeNewFrequency()
 {
     quint32 shift = GetShiftValue();
     if (shift != 0)
@@ -72,7 +76,7 @@ quint16 GBApu_FrequencySweeperModule::ComputeNewFrequency()
     }
 }
 
-bool GBApu_FrequencySweeperModule::OverflowCheck(quint16 newFrequency)
+bool GBApu_FrequencySweepModule::OverflowCheck(quint16 newFrequency)
 {
     if (newFrequency > MAX_FREQUENCY)
     {

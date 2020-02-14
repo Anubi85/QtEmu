@@ -30,12 +30,14 @@ include(../QtEmu.pri)
 SOURCES += \
     GBApu/GBApu.cpp \
     GBApu/GBApu_ChannelBase.cpp \
-    GBApu/GBApu_FrequencySweeperModule.cpp \
+    GBApu/GBApu_FrameSequencer.cpp \
+    GBApu/GBApu_FrequencySweepModule.cpp \
     GBApu/GBApu_LengthCounterModule.cpp \
     GBApu/GBApu_Mixer.cpp \
     GBApu/GBApu_SquareWaveModule.cpp \
     GBApu/GBApu_SquareWaveModule_s.cpp \
     GBApu/GBApu_SweepSquareChannel.cpp \
+    GBApu/GBApu_VolumeEnvelopeModule.cpp \
     GBAudioDac.cpp \
     GBAudioMixer.cpp \
     GBBus.cpp \
@@ -88,11 +90,12 @@ HEADERS += \
     GBApu/GBApu_ChannelModuleBase.h \
     GBApu/GBApu_Dac.h \
     GBApu/GBApu_FrameSequencer.h \
-    GBApu/GBApu_FrequencySweeperModule.h \
+    GBApu/GBApu_FrequencySweepModule.h \
     GBApu/GBApu_LengthCounterModule.h \
     GBApu/GBApu_Mixer.h \
     GBApu/GBApu_SquareWaveModule.h \
     GBApu/GBApu_SweepSquareChannel.h \
+    GBApu/GBApu_VolumeEnvelopeModule.h \
     GBAudioDac.h \
     GBAudioMixer.h \
     GBBus.h \

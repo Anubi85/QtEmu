@@ -1,5 +1,4 @@
-#ifndef GBAPU_DAC_H
-#define GBAPU_DAC_H
+#pragma once
 
 #include <QtGlobal>
 
@@ -19,5 +18,3 @@ public:
 	bool IsEnabled() { return m_IsEnabled; }
 	qreal GetSample() { return m_IsEnabled ? (m_Sample * c_Gain + c_Offset) : 0.0; }
 };
-
-#endif // GBAPU_DAC_H

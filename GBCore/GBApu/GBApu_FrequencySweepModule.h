@@ -6,7 +6,7 @@
 
 #define MAX_FREQUENCY 2047
 
-class GBApu_FrequencySweeperModule : public GBApu_ChannelModuleBase
+class GBApu_FrequencySweepModule : public GBApu_ChannelModuleBase
 {
 private:
     const quint8 c_ChannelMask;
@@ -21,8 +21,8 @@ private:
     quint16 ComputeNewFrequency();
     bool OverflowCheck(quint16 newFrequency);
 public:
-    GBApu_FrequencySweeperModule(quint8 channelMask, quint8& apuStatus, quint8 (&registers)[AUDIO_CHANNEL_REG_NUM]);
-    ~GBApu_FrequencySweeperModule() override { }
+    GBApu_FrequencySweepModule(quint8 channelMask, quint8& apuStatus, quint8 (&registers)[AUDIO_CHANNEL_REG_NUM]);
+    ~GBApu_FrequencySweepModule() override { }
     void Reset() override;
     void Tick(bool doAction, quint8 *sample) override;
     void Trigger() override;

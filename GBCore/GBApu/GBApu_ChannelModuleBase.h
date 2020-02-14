@@ -1,5 +1,4 @@
-#ifndef IGBAUDIOMODULE_H
-#define IGBAUDIOMODULE_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBApuCommonDefs.h"
@@ -16,5 +15,3 @@ public:
 	virtual void Reset();
 	virtual void Trigger();
 };
-
-#endif // IGBAUDIOMODULE_H

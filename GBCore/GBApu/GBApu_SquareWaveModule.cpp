@@ -1,16 +1,11 @@
 #include "GBApu_SquareWaveModule.h"
 
-GBApu_SquareWaveModule::GBApu_SquareWaveModule(quint8 (&registers)[AUDIO_CHANNEL_REG_NUM]) :
-	GBApu_ChannelModuleBase(registers)
-{
-}
-
 void GBApu_SquareWaveModule::Reset()
 {
 	GBApu_ChannelModuleBase::Reset();
 	m_SampleIdx = 0;
 	m_DutyIdx = 0;
-	m_FrequencyCounter = GetFrequencyCount();
+    m_FrequencyCounter.Reload(GetFrequencyCount());
 }
 
 quint16 GBApu_SquareWaveModule::GetFrequencyCount()
@@ -24,15 +19,16 @@ void GBApu_SquareWaveModule::Trigger()
 {
 	m_SampleIdx = 0;
 	m_DutyIdx = GetDutyCycle();
-	m_FrequencyCounter = GetFrequencyCount();
+    m_FrequencyCounter.Reload(GetFrequencyCount());
 }
 
 void GBApu_SquareWaveModule::Tick(bool doAction, quint8 *sample)
 {
 	Q_UNUSED(doAction)
-	if (--m_FrequencyCounter == 0)
+    m_FrequencyCounter.Tick();
+    if (m_FrequencyCounter.IsZero())
 	{
-		m_FrequencyCounter = GetFrequencyCount();
+        m_FrequencyCounter.Reload(GetFrequencyCount());
 		if (++m_SampleIdx == 0x08)
 		{
 			m_DutyIdx = GetDutyCycle();
