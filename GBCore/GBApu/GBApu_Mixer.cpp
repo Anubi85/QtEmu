@@ -12,8 +12,8 @@ void GBApu_Mixer::Reset()
 {
 	m_NR50 = 0;
 	m_NR51 = 0;
-	m_SampleR = 0.0;
-	m_SampleR = 0.0;
+    m_SampleR = 0;
+    m_SampleR = 0;
 }
 
 quint8 GBApu_Mixer::GetVolume(bool isRight)
@@ -30,9 +30,9 @@ quint8 GBApu_Mixer::GetVolume(bool isRight)
 	return volume + 1;
 }
 
-qreal GBApu_Mixer::ComputeSample(bool isRight)
+quint8 GBApu_Mixer::ComputeSample(bool isRight)
 {
-	qreal sample = 0.0;
+    quint8 sample = 0;
 	quint8 channelEnableMask = isRight ? 0x01 : 0x10;
 	for (int ch = 0; ch < AUDIO_CHANNELS_NUM; ch++)
 	{
@@ -46,10 +46,10 @@ qreal GBApu_Mixer::ComputeSample(bool isRight)
 	return sample;
 }
 
-void GBApu_Mixer::Tick(quint8 masterVolume)
+void GBApu_Mixer::Tick()
 {
-	m_SampleR = ComputeSample(true) * masterVolume;
-	m_SampleL = ComputeSample(false) * masterVolume;
+    m_SampleR = ComputeSample(true);
+    m_SampleL = ComputeSample(false);
 }
 
 void GBApu_Mixer::ReadRegister(GBBus *bus)

@@ -1,3 +1,4 @@
+#include <QThread>
 #include "GBBus.h"
 #include "GBApu.h"
 #include "GBApu_ChannelBase.h"
@@ -16,6 +17,7 @@ GBApu::GBApu() :
 	m_Channels[3] = nullptr;
 	m_FrameSequencer = new GBApu_FrameSequencer();
 	m_Mixer = new GBApu_Mixer(m_Channels);
+    Reset();
 }
 
 GBApu::~GBApu()
@@ -26,6 +28,18 @@ GBApu::~GBApu()
 	}
 	delete m_FrameSequencer;
 	delete m_Mixer;
+    if (m_SamplesSemaphore.available() == 0)
+    {
+        m_SamplesSemaphore.release();
+        //give time to release the semaphore before destroy it
+        QThread::usleep(100);
+    }
+}
+
+void GBApu::Reset()
+{
+    m_CurrentBuffer = false;
+    m_SamplesCounter = 0;
 }
 
 void GBApu::ReadSamplesRam(GBBus *bus)
@@ -117,6 +131,24 @@ void GBApu::Tick(GBBus *bus)
 	{
 		m_Channels[ch]->Tick(m_FrameSequencer);
 	}
-	m_Mixer->Tick(1); //TODO: Proper handling of master volume
-	//TODO: Notify new samples
+    m_Mixer->Tick();
+    AddSamplesToBuffer(m_Mixer->GetSampleL(), m_Mixer->GetSampleR());
+}
+
+void GBApu::AddSamplesToBuffer(quint8 lSample, quint8 rSample)
+{
+    m_SamplesBuffer[m_CurrentBuffer][m_SamplesCounter++] = lSample;
+    m_SamplesBuffer[m_CurrentBuffer][m_SamplesCounter++] = rSample;
+    if (m_SamplesCounter >= SAMPLES_BUFFER_SIZE)
+    {
+        m_SamplesCounter = 0;
+        m_CurrentBuffer = !m_CurrentBuffer;
+        m_SamplesSemaphore.release();
+    }
+}
+
+quint8* GBApu::GetSamples()
+{
+    m_SamplesSemaphore.acquire();
+    return m_SamplesBuffer[!m_CurrentBuffer];
 }

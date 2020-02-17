@@ -1,5 +1,4 @@
 #include "GBBus.h"
-#include "GBApu_FrameSequencer.h"
 #include "GBApu_SweepSquareChannel.h"
 #include "GBApu_FrequencySweepModule.h"
 #include "GBApu_SquareWaveModule.h"
@@ -9,18 +8,10 @@
 GBApu_SweepSquareChannel::GBApu_SweepSquareChannel(quint8& apuStatus) :
 	GBApu_ChannelBase(AUDIO_REG_ADDRESS_OFFSET, apuStatus)
 {
-    m_FrequencySweeper = new GBApu_FrequencySweepModule(AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
-	m_SquareWave = new GBApu_SquareWaveModule(m_Registers);
-    m_LengthCounter = new GBApu_LengthCounterModule(0x3F, AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
-    m_VolumeEnvelope = new GBApu_VolumeEnvelopeModule(m_Registers);
-}
-
-GBApu_SweepSquareChannel::~GBApu_SweepSquareChannel()
-{
-    delete m_FrequencySweeper;
-	delete m_SquareWave;
-	delete m_LengthCounter;
-    delete m_VolumeEnvelope;
+    m_Modules[0] = new GBApu_FrequencySweepModule(AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
+    m_Modules[1] = new GBApu_SquareWaveModule(m_Registers);
+    m_Modules[2] = new GBApu_LengthCounterModule(0x3F, AUDIO_CHANNEL1_ENABLE_MASK, m_ApuStatus, m_Registers);
+    m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
 void GBApu_SweepSquareChannel::ReadRegister(GBBus *bus)
@@ -72,36 +63,4 @@ void GBApu_SweepSquareChannel::WriteRegister(GBBus *bus)
 			return;
 	}
 	bus->WriteReqAck();
-}
-
-void GBApu_SweepSquareChannel::Reset()
-{
-	GBApu_ChannelBase::Reset();
-    m_FrequencySweeper->Reset();
-	m_SquareWave->Reset();
-	m_LengthCounter->Reset();
-    m_VolumeEnvelope->Reset();
-}
-
-void GBApu_SweepSquareChannel::Trigger()
-{
-	if ((m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] & 0x80) != 0)
-	{
-        m_FrequencySweeper->Trigger();
-		m_SquareWave->Trigger();
-		m_LengthCounter->Trigger();
-        m_VolumeEnvelope->Trigger();
-	}
-}
-
-void GBApu_SweepSquareChannel::Tick(GBApu_FrameSequencer *sequencer)
-{
-	m_Sample = 0;
-    if ((m_ApuStatus & AUDIO_CHANNEL1_ENABLE_MASK) != 0)
-    {
-        m_FrequencySweeper->Tick(sequencer->IsFrequencySweepTick(), &m_Sample);
-        m_SquareWave->Tick(true, &m_Sample);
-        m_LengthCounter->Tick(sequencer->IsLengthCounterTick(), &m_Sample);
-        m_VolumeEnvelope->Tick(sequencer->IsVolumeEnvelopeTick(), &m_Sample);
-    }
 }

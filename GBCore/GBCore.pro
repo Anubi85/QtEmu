@@ -34,6 +34,7 @@ SOURCES += \
     GBApu/GBApu_FrequencySweepModule.cpp \
     GBApu/GBApu_LengthCounterModule.cpp \
     GBApu/GBApu_Mixer.cpp \
+    GBApu/GBApu_SquareChannel.cpp \
     GBApu/GBApu_SquareWaveModule.cpp \
     GBApu/GBApu_SquareWaveModule_s.cpp \
     GBApu/GBApu_SweepSquareChannel.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     GBApu/GBApu_FrequencySweepModule.h \
     GBApu/GBApu_LengthCounterModule.h \
     GBApu/GBApu_Mixer.h \
+    GBApu/GBApu_SquareChannel.h \
     GBApu/GBApu_SquareWaveModule.h \
     GBApu/GBApu_SweepSquareChannel.h \
     GBApu/GBApu_VolumeEnvelopeModule.h \
