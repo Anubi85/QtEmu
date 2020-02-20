@@ -2,12 +2,15 @@
 
 void GBApu_LfsrModule::Reset()
 {
+    GBApu_ChannelModuleBase::Reset();
+    m_LFSR = 0;
     m_FrequencyCounter.Reload(GetFrequency());
 }
 
 void GBApu_LfsrModule::Trigger()
 {
     m_LFSR = 0x7FFF;
+    m_FrequencyCounter.Reload(GetFrequency());
 }
 
 void GBApu_LfsrModule::Tick(bool doAction, quint8 *sample)
