@@ -20,7 +20,7 @@ void GBCpuState_Decode::Update(GBBus* bus)
     }
     else
     {
-        GBInstruction inst = m_IsCB ? m_Context->GetCBInstructionTable()[bus->GetData()] : m_Context->GetInstructionTable()[bus->GetData()];
+        GBInstruction inst = m_IsCB ? m_Context->GetCBInstruction(bus->GetData()) : m_Context->GetInstruction(bus->GetData());
         if (inst != nullptr)
         {
             m_Context->SetState(new GBCpuState_Execute(

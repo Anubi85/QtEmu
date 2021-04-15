@@ -75,8 +75,8 @@ private:
 	void SetState(IGBCpuState* newState) override;
 	bool GetImeFlag() override { return m_IME; }
 	quint16 GetPcAndIncrement() override { return m_PC++; }
-	GBInstruction* GetInstructionTable() override { return s_InstructionTable; }
-	GBInstruction* GetCBInstructionTable() override { return s_CBInstructionTable; }
+    GBInstruction GetInstruction(quint8 opCode) override { return s_InstructionTable[opCode]; }
+    GBInstruction GetCBInstruction(quint8 opCode) override { return s_CBInstructionTable[opCode]; }
 	bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) override { return (this->*inst)(ctx, bus); }
 
     //instructions

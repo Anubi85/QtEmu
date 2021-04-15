@@ -15,8 +15,8 @@ public:
     virtual void SetState(IGBCpuState* newState) = 0;
     virtual bool GetImeFlag() = 0;
     virtual quint16 GetPcAndIncrement() = 0;
-    virtual GBInstruction* GetInstructionTable() = 0;
-    virtual GBInstruction* GetCBInstructionTable() = 0;
+    virtual GBInstruction GetInstruction(quint8 opCpde) = 0;
+    virtual GBInstruction GetCBInstruction(quint8 opCode) = 0;
 	virtual bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) = 0;
 };
 
