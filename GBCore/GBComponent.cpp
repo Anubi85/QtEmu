@@ -19,7 +19,7 @@ QString GBComponent::GetErrorDescription(Error error)
     case Error::Ok:
         return "No Error";
     case Error::BIOS_FileNotFound:
-        return  "Bios file not found n disk.";
+		return  "Bios file not found on disk.";
     case Error::BIOS_FailToOpen:
         return "Fail to open the bios file.";
     case Error::BIOS_WrongFileSize:

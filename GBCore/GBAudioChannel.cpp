@@ -1,5 +1,6 @@
 #include "GBAudioChannel.h"
 #include "IGBAudioModule.h"
+#include "GBAudioDac.h"
 #include "GBAudioModule_Constant.h"
 #include "GBAudioModule_FrequencySweeper.h"
 #include "GBAudioModule_SquareWaveGenerator.h"
@@ -11,26 +12,29 @@
 GBAudioChannel::GBAudioChannel(
         quint8 enableBitMask,
         quint8* channelsState,
-        IGBAudioModule* frequencySweeper,
+		IGBAudioModule* frequencySweeper,
         IGBAudioModule* waveGenerator,
         IGBAudioModule* lengthCounter,
-        IGBAudioModule* volumeManager) :
+		IGBAudioModule* volumeManager,
+		GBAudioDac* dac) :
     c_EnableBitMask(enableBitMask)
 {
     m_ChannelsState = channelsState;
-    m_FrequencySweeper = frequencySweeper;
+	m_FrequencySweeper = frequencySweeper;
     m_WaveGenerator = waveGenerator;
     m_LengthCounter = lengthCounter;
     m_VolumeManager = volumeManager;
+	m_Dac = dac;
     Reset();
 }
 
 GBAudioChannel::~GBAudioChannel()
 {
-    delete m_FrequencySweeper;
+	delete m_FrequencySweeper;
     delete m_WaveGenerator;
     delete m_LengthCounter;
     delete m_VolumeManager;
+	delete m_Dac;
 }
 
 GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers)
@@ -41,7 +45,8 @@ GBAudioChannel* GBAudioChannel::GetSweepSquareChannel(quint8 enableBitMask, quin
                 new GBAudioModule_FrequencySweeper(registers),
                 new GBAudioModule_SquareWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
-                new GBAudioModule_EnvelopeVolumeManager(registers));
+				new GBAudioModule_EnvelopeVolumeManager(registers),
+				new GBAudioDac(registers, false));
 }
 
 GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers)
@@ -52,7 +57,8 @@ GBAudioChannel* GBAudioChannel::GetSquareChannel(quint8 enableBitMask, quint8* c
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_SquareWaveGenerator(registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
-                new GBAudioModule_EnvelopeVolumeManager(registers));
+				new GBAudioModule_EnvelopeVolumeManager(registers),
+				new GBAudioDac(registers, false));
 }
 
 GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers, quint8* samplesRam)
@@ -63,7 +69,8 @@ GBAudioChannel* GBAudioChannel::GetWaveChannel(quint8 enableBitMask, quint8* cha
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_RamWaveGenerator(registers, samplesRam),
                 new GBAudioModule_LengthCounter(0xFF, registers),
-                new GBAudioModule_Constant(1));
+				new GBAudioModule_Constant(1),
+				new GBAudioDac(registers, true));
 }
 
 GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8 enableBitMask, quint8* channelsState, quint8* registers)
@@ -74,13 +81,14 @@ GBAudioChannel* GBAudioChannel::GetNoiseChannel(quint8 enableBitMask, quint8* ch
                 new GBAudioModule_Constant(1),
                 new GBAudioModule_NoiseWaveGenerator (registers),
                 new GBAudioModule_LengthCounter(0x3F, registers),
-                new GBAudioModule_EnvelopeVolumeManager(registers));
+				new GBAudioModule_EnvelopeVolumeManager(registers),
+				new GBAudioDac(registers, false));
 }
 
 void GBAudioChannel::Reset()
 {
     m_TickCounter = 0;
-    m_FrequencySweeper->Reset();
+	m_FrequencySweeper->Reset();
     m_WaveGenerator->Reset();
     m_LengthCounter->Reset();
     m_VolumeManager->Reset();
@@ -89,7 +97,7 @@ void GBAudioChannel::Reset()
 void GBAudioChannel::Trigger()
 {
     EnableChannel();
-    m_FrequencySweeper->Trigger();
+	m_FrequencySweeper->Trigger();
     m_WaveGenerator->Trigger();
     m_LengthCounter->Trigger();
     m_VolumeManager->Trigger();
@@ -110,7 +118,7 @@ void GBAudioChannel::PerformModuleTick(bool condition, IGBAudioModule* module)
 void GBAudioChannel::Tick()
 {
     m_TickCounter++;
-    PerformModuleTick(IsSweepTick(), m_FrequencySweeper);
+	PerformModuleTick(IsSweepTick(), m_FrequencySweeper);
     PerformModuleTick(true, m_WaveGenerator);
     PerformModuleTick(IsLengthCounterTick(), m_LengthCounter);
     PerformModuleTick(IsVolumeManagerTick(), m_VolumeManager);
@@ -120,7 +128,11 @@ qreal GBAudioChannel::GetSample()
 {
     if (IsChannelEnabled())
     {
-        return (m_FrequencySweeper->GetSample() * m_WaveGenerator->GetSample() * m_LengthCounter->GetSample() * m_VolumeManager->GetSample()) * DAC_FACTOR + DAC_OFFSET;
+		return m_Dac->GetSample(
+					m_FrequencySweeper->GetSample(),
+					m_WaveGenerator->GetSample(),
+					m_LengthCounter->GetSample(),
+					m_VolumeManager->GetSample());
     }
     else
     {

@@ -1,6 +1,7 @@
 #include <QLibrary>
 #include <QThread>
 #include <QFileInfo>
+#include <QDir>
 #include <QException>
 #include "QtEmu.h"
 #include "ui_QtEmu.h"
@@ -46,34 +47,36 @@ QtEmu::~QtEmu()
 void QtEmu::on_actionLoad_ROM_triggered()
 {
     //TODO: display file selection
-    QString biosFilePath = "Bios.gb";
-    QString romFilePath = "Tetris.gb";
+#ifdef Q_OS_MACOS
+	QString biosFilePath = "../../../Bios.gb";
+	QString romFilePath = "../../../Tetris.gb";
+#else
+	QString biosFilePath = "Bios.gb";
+	QString romFilePath = "Tetris.gb";
+#endif
     StopEmulatorCore();
     try
     {
-        switch (s_RomTypeMap[QFileInfo(romFilePath).suffix()])
-        {
-        case SupportedRomType::gb:
-            m_CoreLibrary.setFileName("GBCore");
-            break;
-        }
-        m_Core = reinterpret_cast<IEmulatorCore*(*)()>(m_CoreLibrary.resolve("GetCore"))();
-        int screenWidth, screenHeight;
-        m_Core->GetScreenSize(screenWidth, screenHeight);
-        //set screen size
-        ui->display->setMinimumSize(screenWidth, screenHeight);
-        //fix window size
-        adjustSize();
-        //initialize emulator core
-        if (m_Core->Initialize(biosFilePath, romFilePath))
-        {
-            //start the emulator main loop in a separate thread
-            StartEmulatorCore();
-        }
-        else
-        {
-            //TODO: handle initialization error
-        }
+		LoadCore(s_RomTypeMap[QFileInfo(romFilePath).suffix()]);
+		if (m_Core != nullptr)
+		{
+			int screenWidth, screenHeight;
+			m_Core->GetScreenSize(screenWidth, screenHeight);
+			//set screen size
+			ui->display->setMinimumSize(screenWidth, screenHeight);
+			//fix window size
+			adjustSize();
+			//initialize emulator core
+			if (m_Core->Initialize(biosFilePath, romFilePath))
+			{
+				//start the emulator main loop in a separate thread
+				StartEmulatorCore();
+			}
+			else
+			{
+				//TODO: handle initialization error
+			}
+		}
     }
     catch (QException)
     {
@@ -132,4 +135,32 @@ void QtEmu::VideoLoop()
         std::shared_ptr<QImage> img(new QImage(reinterpret_cast<uchar*>(m_Core->GetFrame()), screenWidth, screenHeight, QImage::Format_ARGB32));
         emit FrameReady(img);
     }
+}
+
+void QtEmu::LoadCore(SupportedRomType romType)
+{
+	QString corePath = "./Cores/";
+	switch (romType)
+	{
+		case SupportedRomType::gb:
+			corePath += "GBCore";
+			break;
+		default:
+			//TODO: Log the error
+			return;
+	}
+	m_CoreLibrary.setFileName(corePath);
+	if (m_CoreLibrary.load())
+	{
+		auto getCoreFn = reinterpret_cast<IEmulatorCore*(*)()>(m_CoreLibrary.resolve("GetCore"));
+		if (getCoreFn != nullptr)
+		{
+			m_Core = getCoreFn();
+		}
+		else
+		{
+			//TODO: Log the error
+		}
+	}
+	//TODO: Log the error
 }
