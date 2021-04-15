@@ -1,7 +1,7 @@
 #ifndef QDISPLAY_H
 #define QDISPLAY_H
 
-#include <QOpenGLWidget>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <memory>
 
 class QDisplay : public QOpenGLWidget
