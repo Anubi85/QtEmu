@@ -10,6 +10,7 @@ GBVideoState_Suspended::GBVideoState_Suspended(IGBVideoStateContext* context) :
 
 void GBVideoState_Suspended::Tick(GBBus* bus)
 {
+    Q_UNUSED(bus)
     if (m_Context->IsDisplayEnabled())
     {
         m_Context->SetState(new GBVideoState_Scanline1(m_Context));

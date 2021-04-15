@@ -11,6 +11,7 @@ GBVideoState_HBlank::GBVideoState_HBlank(IGBVideoStateContext* context) :
 
 void GBVideoState_HBlank::Tick(GBBus* bus)
 {
+    Q_UNUSED(bus)
     if ((m_Context->PerformCycle() % 456) == 0)
     {
         m_Context->ResetCycles();

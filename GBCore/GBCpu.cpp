@@ -987,7 +987,7 @@ bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
         }
         else
         {
-            m_Registers.Single[context->GetZ()] = ((m_Registers.Single[context->GetZ()] << 1) & 0xFF) | GetFlag(Flag::C);
+            m_Registers.Single[context->GetZ()] = ((m_Registers.Single[context->GetZ()] << 1) & 0xFF) | static_cast<quint8>(GetFlag(Flag::C));
             SetFlag(Flag::Z, m_Registers.Single[context->GetZ()] == 0);
             SetFlag(Flag::N, false);
             SetFlag(Flag::H, false);
@@ -995,7 +995,7 @@ bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
             return true;
         }
     case 2:
-        bus->SetData(((context->Get8BitData() << 1) & 0xFF) | GetFlag(Flag::C));
+        bus->SetData(((context->Get8BitData() << 1) & 0xFF) | static_cast<quint8>(GetFlag(Flag::C)));
         SetFlag(Flag::Z, bus->GetData() == 0);
         SetFlag(Flag::N, false);
         SetFlag(Flag::H, false);
@@ -1017,7 +1017,7 @@ bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
     {
     case 0:
         context->SetCarry((m_Registers.Single[*CpuRegister::A] & 0x80) != 0);
-        m_Registers.Single[*CpuRegister::A] = ((m_Registers.Single[*CpuRegister::A] << 1) & 0xFF) | GetFlag(Flag::C);
+        m_Registers.Single[*CpuRegister::A] = ((m_Registers.Single[*CpuRegister::A] << 1) & 0xFF) | static_cast<quint8>(GetFlag(Flag::C));
         SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
         SetFlag(Flag::N, false);
         SetFlag(Flag::H, false);
