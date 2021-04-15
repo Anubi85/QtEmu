@@ -24,7 +24,7 @@ public:
 	virtual ~GBApu_ChannelBase();
 	virtual void Tick(GBApu_FrameSequencer* sequencer);
 	virtual void Reset();
-	virtual void ReadRegister(GBBus* bus);
-	virtual void WriteRegister(GBBus* bus);
+    virtual void ReadRegister(GBBus* bus) = 0;
+    virtual void WriteRegister(GBBus* bus) = 0;
     quint8 GetSample() { return m_Dac->GetSample(); }
 };

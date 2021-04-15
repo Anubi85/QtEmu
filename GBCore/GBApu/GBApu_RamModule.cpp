@@ -2,7 +2,6 @@
 
 void GBApu_RamModule::Reset()
 {
-    GBApu_ChannelModuleBase::Reset();
     m_SampleIdx = 0;
     m_FrequencyCounter.Reload(GetFrequencyCount());
 }
@@ -18,4 +17,9 @@ void GBApu_RamModule::Trigger()
 {
     m_SampleIdx = 0;
     m_FrequencyCounter.Reload(GetFrequencyCount());
+}
+
+void GBApu_RamModule::Tick(bool doAction, quint8 *sample)
+{
+
 }

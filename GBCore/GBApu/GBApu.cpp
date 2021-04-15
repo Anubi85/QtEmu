@@ -14,12 +14,12 @@ GBApu::GBApu() :
 	m_SamplesRam{ 0x84, 0x40, 0x43, 0xAA, 0x2D, 0x78, 0x92, 0x3C, 0x60, 0x59, 0x59, 0xB0, 0x34, 0xB8, 0x2E, 0xDA }
 {
 	m_NR52 = 0;
-	m_Channels[0] = new GBApu_SweepSquareChannel(m_NR52);
+    m_Channels[0] = new GBApu_SweepSquareChannel(m_NR52);
     m_Channels[1] = new GBApu_SquareChannel(m_NR52);
     m_Channels[2] = new GBApu_WaveChannel(m_NR52);
     m_Channels[3] = new GBApu_NoiseChannel(m_NR52);
-	m_FrameSequencer = new GBApu_FrameSequencer();
-	m_Mixer = new GBApu_Mixer(m_Channels);
+    m_FrameSequencer = new GBApu_FrameSequencer();
+    m_Mixer = new GBApu_Mixer(m_Channels);
     Reset();
 }
 
@@ -29,7 +29,7 @@ GBApu::~GBApu()
 	{
 		delete m_Channels[ch];
 	}
-	delete m_FrameSequencer;
+    delete m_FrameSequencer;
 	delete m_Mixer;
     if (m_SamplesSemaphore.available() == 0)
     {
@@ -61,9 +61,9 @@ void GBApu::ReadRegister(GBBus *bus)
 {
 	for(int ch = 0; ch < AUDIO_CHANNELS_NUM; ch++)
 	{
-		m_Channels[ch]->ReadRegister(bus);
+        m_Channels[ch]->ReadRegister(bus);
 	}
-	m_Mixer->ReadRegister(bus);
+    m_Mixer->ReadRegister(bus);
 	if (bus->IsReadReqPending())
 	{
 		switch (bus->GetAddress())
@@ -82,9 +82,9 @@ void GBApu::WriteRegister(GBBus *bus)
 {
 	for (int ch = 0; ch < AUDIO_CHANNELS_NUM; ch++)
 	{
-		m_Channels[ch]->WriteRegister(bus);
+        m_Channels[ch]->WriteRegister(bus);
 	}
-	m_Mixer->WriteRegister(bus);
+    m_Mixer->WriteRegister(bus);
 	if (bus->IsWriteReqPending())
 	{
 		switch (bus->GetAddress())
@@ -129,10 +129,10 @@ void GBApu::Tick(GBBus *bus)
 			WriteRegister(bus);
 		}
 	}
-	m_FrameSequencer->Tick();
+    m_FrameSequencer->Tick();
 	for (int ch = 0;  ch < AUDIO_CHANNELS_NUM; ch++)
 	{
-		m_Channels[ch]->Tick(m_FrameSequencer);
+        m_Channels[ch]->Tick(m_FrameSequencer);
 	}
     m_Mixer->Tick();
     AddSamplesToBuffer(m_Mixer->GetSampleL(), m_Mixer->GetSampleR());

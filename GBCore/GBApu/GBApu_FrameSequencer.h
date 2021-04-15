@@ -16,7 +16,7 @@ private:
 
 public:
     GBApu_FrameSequencer(){ }
-	~GBApu_FrameSequencer();
+    ~GBApu_FrameSequencer() { }
     void Tick();
     bool IsLengthCounterTick() { return m_LengthCounter.IsZero(); }
     bool IsVolumeEnvelopeTick() { return m_VolumeCounter.IsZero(); }

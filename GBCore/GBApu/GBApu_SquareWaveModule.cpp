@@ -2,7 +2,6 @@
 
 void GBApu_SquareWaveModule::Reset()
 {
-	GBApu_ChannelModuleBase::Reset();
 	m_SampleIdx = 0;
 	m_DutyIdx = 0;
     m_FrequencyCounter.Reload(GetFrequencyCount());

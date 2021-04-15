@@ -2,7 +2,6 @@
 
 void GBApu_LfsrModule::Reset()
 {
-    GBApu_ChannelModuleBase::Reset();
     m_LFSR = 0;
     m_FrequencyCounter.Reload(GetFrequency());
 }
