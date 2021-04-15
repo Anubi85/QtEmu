@@ -1,0 +1,1 @@
+HEADERS += IEmulatorCore.h

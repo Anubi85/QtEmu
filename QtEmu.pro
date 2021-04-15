@@ -2,7 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     QtEmu \
-    GBCore
+    GBCore \
+    Includes
 
 OTHER_FILES += \
     QtEmu.pri \

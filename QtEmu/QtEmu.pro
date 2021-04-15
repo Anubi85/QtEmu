@@ -30,7 +30,6 @@ SOURCES += \
     QDisplay.cpp
 
 HEADERS += \
-    ../Includes/IEmulatorCore.h \
     QtEmu.h \
     QDisplay.h
 

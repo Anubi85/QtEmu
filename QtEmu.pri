@@ -1,7 +1,5 @@
 INCLUDEPATH += \
-    ../Includes \
-    GBApu \
-    GBUtility
+    ../Includes
 
 CONFIG(debug, debug|release): {
     DESTDIR = $${PWD}/Bin/$${TARGET}/Debug
