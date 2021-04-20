@@ -1,5 +1,4 @@
-#ifndef GBCPUSTATE_FETCH_H
-#define GBCPUSTATE_FETCH_H
+#pragma once
 
 #include <QtGlobal>
 #include "IGBCpuState.h"
@@ -13,9 +12,8 @@ private:
 
     int m_Count;
 public:
-    GBCpuState_Fetch(IGBCpuStateContext* context, bool isCB);
+    GBCpuState_Fetch(IGBCpuStateContext* context) : IGBCpuState(context) { }
+    void Reset() override;
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::Fetch; }
 };
-
-#endif // GBCPUSTATE_FETCH_H

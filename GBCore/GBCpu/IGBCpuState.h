@@ -1,8 +1,9 @@
-#ifndef IGBCPUSTATE_H
-#define IGBCPUSTATE_H
+#pragma once
 
 class GBBus;
 class IGBCpuStateContext;
+
+#define CPU_STATES_NUM 5
 
 enum class CpuState
 {
@@ -20,8 +21,7 @@ protected:
     IGBCpuState(IGBCpuStateContext* context);
 public:
     virtual ~IGBCpuState();
+    virtual void Reset() { }
     virtual void Update(GBBus* bus) = 0;
     virtual CpuState GetStateID() = 0;
 };
-
-#endif // IGBCPUSTATE_H

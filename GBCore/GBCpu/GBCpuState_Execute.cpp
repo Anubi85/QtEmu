@@ -3,11 +3,9 @@
 #include "GBInstructionContext.h"
 #include "IGBCpuStateContext.h"
 
-GBCpuState_Execute::GBCpuState_Execute(IGBCpuStateContext* context, GBInstruction inst, GBInstructionContext* instContext) :
-    IGBCpuState (context)
+void GBCpuState_Execute::Reset()
 {
-    m_Instruction = inst;
-    m_InstructionContext = instContext;
+    m_InstructionContext.SetOpCode(m_Context->GetOpCode());
     m_Count = 0;
 }
 
@@ -15,10 +13,9 @@ void GBCpuState_Execute::Update(GBBus* bus)
 {
     if (m_Count-- == 0)
     {
-		if (m_Context->ExecuteOpCode(m_Instruction, m_InstructionContext, bus))
+        if (m_Context->ExecuteOpCode(&m_InstructionContext, bus))
         {
-            delete m_InstructionContext;
-            m_Context->SetState(new GBCpuState_InterruptCheck(m_Context));
+            m_Context->SetState(CpuState::InterruptCheck, false, NOP_INSTRUCTION);
         }
         else
         {

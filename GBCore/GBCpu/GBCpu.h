@@ -1,11 +1,12 @@
-#ifndef GBCPU_H
-#define GBCPU_H
+#pragma once
 
 #include <QtGlobal>
 #include <QtEndian>
 #include "GBComponent.h"
 #include "GBInstruction.h"
+#include "GBInstructionContext.h"
 #include "GBUtils.h"
+#include "IGBCpuState.h"
 #include "IGBCpuStateContext.h"
 
 #define REG8_NUM 8
@@ -44,8 +45,6 @@ enum class CpuRegister
 	AF = 0x03,
 };
 
-class IGBCpuState;
-
 class GBCpu : IGBCpuStateContext, public GBComponent
 {
 private:
@@ -61,7 +60,11 @@ private:
         quint8 Single[REG8_NUM];
         quint16_be Double[REG16_NUM];
     } m_Registers;
+    //IGBCpuStateContext members
     bool m_IME;
+    bool m_CB;
+    quint8 m_OpCode;
+    IGBCpuState* m_CpuStates[CPU_STATES_NUM];
     IGBCpuState* m_State;
 
     void SetFlag(Flag flagMask, bool value);
@@ -72,12 +75,12 @@ private:
     bool HasCarry(quint8 nibble) { return (nibble & 0x10) != 0; }
     quint8 AddSub(quint8 value1, quint8 value2, bool isSub);
     //IGBCpuStateContext
-	void SetState(IGBCpuState* newState) override;
+    void SetState(CpuState newStateID, bool isCBInstruction, quint8 opCode) override;
 	bool GetImeFlag() override { return m_IME; }
+    bool IsCBInstruction() override { return m_CB; }
 	quint16 GetPcAndIncrement() override { return m_PC++; }
-    GBInstruction GetInstruction(quint8 opCode) override { return s_InstructionTable[opCode]; }
-    GBInstruction GetCBInstruction(quint8 opCode) override { return s_CBInstructionTable[opCode]; }
-	bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) override { return (this->*inst)(ctx, bus); }
+    quint8 GetOpCode() override { return m_OpCode; }
+    bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) override;
 
     //instructions
     bool NOP(GBInstructionContext* context, GBBus* bus);
@@ -112,5 +115,3 @@ public:
     void Reset() override;
     void Tick(GBBus* bus) override;
 };
-
-#endif // GBCPU_H

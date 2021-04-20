@@ -1,5 +1,4 @@
-#ifndef GBINSTRUCTIONCONTEXT_H
-#define GBINSTRUCTIONCONTEXT_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBUtils.h"
@@ -54,7 +53,7 @@ private:
     quint8 m_Step;
     bool m_Carry;
 public:
-    GBInstructionContext(quint8 opcode);
+    void SetOpCode(quint8 opCode);
     quint8 GetX() { return m_x; }
     quint8 GetY() { return m_y; }
     quint8 GetZ() { return m_z; }
@@ -70,5 +69,3 @@ public:
     void SetCarry(bool value) { m_Carry = value; }
     void AdvanceStep() { m_Step++; }
 };
-
-#endif // GBINSTRUCTIONCONTEXT_H

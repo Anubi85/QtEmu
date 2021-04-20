@@ -1,5 +1,4 @@
-#ifndef GBCOMPONENT_H
-#define GBCOMPONENT_H
+#pragma once
 
 #include <QtGlobal>
 #include <QString>
@@ -48,5 +47,3 @@ public:
     QString GetErrorDescription(quint16 errorCode) { return GetErrorDescription(static_cast<Error>(errorCode)); }
     QString GetErrorDescription(Error error);
 };
-
-#endif // GBCOMPONENT_H

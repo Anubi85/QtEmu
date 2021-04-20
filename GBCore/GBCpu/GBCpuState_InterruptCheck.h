@@ -1,5 +1,4 @@
-#ifndef GBCPUSTATE_INTERRUPTCHECK_H
-#define GBCPUSTATE_INTERRUPTCHECK_H
+#pragma once
 
 #include "IGBCpuState.h"
 
@@ -10,5 +9,3 @@ public:
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::InterruptCheck; }
 };
-
-#endif // GBCPUSTATE_INTERRUPTCHECK_H

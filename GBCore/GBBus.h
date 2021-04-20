@@ -1,5 +1,4 @@
-#ifndef GBBUS_H
-#define GBBUS_H
+#pragma once
 
 #include <QtGlobal>
 
@@ -25,5 +24,3 @@ public:
     bool IsWriteReqPending() { return m_WriteReq; }
     bool IsReadReqPending() {return m_ReadReq; }
 };
-
-#endif // GBBUS_H

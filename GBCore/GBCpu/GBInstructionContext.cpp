@@ -1,6 +1,6 @@
 #include "GBInstructionContext.h"
 
-GBInstructionContext::GBInstructionContext(quint8 opCode)
+void GBInstructionContext::SetOpCode(quint8 opCode)
 {
     m_x = (opCode & MASK_X) >> SHIFT_X;
     m_y = (opCode & MASK_Y) >> SHIFT_Y;

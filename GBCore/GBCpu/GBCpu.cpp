@@ -1,17 +1,29 @@
 #include "GBCpu.h"
 #include "GBBus.h"
-#include "GBInstructionContext.h"
 #include "GBCpuState_Fetch.h"
+#include "GBCpuState_Decode.h"
+#include "GBCpuState_Execute.h"
+#include "GBCpuState_InterruptCheck.h"
+#include "GBCpuState_Error.h"
 
 GBCpu::GBCpu()
 {
+    m_CpuStates[*CpuState::Fetch] = new GBCpuState_Fetch(this);
+    m_CpuStates[*CpuState::Decode] = new GBCpuState_Decode(this);
+    m_CpuStates[*CpuState::Execute] = new GBCpuState_Execute(this);
+    m_CpuStates[*CpuState::InterruptCheck] = new GBCpuState_InterruptCheck(this);
+    m_CpuStates[*CpuState::Error] = new GBCpuState_Error(this);
     m_State = nullptr;
     Reset();
 }
 
 GBCpu::~GBCpu()
 {
-    delete m_State;
+    for (int state = 0; state < CPU_STATES_NUM; state++)
+    {
+        delete m_CpuStates[state];
+    }
+    //no need to delete m_state because already deleted by the above loop
 }
 
 void GBCpu::Reset()
@@ -19,11 +31,13 @@ void GBCpu::Reset()
     GBComponent::Reset();
     m_Cycles = 0;
     m_IME = false;
+    m_CB = false;
+    m_OpCode = NOP_INSTRUCTION;
     m_PC = 0;
     m_SP = 0;
     m_Registers.All = 0;
-    delete m_State;
-    m_State = new GBCpuState_Fetch(this, false);
+    m_State = m_CpuStates[*CpuState::Fetch];
+    m_State->Reset();
 }
 
 void GBCpu::Tick(GBBus* bus)
@@ -39,10 +53,33 @@ void GBCpu::Tick(GBBus* bus)
     }
 }
 
-void GBCpu::SetState(IGBCpuState* newState)
+void GBCpu::SetState(CpuState newStateID, bool isCBInstruction, quint8 opCode)
 {
-    delete m_State;
-    m_State = newState;
+    m_OpCode = opCode;
+    m_CB = isCBInstruction;
+    m_State = m_CpuStates[*newStateID];
+    m_State->Reset();
+}
+
+bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
+{
+    GBInstruction inst = m_CB ? s_CBInstructionTable[m_OpCode] : s_InstructionTable[m_OpCode];
+    if (inst != nullptr)
+    {
+        return (this->*inst)(ctx, bus);
+    }
+    else
+    {
+#ifdef DEBUG
+        QString msg("Op Code %1 not implemented");
+        msg = msg.arg(m_CB ? "0xCB 0x%1" : "0x%1").arg(m_OpCode, 2, 16, QLatin1Char('0'));
+        qDebug(msg.toUtf8());
+#endif
+        //go to error state
+        SetState(CpuState::Error, false, NOP_INSTRUCTION);
+        //return false to prevent Execute state to go into InterruptCheck state
+        return false;
+    }
 }
 
 void GBCpu::SetFlag(Flag flagMask, bool value)

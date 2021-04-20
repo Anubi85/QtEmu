@@ -1,21 +1,17 @@
-#ifndef GBCPUSTATE_EXECUTE_H
-#define GBCPUSTATE_EXECUTE_H
+#pragma once
 
 #include "IGBCpuState.h"
 #include "GBInstruction.h"
-
-class GBInstructionContext;
+#include "GBInstructionContext.h"
 
 class GBCpuState_Execute : public IGBCpuState
 {
 private:
-    GBInstruction m_Instruction;
-    GBInstructionContext* m_InstructionContext;
+    GBInstructionContext m_InstructionContext;
     int m_Count;
 public:
-    GBCpuState_Execute(IGBCpuStateContext* context, GBInstruction inst, GBInstructionContext* instContext);
+    GBCpuState_Execute(IGBCpuStateContext* context) : IGBCpuState(context) { }
+    void Reset() override;
     void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::Execute; }
 };
-
-#endif // GBCPUSTATE_EXECUTE_H

@@ -88,7 +88,6 @@ SOURCES += \
     GBVideo/IGBVideoStateContext.cpp \                  #TODO: rename Video to Gpu
     GBVideo/GBVideo_s.cpp \                             #TODO: rename Video to Gpu
     GBCpu/IGBCpuState.cpp \
-    GBCpu/IGBCpuStateContext.cpp \
     GBCpu/GBCpu.cpp \
     GBCpu/GBCpu_s.cpp \
     GBCpu/GBCpuState_Fetch.cpp \
@@ -96,7 +95,6 @@ SOURCES += \
     GBCpu/GBInstructionContext.cpp \
     GBCpu/GBCpuState_Execute.cpp \
     GBCpu/GBCpuState_InterruptCheck.cpp \
-    GBCpu/GBCpuState_Error.cpp \
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \

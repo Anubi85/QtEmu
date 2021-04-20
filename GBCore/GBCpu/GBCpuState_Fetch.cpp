@@ -1,5 +1,4 @@
 #include "GBCpuState_Fetch.h"
-#include "GBCpuState_Decode.h"
 #include "GBBus.h"
 #include "IGBCpuStateContext.h"
 
@@ -12,10 +11,9 @@ quint16 GBCpuState_Fetch::s_InterruptRoutineAddress[INTERRUPT_NUM] =
     0x0060, //Hi-Lo of P10-P13
 };
 
-GBCpuState_Fetch::GBCpuState_Fetch(IGBCpuStateContext* context, bool isCB) :
-    IGBCpuState (context)
+void GBCpuState_Fetch::Reset()
 {
-    m_Count = isCB ? 3 : 0;
+    m_Count = m_Context->IsCBInstruction() ? 3 : 0;
 }
 
 void GBCpuState_Fetch::Update(GBBus* bus)
@@ -41,6 +39,6 @@ void GBCpuState_Fetch::Update(GBBus* bus)
         }
         bus->SetAddress(address);
         bus->RequestRead();
-        m_Context->SetState(new GBCpuState_Decode(m_Context, m_Count == 0));
+        m_Context->SetState(CpuState::Decode, m_Count == 0, NOP_INSTRUCTION);
     }
 }

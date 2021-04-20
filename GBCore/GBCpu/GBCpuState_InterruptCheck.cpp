@@ -16,5 +16,5 @@ void GBCpuState_InterruptCheck::Update(GBBus* bus)
         bus->SetAddress(0xFFFF); //read interrupt flags register
         bus->RequestRead();
     }
-    m_Context->SetState(new GBCpuState_Fetch(m_Context, false));
+    m_Context->SetState(CpuState::Fetch, false, NOP_INSTRUCTION);
 }

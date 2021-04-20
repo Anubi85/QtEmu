@@ -1,18 +1,12 @@
-#ifndef GBCPUSTATE_ERROR_H
-#define GBCPUSTATE_ERROR_H
+#pragma once
 
-#include <QtGlobal>
-#include <QString>
+#include "GBBus.h"
 #include "IGBCpuState.h"
 
 class GBCpuState_Error : public IGBCpuState
 {
-private:
-    QString m_LastErrorDescription;
 public:
-    GBCpuState_Error(IGBCpuStateContext* context, const QString errorDescription);
-    void Update(GBBus* bus) override;
+    GBCpuState_Error(IGBCpuStateContext* context) : IGBCpuState(context) { }
+    void Update(GBBus* bus) override { bus->Clear(); } //never exit the state and delete any pending request
     CpuState GetStateID() override { return CpuState::Error; }
 };
-
-#endif // GBCPUSTATE_ERROR_H

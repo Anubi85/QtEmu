@@ -1,23 +1,19 @@
-#ifndef IGBCPUSTATECONTEXT_H
-#define IGBCPUSTATECONTEXT_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBInstruction.h"
-
-class IGBCpuState;
+#include "IGBCpuState.h"
 
 class IGBCpuStateContext
 {
 protected:
-    IGBCpuStateContext();
+    IGBCpuStateContext() { }
 public:
-    virtual ~IGBCpuStateContext();
-    virtual void SetState(IGBCpuState* newState) = 0;
+    virtual ~IGBCpuStateContext() { }
+    virtual void SetState(CpuState newStateId, bool isCBInstruction, quint8 opCode) = 0;
     virtual bool GetImeFlag() = 0;
+    virtual bool IsCBInstruction() = 0;
     virtual quint16 GetPcAndIncrement() = 0;
-    virtual GBInstruction GetInstruction(quint8 opCpde) = 0;
-    virtual GBInstruction GetCBInstruction(quint8 opCode) = 0;
-	virtual bool ExecuteOpCode(GBInstruction inst, GBInstructionContext* ctx, GBBus* bus) = 0;
+    virtual quint8 GetOpCode() = 0;
+    virtual bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) = 0;
 };
-
-#endif // IGBCPUSTATECONTEXT_H

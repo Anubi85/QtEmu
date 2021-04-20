@@ -1,5 +1,4 @@
-#ifndef GBCORE_H
-#define GBCORE_H
+#pragma once
 
 #include "IEmulatorCore.h"
 #include "GBComponent.h"
@@ -21,5 +20,3 @@ public:
     quint32* GetFrame() override;
     bool Initialize(QString biosFilePath, QString romFilePath) override;
 };
-
-#endif // GBCORE_H
