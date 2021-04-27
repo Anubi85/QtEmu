@@ -1,5 +1,4 @@
-#ifndef IGBVIDEOSTATE_H
-#define IGBVIDEOSTATE_H
+#pragma once
 
 enum class VideoState
 {
@@ -10,18 +9,16 @@ enum class VideoState
     Suspended
 };
 
-class IGBVideoStateContext;
+class IGBGpuStateContext;
 class GBBus;
 
-class IGBVideoState
+class IGBGpuState
 {
 protected:
-	IGBVideoStateContext* m_Context;
-	IGBVideoState(IGBVideoStateContext* context);
+    IGBGpuStateContext* m_Context;
+    IGBGpuState(IGBGpuStateContext* context);
 public:
-    virtual ~IGBVideoState();
+    virtual ~IGBGpuState();
     virtual void Tick(GBBus* bus) = 0;
     virtual VideoState GetStateID() = 0;
 };
-
-#endif // IGBVIDEOSTATE_H

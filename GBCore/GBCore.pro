@@ -31,7 +31,7 @@ INCLUDEPATH += \
     GBBios \
     GBCartridge \
     GBAudio \
-    GBVideo \
+    GBGpu \
     GBApu \
     GBCpu \
     GBGpu \
@@ -78,15 +78,15 @@ SOURCES += \
     GBApu/GBApu_SweepSquareChannel.cpp \
     GBApu/GBApu_VolumeEnvelopeModule.cpp \
     GBApu/GBApu_WaveChannel.cpp \
-    GBVideo/GBVideo.cpp \                               #TODO: rename Video to Gpu
-    GBVideo/IGBVideoState.cpp \                         #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Scanline1.cpp \                #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Suspended.cpp \                #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Scanline2.cpp \                #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_HBlank.cpp \                   #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_VBlank.cpp \                   #TODO: rename Video to Gpu
-    GBVideo/IGBVideoStateContext.cpp \                  #TODO: rename Video to Gpu
-    GBVideo/GBVideo_s.cpp \                             #TODO: rename Video to Gpu
+    GBGpu/GBGpu.cpp \
+    GBGpu/GBGpu_s.cpp \
+    GBGpu/IGBGpuStateContext.cpp \
+    GBGpu/IGBGpuState.cpp \
+    GBGpu/GBGpuState_Scanline1.cpp \
+    GBGpu/GBGpuState_Scanline2.cpp \
+    GBGpu/GBGpuState_Suspended.cpp \
+    GBGpu/GBGpuState_HBlank.cpp \
+    GBGpu/GBGpuState_VBlank.cpp \
     GBCpu/IGBCpuState.cpp \
     GBCpu/GBCpu.cpp \
     GBCpu/GBCpu_s.cpp \
@@ -139,14 +139,14 @@ HEADERS += \
     GBApu/GBApu_SweepSquareChannel.h \
     GBApu/GBApu_VolumeEnvelopeModule.h \
     GBApu/GBApu_WaveChannel.h \
-    GBVideo/GBVideo.h \                                 #TODO: rename Video to Gpu
-    GBVideo/IGBVideoState.h \                           #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Scanline1.h \                  #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Suspended.h \                  #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_Scanline2.h \                  #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_HBlank.h \                     #TODO: rename Video to Gpu
-    GBVideo/GBVideoState_VBlank.h \                     #TODO: rename Video to Gpu
-    GBVideo/IGBVideoStateContext.h \                    #TODO: rename Video to Gpu
+    GBGpu/GBGpu.h \
+    GBGpu/IGBGpuStateContext.h \
+    GBGpu/IGBGpuState.h \
+    GBGpu/GBGpuState_Scanline1.h \
+    GBGpu/GBGpuState_Scanline2.h \
+    GBGpu/GBGpuState_Suspended.h \
+    GBGpu/GBGpuState_HBlank.h \
+    GBGpu/GBGpuState_VBlank.h \
     GBCpu/IGBCpuStateContext.h \
     GBCpu/IGBCpuState.h \
     GBCpu/GBCpu.h \

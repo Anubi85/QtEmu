@@ -1,10 +1,9 @@
-#ifndef GBLCDDISPLAY_H
-#define GBLCDDISPLAY_H
+#pragma once
 
 #include <QSemaphore>
 #include "GBComponent.h"
 #include "GBUtils.h"
-#include "IGBVideoStateContext.h"
+#include "IGBGpuStateContext.h"
 
 #define VIDEO_REG_SIZE 0x000C
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
@@ -37,16 +36,16 @@ enum class Palette
     BlueDark,
 };
 
-class IGBVideoState;
+class IGBGpuState;
 enum class VideoState;
 
-class GBVideo : IGBVideoStateContext, public GBComponent
+class GBGpu : IGBGpuStateContext, public GBComponent
 {
 private:
     static quint32 s_Palettes[PALETTE_NUM][PALETTE_SIZE];
 
     GBBus* m_InternalBus;
-    IGBVideoState* m_State;
+    IGBGpuState* m_State;
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
     quint32 m_Cycles;
@@ -63,7 +62,7 @@ private:
     void WriteVideoRegister(GBBus* bus);
     //IGBVideoStateContext
 	quint32 PerformCycle() override { return ++m_Cycles; }
-	void SetState(IGBVideoState* newState) override;
+    void SetState(IGBGpuState* newState) override;
 	bool IsDisplayEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
 	void ResetCycles() override { m_Cycles = 0; }
 	void IncreaseYLineCount() override { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
@@ -75,12 +74,10 @@ private:
     void SetPixel(quint8 pixelIdx, quint8 pixelValue) override;
     void FrameReady() override { m_FrameSemaphore.release(); }
 public:
-    GBVideo();
-    ~GBVideo() override;
+    GBGpu();
+    ~GBGpu() override;
     void Reset() override;
     void Tick(GBBus* bus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
     quint32* GetFrame();
 };
-
-#endif // GBLCDDISPLAY_H

@@ -1,6 +1,6 @@
-#include "GBVideo.h"
+#include "GBGpu.h"
 
-quint32 GBVideo::s_Palettes[PALETTE_NUM][PALETTE_SIZE] =
+quint32 GBGpu::s_Palettes[PALETTE_NUM][PALETTE_SIZE] =
 {
     //Monochrome palette
     {

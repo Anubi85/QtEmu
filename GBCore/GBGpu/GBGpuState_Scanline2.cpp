@@ -1,10 +1,10 @@
-#include "IGBVideoStateContext.h"
-#include "GBVideoState_Scanline2.h"
-#include "GBVideoState_HBlank.h"
+#include "IGBGpuStateContext.h"
+#include "GBGpuState_Scanline2.h"
+#include "GBGpuState_HBlank.h"
 #include "GBBus.h"
 
-GBVideoState_Scanline2::GBVideoState_Scanline2(IGBVideoStateContext* context) :
-    IGBVideoState(context)
+GBGpuState_Scanline2::GBGpuState_Scanline2(IGBGpuStateContext* context) :
+    IGBGpuState(context)
 {
     m_Count = -6; //first 6 cycles are dummy cycles!
     m_PixelCount = 0;
@@ -17,7 +17,7 @@ GBVideoState_Scanline2::GBVideoState_Scanline2(IGBVideoStateContext* context) :
     m_FineYScroll = yOff & 0x07;
 }
 
-quint16 GBVideoState_Scanline2::GetBackgroundTileDataAddress(quint8 tileID)
+quint16 GBGpuState_Scanline2::GetBackgroundTileDataAddress(quint8 tileID)
 {
     quint16 address = 0x8000;
     address |= (!m_Context->GetBackgroundTileID() & ~((tileID & 0x80) >> 7)) << 12;
@@ -26,7 +26,7 @@ quint16 GBVideoState_Scanline2::GetBackgroundTileDataAddress(quint8 tileID)
     return address;
 }
 
-void GBVideoState_Scanline2::Tick(GBBus* bus)
+void GBGpuState_Scanline2::Tick(GBBus* bus)
 {
     m_Context->PerformCycle();
     switch (m_Count % 8)
@@ -90,6 +90,6 @@ void GBVideoState_Scanline2::Tick(GBBus* bus)
     m_TileByte2 <<= 1;
     if (m_PixelCount == SCREEN_WIDTH)
     {
-        m_Context->SetState(new GBVideoState_HBlank(m_Context));
+        m_Context->SetState(new GBGpuState_HBlank(m_Context));
     }
 }

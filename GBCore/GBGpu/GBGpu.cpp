@@ -1,11 +1,11 @@
 #include <QThread>
-#include "GBVideo.h"
+#include "GBGpu.h"
 #include "GBBus.h"
 #include "GBUtils.h"
-#include "GBVideoState_Suspended.h"
+#include "GBGpuState_Suspended.h"
 #include <QFile>
 
-GBVideo::GBVideo() :
+GBGpu::GBGpu() :
     m_FrameSemaphore()
 {
     m_State = nullptr;
@@ -13,7 +13,7 @@ GBVideo::GBVideo() :
     Reset();
 }
 
-GBVideo::~GBVideo()
+GBGpu::~GBGpu()
 {
     delete m_State;
     delete m_InternalBus;
@@ -25,7 +25,7 @@ GBVideo::~GBVideo()
     }
 }
 
-void GBVideo::Reset()
+void GBGpu::Reset()
 {
     GBComponent::Reset();
     m_Cycles = 0;
@@ -37,11 +37,11 @@ void GBVideo::Reset()
     }
     memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
     delete m_State;
-    m_State = new GBVideoState_Suspended(this);
+    m_State = new GBGpuState_Suspended(this);
     m_InternalBus->Clear();
 }
 
-void GBVideo::SetState(IGBVideoState* newState)
+void GBGpu::SetState(IGBGpuState* newState)
 {
     if (newState->GetStateID() == VideoState::Suspended)
     {
@@ -52,7 +52,7 @@ void GBVideo::SetState(IGBVideoState* newState)
     m_State = newState;
 }
 
-void GBVideo::ReadVideoRAM(GBBus* bus, bool modeOverride)
+void GBGpu::ReadVideoRAM(GBBus* bus, bool modeOverride)
 {
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending() && IsAddressInVideoRAM(bus->GetAddress()))
@@ -69,7 +69,7 @@ void GBVideo::ReadVideoRAM(GBBus* bus, bool modeOverride)
     }
 }
 
-void GBVideo::WriteVideoRAM(GBBus* bus)
+void GBGpu::WriteVideoRAM(GBBus* bus)
 {
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending() && IsAddressInVideoRAM(bus->GetAddress()))
@@ -82,7 +82,7 @@ void GBVideo::WriteVideoRAM(GBBus* bus)
     }
 }
 
-void GBVideo::ReadVideoRegister(GBBus* bus)
+void GBGpu::ReadVideoRegister(GBBus* bus)
 {
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending() && IsAddressInVideoReg(bus->GetAddress()))
@@ -117,7 +117,7 @@ void GBVideo::ReadVideoRegister(GBBus* bus)
     }
 }
 
-void GBVideo::WriteVideoRegister(GBBus* bus)
+void GBGpu::WriteVideoRegister(GBBus* bus)
 {
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending() && IsAddressInVideoReg(bus->GetAddress()))
@@ -152,7 +152,7 @@ void GBVideo::WriteVideoRegister(GBBus* bus)
     }
 }
 
-void GBVideo::Tick(GBBus* bus)
+void GBGpu::Tick(GBBus* bus)
 {
     //read VRAM from standard bus
     ReadVideoRAM(bus, false);
@@ -168,13 +168,13 @@ void GBVideo::Tick(GBBus* bus)
     ReadVideoRAM(m_InternalBus, true);
 }
 
-quint32* GBVideo::GetFrame()
+quint32* GBGpu::GetFrame()
 {
     m_FrameSemaphore.acquire();
     return m_ScreenBuffer;
 }
 
-void GBVideo::SetPixel(quint8 pixelIdx, quint8 pixelValue)
+void GBGpu::SetPixel(quint8 pixelIdx, quint8 pixelValue)
 {
     quint8 paletteColor = 0;
     //Get palette color

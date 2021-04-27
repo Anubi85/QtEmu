@@ -3,7 +3,7 @@
 #include "GBCpu.h"
 #include "GBBios.h"
 #include "GBRam.h"
-#include "GBVideo.h"
+#include "GBGpu.h"
 #include "GBAudio.h"
 #include "GBCartridge.h"
 #include "GBInternalRam.h"
@@ -75,12 +75,12 @@ bool GBCore::HasError()
 
 void GBCore::GetScreenSize(int& width, int& height)
 {
-    static_cast<GBVideo*>(m_Components[*Component::Video])->GetScreenSize(width, height);
+    static_cast<GBGpu*>(m_Components[*Component::Video])->GetScreenSize(width, height);
 }
 
 quint32* GBCore::GetFrame()
 {
-    return static_cast<GBVideo*>(m_Components[*Component::Video])->GetFrame();
+    return static_cast<GBGpu*>(m_Components[*Component::Video])->GetFrame();
 }
 
 bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
@@ -129,7 +129,7 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
             break;
         }
         case Component::Video:
-            m_Components[comp] = new GBVideo();
+            m_Components[comp] = new GBGpu();
             break;
         case Component::Audio:
             m_Components[comp] = new GBAudio();

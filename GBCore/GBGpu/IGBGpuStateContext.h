@@ -1,5 +1,4 @@
-#ifndef IGBVIDEOSTATECONTEXT_H
-#define IGBVIDEOSTATECONTEXT_H
+#pragma once
 
 #include <QtGlobal>
 
@@ -7,16 +6,16 @@
 #define SCREEN_HEIGHT 144
 #define VIDEO_MAX_Y_LINE_COUNT 154
 
-class IGBVideoState;
+class IGBGpuState;
 
-class IGBVideoStateContext
+class IGBGpuStateContext
 {
 protected:
-	IGBVideoStateContext();
+    IGBGpuStateContext();
 public:
-	virtual ~IGBVideoStateContext();
+    virtual ~IGBGpuStateContext();
 	virtual quint32 PerformCycle() = 0;
-	virtual void SetState(IGBVideoState* newState) = 0;
+    virtual void SetState(IGBGpuState* newState) = 0;
 	virtual bool IsDisplayEnabled() = 0;
 	virtual void ResetCycles() = 0;
 	virtual void IncreaseYLineCount() = 0;
@@ -28,5 +27,3 @@ public:
     virtual void SetPixel(quint8 pixelIdx, quint8 pixelValue) = 0;
     virtual void FrameReady() = 0;
 };
-
-#endif // IGBVIDEOSTATECONTEXT_H
