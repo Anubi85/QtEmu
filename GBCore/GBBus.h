@@ -10,11 +10,11 @@ private:
 	bool m_WriteReq;
     bool m_ReadReq;
 public:
-    GBBus();
+    GBBus() { Clear(); }
     void Clear();
     void SetAddress(quint16 address) { m_Address = address; }
     quint16 GetAddress() { return m_Address; }
-	quint16 GetLocalAddress(quint16 offset) { return	m_Address - offset; }
+    quint16 GetLocalAddress(quint16 offset) { return m_Address - offset; }
     void SetData(quint8 data) { m_Data = data; }
     quint8 GetData() { return m_Data; }
     void RequestWrite() { m_WriteReq = !m_ReadReq; } //allow write request only if no read request are pending

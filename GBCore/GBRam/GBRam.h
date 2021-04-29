@@ -1,5 +1,4 @@
-#ifndef GBRAM_H
-#define GBRAM_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBComponent.h"
@@ -17,9 +16,7 @@ private:
 
     bool IsAddressInRange(quint16 address) { return address >= RAM_OFFSET && address < RAM_OFFSET + RAM_SIZE + RAM_ECHO_SIZE; }
 public:
-    GBRam();
+    GBRam() { Reset(); }
     void Reset() override;
     void Tick(GBBus* bus) override;
 };
-
-#endif // GBRAM_H

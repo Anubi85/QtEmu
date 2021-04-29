@@ -16,7 +16,7 @@ GBApu::GBApu() :
 	m_NR52 = 0;
     m_Channels[0] = new GBApu_SweepSquareChannel(m_NR52);
     m_Channels[1] = new GBApu_SquareChannel(m_NR52);
-    m_Channels[2] = new GBApu_WaveChannel(m_NR52);
+    m_Channels[2] = new GBApu_WaveChannel(m_NR52, m_SamplesRam);
     m_Channels[3] = new GBApu_NoiseChannel(m_NR52);
     m_FrameSequencer = new GBApu_FrameSequencer();
     m_Mixer = new GBApu_Mixer(m_Channels);
@@ -91,7 +91,7 @@ void GBApu::WriteRegister(GBBus *bus)
 		{
 			case AUDIO_NR52_ADDRESS:
 				m_NR52 &= 0x7F;
-				m_NR52 &= bus->GetData() & 0x80;
+                m_NR52 |= (bus->GetData() & 0x80);
 				if (!IsAudioEnabled())
 				{
 					Reset();

@@ -1,5 +1,4 @@
-#ifndef IGBCARTRIDGEBEHAVIOUR_H
-#define IGBCARTRIDGEBEHAVIOUR_H
+#pragma once
 
 #include <QtGlobal>
 
@@ -12,8 +11,6 @@ protected:
     quint32 m_DataSize;
     IGBCartridgeBehaviour(quint8* data, quint32 size);
 public:
-    virtual ~IGBCartridgeBehaviour();
+    virtual ~IGBCartridgeBehaviour() { delete[] m_Data; }
     virtual void ProcessRequests(GBBus* bus) = 0;
 };
-
-#endif // IGBCARTRIDGEBEHAVIOUR_H

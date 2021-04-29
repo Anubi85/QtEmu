@@ -2,12 +2,6 @@
 #include "GBApu_Mixer.h"
 #include "GBApu_ChannelBase.h"
 
-GBApu_Mixer::GBApu_Mixer(GBApu_ChannelBase* (&channels)[AUDIO_CHANNELS_NUM]) :
-	m_Channels(channels)
-{
-	Reset();
-}
-
 void GBApu_Mixer::Reset()
 {
 	m_NR50 = 0;

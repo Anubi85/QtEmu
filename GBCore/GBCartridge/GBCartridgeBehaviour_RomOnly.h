@@ -1,5 +1,4 @@
-#ifndef GBCARTRIDGEBEHAVIOUR_ROMONLY_H
-#define GBCARTRIDGEBEHAVIOUR_ROMONLY_H
+#pragma once
 
 #include <QtGlobal>
 #include "IGBCartridgeBehaviour.h"
@@ -11,8 +10,6 @@ class GBBus;
 class GBCartridgeBehaviour_RomOnly : public IGBCartridgeBehaviour
 {
 public:
-    GBCartridgeBehaviour_RomOnly(quint8* data);
+    GBCartridgeBehaviour_RomOnly(quint8* data) : IGBCartridgeBehaviour(data, ROM_ONLY_SIZE) { }
     void ProcessRequests(GBBus* bus) override;
 };
-
-#endif // GBCARTRIDGEBEHAVIOUR_ROMONLY_H

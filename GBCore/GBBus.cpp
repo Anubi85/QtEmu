@@ -1,10 +1,5 @@
 #include "GBBus.h"
 
-GBBus::GBBus()
-{
-    Clear();
-}
-
 void GBBus::Clear()
 {
     m_Address = 0;

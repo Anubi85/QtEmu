@@ -1,5 +1,4 @@
-#ifndef GBROM_H
-#define GBROM_H
+#pragma once
 
 #include <QtGlobal>
 #include "GBComponent.h"
@@ -15,10 +14,8 @@ private:
     bool m_IsBiosLoaded;
     bool m_IsBiosMapped;
 public:
-    GBBios();
+    GBBios() { Reset(); }
     bool Load(QString biosFilePath);
     void Reset() override;
     void Tick(GBBus* bus) override;
 };
-
-#endif // GBROM_H

@@ -4,11 +4,6 @@
 #include "GBBios.h"
 #include "GBBus.h"
 
-GBBios::GBBios()
-{
-    Reset();
-}
-
 void GBBios::Reset()
 {
     GBComponent::Reset();

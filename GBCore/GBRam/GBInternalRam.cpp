@@ -1,11 +1,6 @@
 #include "GBInternalRam.h"
 #include "GBBus.h"
 
-GBInternalRam::GBInternalRam()
-{
-    Reset();
-}
-
 void GBInternalRam::Reset()
 {
     GBComponent::Reset();

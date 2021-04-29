@@ -80,7 +80,6 @@ SOURCES += \
     GBApu/GBApu_WaveChannel.cpp \
     GBGpu/GBGpu.cpp \
     GBGpu/GBGpu_s.cpp \
-    GBGpu/IGBGpuStateContext.cpp \
     GBGpu/IGBGpuState.cpp \
     GBGpu/GBGpuState_Scanline1.cpp \
     GBGpu/GBGpuState_Scanline2.cpp \

@@ -20,8 +20,8 @@ private:
 	quint8 GetVolume(bool isRight);
     quint8 ComputeSample(bool isRight);
 public:
-	GBApu_Mixer(GBApu_ChannelBase* (&channels)[AUDIO_CHANNELS_NUM]);
-	~GBApu_Mixer() {}
+    GBApu_Mixer(GBApu_ChannelBase* (&channels)[AUDIO_CHANNELS_NUM]) : m_Channels(channels) { Reset(); }
+    ~GBApu_Mixer() { }
 	void Reset();
     void Tick();
 	void ReadRegister(GBBus* bus);

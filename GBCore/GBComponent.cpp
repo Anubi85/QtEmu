@@ -1,17 +1,5 @@
 #include "GBComponent.h"
 
-GBComponent::GBComponent()
-{
-    m_ErrorCode = Error::Ok;
-}
-
-void GBComponent::Reset()
-{
-    m_ErrorCode = Error::Ok;
-}
-
-GBComponent::~GBComponent() {}
-
 QString GBComponent::GetErrorDescription(Error error)
 {
     switch (error)

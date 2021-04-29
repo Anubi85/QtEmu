@@ -26,8 +26,8 @@ enum class Component
     BIOS,
     RAM,
     Cartridge,
-    Video,
-    Audio,
+    GPU,
+    APU,
     InternalRAM,
 };
 
@@ -38,10 +38,10 @@ class GBComponent
 protected:
     Error m_ErrorCode;
 public:
-    GBComponent();
-    virtual ~GBComponent();
+    GBComponent() { Reset(); }
+    virtual ~GBComponent() { }
     bool HasError() { return m_ErrorCode != Error::Ok; }
-    virtual void Reset() = 0;
+    virtual void Reset() { m_ErrorCode = Error::Ok; }
     virtual void Tick(GBBus* bus) = 0;
     quint16 GetLastError() { return static_cast<quint16>(m_ErrorCode); }
     QString GetErrorDescription(quint16 errorCode) { return GetErrorDescription(static_cast<Error>(errorCode)); }

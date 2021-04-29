@@ -10,9 +10,9 @@
 class IGBGpuStateContext
 {
 protected:
-    IGBGpuStateContext();
+    IGBGpuStateContext() { }
 public:
-    virtual ~IGBGpuStateContext();
+    virtual ~IGBGpuStateContext() { }
 	virtual quint32 PerformCycle() = 0;
     virtual void SetState(GpuState newStateId) = 0;
 	virtual bool IsDisplayEnabled() = 0;

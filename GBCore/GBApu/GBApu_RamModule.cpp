@@ -19,7 +19,31 @@ void GBApu_RamModule::Trigger()
     m_FrequencyCounter.Reload(GetFrequencyCount());
 }
 
+quint8 GBApu_RamModule::GetVolumeShift()
+{
+    quint8 volume = (m_Registers[AUDIO_CHANNEL_NRX2_ADDRESS] & 0x60) >> 5;
+    return volume > 0 ? (volume - 1) : 4;
+}
+
+quint8 GBApu_RamModule::GetSample()
+{
+    quint8 sample = m_SamplesRam[m_SampleIdx / 2];
+    if ((m_SampleIdx & 0x01) == 0)
+    {
+        //use upper nibble
+        sample >>= 4;
+    }
+    return sample & 0x0F;
+}
+
 void GBApu_RamModule::Tick(bool doAction, quint8 *sample)
 {
-
+    Q_UNUSED(doAction)
+    m_FrequencyCounter.Tick();
+    if (m_FrequencyCounter.IsZero())
+    {
+        m_FrequencyCounter.Reload(GetFrequencyCount());
+        m_SampleIdx = (m_SampleIdx + 1) % AUDIO_RAM_SIZE;
+    }
+    *sample = GetSample() >> GetVolumeShift();
 }

@@ -39,9 +39,6 @@ void GBCpuState_Fetch::Update(GBBus* bus)
         }
         bus->SetAddress(address);
         bus->RequestRead();
-        m_Context->SetCBFlag(m_Count == 0);
-        //TODO: serve?
-        m_Context->SetOpCode(NOP_INSTRUCTION);
         m_Context->SetState(CpuState::Decode);
     }
 }
