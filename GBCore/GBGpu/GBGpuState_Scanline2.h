@@ -20,7 +20,8 @@ private:
     quint16 GetBackgroundTileAddress() { return m_BaseBackgroundTileMapAddress | m_XScroll; }
     quint16 GetBackgroundTileDataAddress(quint8 tileID);
 public:
-    GBGpuState_Scanline2(IGBGpuStateContext* context);
+    GBGpuState_Scanline2(IGBGpuStateContext* context) : IGBGpuState(context) { }
+    void Reset() override;
     void Tick(GBBus* bus) override;
-    VideoState GetStateID() override { return VideoState::Scanline2; }
+    GpuState GetStateID() override { return GpuState::Scanline2; }
 };

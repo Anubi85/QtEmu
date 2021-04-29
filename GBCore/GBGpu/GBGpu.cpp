@@ -2,12 +2,21 @@
 #include "GBGpu.h"
 #include "GBBus.h"
 #include "GBUtils.h"
+#include "GBGpuState_HBlank.h"
+#include "GBGpuState_VBlank.h"
+#include "GBGpuState_Scanline1.h"
+#include "GBGpuState_Scanline2.h"
 #include "GBGpuState_Suspended.h"
 #include <QFile>
 
 GBGpu::GBGpu() :
     m_FrameSemaphore()
 {
+    m_GpuStates[*GpuState::HBlank] = new GBGpuState_HBlank(this);
+    m_GpuStates[*GpuState::VBlank] = new GBGpuState_VBlank(this);
+    m_GpuStates[*GpuState::Scanline1] = new GBGpuState_Scanline1(this);
+    m_GpuStates[*GpuState::Scanline2] = new GBGpuState_Scanline2(this);
+    m_GpuStates[*GpuState::Suspended] = new GBGpuState_Suspended(this);
     m_State = nullptr;
     m_InternalBus = new GBBus();
     Reset();
@@ -15,7 +24,11 @@ GBGpu::GBGpu() :
 
 GBGpu::~GBGpu()
 {
-    delete m_State;
+    for (int state = 0; state < GPU_STATES_NUM; state++)
+    {
+        delete m_GpuStates[state];
+    }
+    //no need to delete m_state because already deleted by the above loop
     delete m_InternalBus;
     if (m_FrameSemaphore.available() == 0)
     {
@@ -36,20 +49,20 @@ void GBGpu::Reset()
         m_FrameSemaphore.acquire();
     }
     memset(m_ScreenBuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
-    delete m_State;
-    m_State = new GBGpuState_Suspended(this);
+    m_State = m_GpuStates[*GpuState::Suspended];
+    m_State->Reset();
     m_InternalBus->Clear();
 }
 
-void GBGpu::SetState(IGBGpuState* newState)
+void GBGpu::SetState(GpuState newStateId)
 {
-    if (newState->GetStateID() == VideoState::Suspended)
+    if (newStateId == GpuState::Suspended)
     {
         memset(m_ScreenBuffer, 0xFF, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(quint32));
         m_FrameSemaphore.release();
     }
-    delete m_State;
-    m_State = newState;
+    m_State = m_GpuStates[*newStateId];
+    m_State->Reset();
 }
 
 void GBGpu::ReadVideoRAM(GBBus* bus, bool modeOverride)
@@ -57,7 +70,7 @@ void GBGpu::ReadVideoRAM(GBBus* bus, bool modeOverride)
     //check if a read request is pending and address is in range
     if (bus->IsReadReqPending() && IsAddressInVideoRAM(bus->GetAddress()))
     {
-        if ((GetVideoMode() != VideoState::Scanline2) || modeOverride)
+        if ((GetVideoMode() != GpuState::Scanline2) || modeOverride)
         {
             bus->SetData(m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET]);
         }
@@ -74,7 +87,7 @@ void GBGpu::WriteVideoRAM(GBBus* bus)
     //check if a write request is pending and address is in range
     if (bus->IsWriteReqPending() && IsAddressInVideoRAM(bus->GetAddress()))
     {
-        if (GetVideoMode() != VideoState::Scanline2)
+        if (GetVideoMode() != GpuState::Scanline2)
         {
             m_VideoRAM[bus->GetAddress() - VIDEO_RAM_ADDRESS_OFFSET] = bus->GetData();
         }

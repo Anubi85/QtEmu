@@ -15,7 +15,10 @@ void GBCpuState_Execute::Update(GBBus* bus)
     {
         if (m_Context->ExecuteOpCode(&m_InstructionContext, bus))
         {
-            m_Context->SetState(CpuState::InterruptCheck, false, NOP_INSTRUCTION);
+            //clean up context before moving ot next state
+            m_Context->SetCBFlag(false);
+            m_Context->SetOpCode(NOP_INSTRUCTION);
+            m_Context->SetState(CpuState::InterruptCheck);
         }
         else
         {

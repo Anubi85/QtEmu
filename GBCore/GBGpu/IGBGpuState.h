@@ -1,6 +1,8 @@
 #pragma once
 
-enum class VideoState
+#define GPU_STATES_NUM 5
+
+enum class GpuState
 {
     HBlank = 0x00,
     VBlank = 0x01,
@@ -19,6 +21,7 @@ protected:
     IGBGpuState(IGBGpuStateContext* context);
 public:
     virtual ~IGBGpuState();
+    virtual void Reset() { }
     virtual void Tick(GBBus* bus) = 0;
-    virtual VideoState GetStateID() = 0;
+    virtual GpuState GetStateID() = 0;
 };

@@ -13,7 +13,7 @@ quint16 GBCpuState_Fetch::s_InterruptRoutineAddress[INTERRUPT_NUM] =
 
 void GBCpuState_Fetch::Reset()
 {
-    m_Count = m_Context->IsCBInstruction() ? 3 : 0;
+    m_Count = m_Context->GetCBFlag() ? 3 : 0;
 }
 
 void GBCpuState_Fetch::Update(GBBus* bus)
@@ -39,6 +39,9 @@ void GBCpuState_Fetch::Update(GBBus* bus)
         }
         bus->SetAddress(address);
         bus->RequestRead();
-        m_Context->SetState(CpuState::Decode, m_Count == 0, NOP_INSTRUCTION);
+        m_Context->SetCBFlag(m_Count == 0);
+        //TODO: serve?
+        m_Context->SetOpCode(NOP_INSTRUCTION);
+        m_Context->SetState(CpuState::Decode);
     }
 }

@@ -1,10 +1,8 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_Scanline2.h"
-#include "GBGpuState_HBlank.h"
 #include "GBBus.h"
 
-GBGpuState_Scanline2::GBGpuState_Scanline2(IGBGpuStateContext* context) :
-    IGBGpuState(context)
+void GBGpuState_Scanline2::Reset()
 {
     m_Count = -6; //first 6 cycles are dummy cycles!
     m_PixelCount = 0;
@@ -90,6 +88,6 @@ void GBGpuState_Scanline2::Tick(GBBus* bus)
     m_TileByte2 <<= 1;
     if (m_PixelCount == SCREEN_WIDTH)
     {
-        m_Context->SetState(new GBGpuState_HBlank(m_Context));
+        m_Context->SetState(GpuState::HBlank);
     }
 }

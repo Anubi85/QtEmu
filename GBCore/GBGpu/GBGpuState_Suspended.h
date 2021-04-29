@@ -5,7 +5,7 @@
 class GBGpuState_Suspended : public IGBGpuState
 {
 public:
-    GBGpuState_Suspended(IGBGpuStateContext* context);
+    GBGpuState_Suspended(IGBGpuStateContext* context) : IGBGpuState(context) { }
     void Tick(GBBus* bus) override;
-    VideoState GetStateID() override { return VideoState::Suspended; }
+    GpuState GetStateID() override { return GpuState::Suspended; }
 };

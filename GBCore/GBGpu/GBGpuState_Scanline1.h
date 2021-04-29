@@ -5,7 +5,7 @@
 class GBGpuState_Scanline1 : public IGBGpuState
 {
 public:
-    GBGpuState_Scanline1(IGBGpuStateContext* context);
+    GBGpuState_Scanline1(IGBGpuStateContext* context) : IGBGpuState(context) { }
     void Tick(GBBus* bus) override;
-    VideoState GetStateID() override { return VideoState::Scanline1; }
+    GpuState GetStateID() override { return GpuState::Scanline1; }
 };

@@ -5,7 +5,7 @@
 class GBGpuState_VBlank : public IGBGpuState
 {
 public:
-    GBGpuState_VBlank(IGBGpuStateContext* context);
+    GBGpuState_VBlank(IGBGpuStateContext* context) : IGBGpuState(context) { }
     void Tick(GBBus* bus) override;
-    VideoState GetStateID() override { return VideoState::VBlank; }
+    GpuState GetStateID() override { return GpuState::VBlank; }
 };

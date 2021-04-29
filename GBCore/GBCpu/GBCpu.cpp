@@ -53,10 +53,8 @@ void GBCpu::Tick(GBBus* bus)
     }
 }
 
-void GBCpu::SetState(CpuState newStateID, bool isCBInstruction, quint8 opCode)
+void GBCpu::SetState(CpuState newStateID)
 {
-    m_OpCode = opCode;
-    m_CB = isCBInstruction;
     m_State = m_CpuStates[*newStateID];
     m_State->Reset();
 }
@@ -76,7 +74,7 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
         qDebug(msg.toUtf8());
 #endif
         //go to error state
-        SetState(CpuState::Error, false, NOP_INSTRUCTION);
+        SetState(CpuState::Error);
         //return false to prevent Execute state to go into InterruptCheck state
         return false;
     }

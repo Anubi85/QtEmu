@@ -75,11 +75,13 @@ private:
     bool HasCarry(quint8 nibble) { return (nibble & 0x10) != 0; }
     quint8 AddSub(quint8 value1, quint8 value2, bool isSub);
     //IGBCpuStateContext
-    void SetState(CpuState newStateID, bool isCBInstruction, quint8 opCode) override;
+    void SetState(CpuState newStateID) override;
+    bool GetCBFlag() override { return m_CB; }
+    void SetCBFlag(bool isCB) override { m_CB = isCB; }
 	bool GetImeFlag() override { return m_IME; }
-    bool IsCBInstruction() override { return m_CB; }
 	quint16 GetPcAndIncrement() override { return m_PC++; }
     quint8 GetOpCode() override { return m_OpCode; }
+    void SetOpCode(quint8 opCode) override { m_OpCode = opCode; }
     bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) override;
 
     //instructions
