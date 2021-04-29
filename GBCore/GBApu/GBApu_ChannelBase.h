@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtGlobal>
-#include "GBApuCommonDefs.h"
+#include "GBApu_CommonDefs.h"
 #include "GBApu_Dac.h"
 
 class GBBus;

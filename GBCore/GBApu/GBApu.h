@@ -3,7 +3,7 @@
 #include <QtGlobal>
 #include <QSemaphore>
 #include "GBComponent.h"
-#include "GBApuCommonDefs.h"
+#include "GBApu_CommonDefs.h"
 
 #define SAMPLES_BUFFER_SIZE 2024
 
@@ -37,6 +37,6 @@ public:
 	~GBApu() override;
 	void Reset() override;
 	void Tick(GBBus *bus) override;
-    void GetSamples(quint8* right, quint8 left);
+    quint32 GetSamplesBufferSize() { return SAMPLES_BUFFER_SIZE; }
     quint8* GetSamples();
 };

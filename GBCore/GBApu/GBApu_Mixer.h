@@ -2,7 +2,7 @@
 
 #include <QtGlobal>
 #include <qmap.h>
-#include "GBApuCommonDefs.h"
+#include "GBApu_CommonDefs.h"
 
 class GBBus;
 class GBApu_ChannelBase;

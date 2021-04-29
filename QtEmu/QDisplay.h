@@ -1,6 +1,4 @@
-#ifndef QDISPLAY_H
-#define QDISPLAY_H
-
+#pragma once
 #include <QtOpenGLWidgets/QOpenGLWidget>
 #include <memory>
 
@@ -18,5 +16,3 @@ protected:
 public slots:
     void RenderFrame(std::shared_ptr<QImage> frame);
 };
-
-#endif // QDISPLAY_H

@@ -21,6 +21,7 @@ QtEmu::QtEmu(QWidget *parent) :
     m_Core = nullptr;
     m_CoreExecutingThread = nullptr;
     m_VideoUpdateThread = nullptr;
+    m_AudioUpdateThread = nullptr;
     m_StopCore = false;
     QObject::connect(this, &QtEmu::FrameReady, ui->display, &QDisplay::RenderFrame);
 }
@@ -40,6 +41,12 @@ QtEmu::~QtEmu()
         m_VideoUpdateThread->exit();
         m_VideoUpdateThread->wait();
         delete m_VideoUpdateThread;
+    }
+    if (m_AudioUpdateThread != nullptr)
+    {
+        m_AudioUpdateThread->exit();
+        m_AudioUpdateThread->wait();
+        delete m_AudioUpdateThread;
     }
     delete ui;
 }
@@ -99,6 +106,11 @@ void QtEmu::StopEmulatorCore()
             m_VideoUpdateThread->wait();
             delete m_VideoUpdateThread;
         }
+        if (m_AudioUpdateThread != nullptr && m_AudioUpdateThread->isRunning())
+        {
+            m_AudioUpdateThread->wait();
+            delete m_AudioUpdateThread;
+        }
         delete m_Core;
     }
     if (m_CoreLibrary.isLoaded())
@@ -113,8 +125,10 @@ void QtEmu::StartEmulatorCore()
     {
         m_CoreExecutingThread = QThread::create([this] { EmulatorLoop(); });
         m_VideoUpdateThread = QThread::create([this] { VideoLoop(); });
+        m_AudioUpdateThread = QThread::create([this] { AudioLoop(); });
         m_CoreExecutingThread->start(QThread::HighestPriority);
         m_VideoUpdateThread->start(QThread::HighestPriority);
+        m_AudioUpdateThread->start((QThread::HighPriority));
     }
 }
 
@@ -132,8 +146,18 @@ void QtEmu::VideoLoop()
     m_Core->GetScreenSize(screenWidth, screenHeight);
     while(!m_Core->HasError() && !m_StopCore)
     {
-        std::shared_ptr<QImage> img(new QImage(reinterpret_cast<uchar*>(m_Core->GetFrame()), screenWidth, screenHeight, QImage::Format_ARGB32));
+        std::shared_ptr<QImage> img(new QImage(reinterpret_cast<uchar*>(m_Core->GetVideoFrame()), screenWidth, screenHeight, QImage::Format_ARGB32));
         emit FrameReady(img);
+    }
+}
+
+void QtEmu::AudioLoop()
+{
+    quint32 audioBufferSize = m_Core->GetAudioBufferSize();
+    while (!m_Core->HasError() && !m_StopCore)
+    {
+        quint8* audioSamples = m_Core->GetAudioSamples();
+        //TODO: do something with audio samples
     }
 }
 

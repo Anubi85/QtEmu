@@ -1,5 +1,4 @@
-#ifndef QTGB_H
-#define QTGB_H
+#pragma once
 
 #include <QMainWindow>
 #include "IEmulatorCore.h"
@@ -39,12 +38,12 @@ private:
     bool m_StopCore;
     QThread* m_CoreExecutingThread;
     QThread* m_VideoUpdateThread;
+    QThread* m_AudioUpdateThread;
 
 	void LoadCore(SupportedRomType romType);
     void StopEmulatorCore();
     void StartEmulatorCore();
     void EmulatorLoop();
     void VideoLoop();
+    void AudioLoop();
 };
-
-#endif // QTGB_H

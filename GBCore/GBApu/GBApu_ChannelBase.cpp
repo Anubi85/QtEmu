@@ -7,6 +7,10 @@ GBApu_ChannelBase::GBApu_ChannelBase(quint16 startRegAddress, quint8& apuStatus)
 	m_ApuStatus(apuStatus)
 {
 	m_Dac = new GBApu_Dac(m_Sample);
+    for (int i = 0; i < AUDIO_CHANNEL_MODULES_NUM; i++)
+    {
+        m_Modules[i] = nullptr;
+    }
 	Reset();
 }
 

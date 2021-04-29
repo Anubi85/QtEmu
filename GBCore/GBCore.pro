@@ -30,7 +30,6 @@ include(../QtEmu.pri)
 INCLUDEPATH += \
     GBBios \
     GBCartridge \
-    GBAudio \
     GBGpu \
     GBApu \
     GBCpu \
@@ -43,21 +42,6 @@ SOURCES += \
     GBComponent.cpp \
     GBCore.cpp \
     GBBios/GBBios.cpp \
-    GBAudio/GBAudioDac.cpp \                            #TODO: remove
-    GBAudio/GBAudioMixer.cpp \                          #TODO: remove
-    GBAudio/GBAudio.cpp \                               #TODO: remove
-    GBAudio/GBAudioChannel.cpp \                        #TODO: remove
-    GBAudio/IGBAudioModule.cpp \                        #TODO: remove
-    GBAudio/GBAudioModule_FrequencySweeper.cpp \        #TODO: remove
-    GBAudio/GBAudioModule_SquareWaveGenerator_s.cpp \   #TODO: remove
-    GBAudio/GBAudioModule_SquareWaveGenerator.cpp \     #TODO: remove
-    GBAudio/GBAudioModule_LengthCounter.cpp \           #TODO: remove
-    GBAudio/GBAudioModule_EnvelopeVolumeManager.cpp \   #TODO: remove
-    GBAudio/GBAudioModule_Constant.cpp \                #TODO: remove
-    GBAudio/GBAudioModule_RamWaveGenerator.cpp \        #TODO: remove
-    GBAudio/GBAudioModule_NoiseWaveGenerator.cpp \      #TODO: remove
-    GBAudio/GBAudioModule_RamWaveGenerator_s.cpp \      #TODO: remove
-    GBAudio/GBAudioModule_NoiseWaveGenerator_s.cpp \    #TODO: remove
     GBCartridge/GBCartridge.cpp \
     GBCartridge/IGBCartridgeBehaviour.cpp \
     GBCartridge/GBCartridgeBehaviour_RomOnly.cpp \
@@ -101,19 +85,6 @@ HEADERS += \
     GBComponent.h \
     GBCore.h \
     GBBios/GBBios.h \
-    GBAudio/GBAudioDac.h \                              #TODO: remove
-    GBAudio/GBAudioMixer.h \                            #TODO: remove
-    GBAudio/GBAudio.h \                                 #TODO: remove
-    GBAudio/GBAudioChannel.h \                          #TODO: remove
-    GBAudio/GBAudioCommonDefs.h \                       #TODO: remove
-    GBAudio/IGBAudioModule.h \                          #TODO: remove
-    GBAudio/GBAudioModule_FrequencySweeper.h \          #TODO: remove
-    GBAudio/GBAudioModule_SquareWaveGenerator.h \       #TODO: remove
-    GBAudio/GBAudioModule_LengthCounter.h \             #TODO: remove
-    GBAudio/GBAudioModule_EnvelopeVolumeManager.h \     #TODO: remove
-    GBAudio/GBAudioModule_Constant.h \                  #TODO: remove
-    GBAudio/GBAudioModule_RamWaveGenerator.h \          #TODO: remove
-    GBAudio/GBAudioModule_NoiseWaveGenerator.h \        #TODO: remove
     GBCartridge/GBCartridge.h \
     GBCartridge/IGBCartridgeBehaviour.h \
     GBCartridge/GBCartridgeBehaviour_RomOnly.h \
@@ -122,7 +93,7 @@ HEADERS += \
     GBUtility/GBCounter.h \
     GBUtility/GBUtils.h \
     GBApu/GBApu.h \
-    GBApu/GBApuCommonDefs.h \
+    GBApu/GBApu_CommonDefs.h \
     GBApu/GBApu_ChannelBase.h \
     GBApu/GBApu_ChannelModuleBase.h \
     GBApu/GBApu_Dac.h \

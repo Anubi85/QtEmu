@@ -43,6 +43,8 @@ void GBApu::Reset()
 {
     m_CurrentBuffer = false;
     m_SamplesCounter = 0;
+    m_NR52 = 0x81;
+    //TODO: set default register values◘
 }
 
 void GBApu::ReadSamplesRam(GBBus *bus)
