@@ -19,6 +19,7 @@ void GBApu_LengthCounterModule::Trigger()
 	{
         m_OldLength = c_LenghtMask;
         m_Counter.Reload(c_LenghtMask);
+        m_ApuStatus |= c_ChannelMask;
 	}
 }
 

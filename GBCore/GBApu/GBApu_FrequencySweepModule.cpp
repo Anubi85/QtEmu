@@ -16,18 +16,12 @@ void GBApu_FrequencySweepModule::Trigger()
 {
     m_ShadowFrequency = GetFrequency();
     quint8 sweepCount = GetSweepCount();
-    quint8 shift = GetShiftValue();
     m_Counter.Reload(sweepCount);
-    if (sweepCount == 0 && shift == 0)
+    if (GetShiftValue() != 0)
     {
-        m_ApuStatus &= ~c_ChannelMask;
+        quint16 newFrequency = ComputeNewFrequency();
+        OverflowCheck(newFrequency);
     }
-    else
-    {
-        m_ApuStatus |= c_ChannelMask;
-    }
-    quint16 newFrequency = ComputeNewFrequency();
-    OverflowCheck(newFrequency);
 }
 
 void GBApu_FrequencySweepModule::Tick(bool doAction, quint8 *sample)

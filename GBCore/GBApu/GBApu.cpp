@@ -9,9 +9,7 @@
 #include "GBApu_NoiseChannel.h"
 #include "GBApu_Mixer.h"
 
-GBApu::GBApu() :
-	GBComponent(),
-	m_SamplesRam{ 0x84, 0x40, 0x43, 0xAA, 0x2D, 0x78, 0x92, 0x3C, 0x60, 0x59, 0x59, 0xB0, 0x34, 0xB8, 0x2E, 0xDA }
+GBApu::GBApu() : GBComponent()
 {
 	m_NR52 = 0;
     m_Channels[0] = new GBApu_SweepSquareChannel(m_NR52);
@@ -43,8 +41,22 @@ void GBApu::Reset()
 {
     m_CurrentBuffer = false;
     m_SamplesCounter = 0;
-    m_NR52 = 0x81;
-    //TODO: set default register values◘
+    m_SamplesRam[0x0] = 0x84;
+    m_SamplesRam[0x1] = 0x40;
+    m_SamplesRam[0x2] = 0x43;
+    m_SamplesRam[0x3] = 0xAA;
+    m_SamplesRam[0x4] = 0x2D;
+    m_SamplesRam[0x5] = 0x78;
+    m_SamplesRam[0x6] = 0x92;
+    m_SamplesRam[0x7] = 0x3C;
+    m_SamplesRam[0x8] = 0x60;
+    m_SamplesRam[0x9] = 0x59;
+    m_SamplesRam[0xA] = 0x59;
+    m_SamplesRam[0xB] = 0xB0;
+    m_SamplesRam[0xC] = 0x34;
+    m_SamplesRam[0xD] = 0xB8;
+    m_SamplesRam[0xE] = 0x2E;
+    m_SamplesRam[0xF] = 0xDA;
 }
 
 void GBApu::ReadSamplesRam(GBBus *bus)

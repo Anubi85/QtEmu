@@ -5,11 +5,11 @@
 #include "GBApu_VolumeEnvelopeModule.h"
 
 GBApu_WaveChannel::GBApu_WaveChannel(quint8& apuStatus, quint8 (&samplesRam)[AUDIO_RAM_SIZE]) :
-    GBApu_ChannelBase(AUDIO_REG_ADDRESS_OFFSET + 2 * AUDIO_CHANNEL_REG_NUM, apuStatus)
+    GBApu_ChannelBase(AUDIO_CHANNEL3_ENABLE_MASK, AUDIO_REG_ADDRESS_OFFSET + 2 * AUDIO_CHANNEL_REG_NUM, apuStatus)
 {
     m_Modules[0] = nullptr;
     m_Modules[1] = new GBApu_RamModule(m_Registers, samplesRam);
-    m_Modules[2] = new GBApu_LengthCounterModule(0xFF, AUDIO_CHANNEL3_ENABLE_MASK, m_ApuStatus, m_Registers);
+    m_Modules[2] = new GBApu_LengthCounterModule(0xFF, c_ChannelMask, m_ApuStatus, m_Registers);
     m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
