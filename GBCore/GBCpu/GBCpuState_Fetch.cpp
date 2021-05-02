@@ -22,13 +22,18 @@ void GBCpuState_Fetch::Update(GBBus* bus)
     {
         quint16 address = 0; //it will aways be override by the following code
         //manage interrupts
-        if (m_Count != 0 && m_Context->GetImeFlag() && bus->GetData() != 0)
+		if (m_Count != 0 && m_Context->GetImeFlag() && bus->GetInterrupts() != 0)
         {
-            for (int mask = 0x01, idx = 0; idx < INTERRUPT_NUM; idx ++, mask <<= idx)
+			for (int mask = 0x01; mask < *Interrupt::HiLo; mask <<= 1)
             {
-                if ((bus->GetData() & mask) != 0)
+				if ((bus->GetInterrupts() & mask) != 0)
                 {
-                    address = s_InterruptRoutineAddress[idx];
+					//Acknowledge the interrupt and handle it
+					bus->SetInterruptAcq(static_cast<Interrupt>(mask));
+#ifdef DEBUG
+					qDebug("Interrupt handling not implemented");
+#endif
+					m_Context->SetState(CpuState::Error);
                     break;
                 }
             }

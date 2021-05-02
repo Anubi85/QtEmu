@@ -2,16 +2,14 @@
 
 #include <QtGlobal>
 #include "GBComponent.h"
-
-#define INTERNAL_RAM_SIZE 0x0080
-#define INTERNAL_RAM_ADDRESS_OFFSET 0xFF80
+#include "GBMemoryMap.h"
 
 class GBInternalRam : public GBComponent
 {
 private:
-    quint8 m_Ram[INTERNAL_RAM_SIZE];
+	quint8 m_Ram[HRAM_SIZE];
 
-    bool IsAddressInRange(quint16 address) { return address >= INTERNAL_RAM_ADDRESS_OFFSET; }
+	bool IsAddressInRange(quint16 address) { return address >= HRAM_ADDRESS && address < HRAM_ADDRESS + HRAM_SIZE; }
 public:
     GBInternalRam() { Reset(); }
     void Reset() override;

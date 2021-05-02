@@ -11,10 +11,5 @@ GBCpuState_InterruptCheck::GBCpuState_InterruptCheck(IGBCpuStateContext* context
 
 void GBCpuState_InterruptCheck::Update(GBBus* bus)
 {
-    if (m_Context->GetImeFlag())
-    {
-        bus->SetAddress(0xFFFF); //read interrupt flags register
-        bus->RequestRead();
-    }
     m_Context->SetState(CpuState::Fetch);
 }

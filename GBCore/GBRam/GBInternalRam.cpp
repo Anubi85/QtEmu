@@ -4,7 +4,7 @@
 void GBInternalRam::Reset()
 {
     GBComponent::Reset();
-    memset(m_Ram, 0, INTERNAL_RAM_SIZE);
+	memset(m_Ram, 0, HRAM_SIZE);
 }
 
 void GBInternalRam::Tick(GBBus* bus)
@@ -13,12 +13,12 @@ void GBInternalRam::Tick(GBBus* bus)
     {
         if (bus->IsReadReqPending())
         {
-            bus->SetData(m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET]);
+			bus->SetData(m_Ram[bus->GetAddress() - HRAM_ADDRESS]);
             bus->ReadReqAck();
         }
         if (bus->IsWriteReqPending())
         {
-            m_Ram[bus->GetAddress() - INTERNAL_RAM_ADDRESS_OFFSET] = bus->GetData();
+			m_Ram[bus->GetAddress() - HRAM_ADDRESS] = bus->GetData();
             bus->WriteReqAck();
         }
     }
