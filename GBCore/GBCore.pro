@@ -88,6 +88,7 @@ HEADERS += \
     GBCartridge/GBCartridge.h \
     GBCartridge/IGBCartridgeBehaviour.h \
     GBCartridge/GBCartridgeBehaviour_RomOnly.h \
+    GBMemoryMap.h \
     GBRam/GBRam.h \
     GBRam/GBInternalRam.h \
     GBUtility/GBCounter.h \

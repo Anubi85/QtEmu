@@ -3,8 +3,8 @@
 #include "GBApu_FrameSequencer.h"
 
 GBApu_ChannelBase::GBApu_ChannelBase(quint8 channelMask, quint16 startRegAddress, quint8& apuStatus) :
-    c_ChannelMask(channelMask),
     c_StartRegAddress(startRegAddress),
+	c_ChannelMask(channelMask),
 	m_ApuStatus(apuStatus)
 {
 	m_Dac = new GBApu_Dac(m_Sample);

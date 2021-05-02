@@ -31,6 +31,7 @@ void GBCpu::Reset()
     GBComponent::Reset();
     m_Cycles = 0;
     m_IME = false;
+	m_IMERequest = IMERequest::None;
     m_CB = false;
     m_OpCode = NOP_INSTRUCTION;
     m_PC = 0;
@@ -64,6 +65,14 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
     GBInstruction inst = m_CB ? s_CBInstructionTable[m_OpCode] : s_InstructionTable[m_OpCode];
     if (inst != nullptr)
     {
+		if (m_IMERequest == IMERequest::Activate)
+		{
+			m_IME = true;
+		}
+		if (m_IMERequest == IMERequest::Deactivate)
+		{
+			m_IME = false;
+		}
         return (this->*inst)(ctx, bus);
     }
     else
@@ -71,7 +80,7 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
 #ifdef DEBUG
         QString msg("Op Code %1 not implemented");
         msg = msg.arg(m_CB ? "0xCB 0x%1" : "0x%1").arg(m_OpCode, 2, 16, QLatin1Char('0'));
-        qDebug(msg.toUtf8());
+		qDebug(msg.toUtf8());
 #endif
         //go to error state
         SetState(CpuState::Error);
@@ -1061,4 +1070,18 @@ bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;
+}
+
+bool GBCpu::EDI(GBInstructionContext *context, GBBus *bus)
+{
+	Q_UNUSED(bus)
+	if (context->GetBit(Bit::Bit3))
+	{
+		m_IMERequest = IMERequest::Activate;
+	}
+	else
+	{
+		m_IMERequest = IMERequest::Deactivate;
+	}
+	return true;
 }

@@ -6,4 +6,5 @@ SUBDIRS += \
 
 OTHER_FILES += \
     QtEmu.pri \
+    TODO.txt \
     .gitignore

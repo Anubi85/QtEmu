@@ -1,0 +1,12 @@
+TODO: Rinominare stato GBCpuState_InterruptCheck in GBCpuState_InterruptHandling
+TODO: Gestire richieste di interrupt
+TODO: Aggiornare IME flag se necessario
+TODO: Gestire richieste scrittura/lettura sui registri di interrupt
+TODO: Non fare richieste di lettura su 0xFFFF
+TODO: Eliminare 0xFFFF da GBInternalRAM
+TODO: Rinominare GBInternalRam in GBHighRam
+TODO: In GBCpuState_Fetch controllare gli interrupt non leggendo da bus
+TODO: Implementare registri IE (0xFFFF) e IF (0xFF0F) in GBCpu
+TODO: Estendere range indirizzi video fino a 0xFF50 e gestire registri inutilizzati
+TODO: Gestire registri I/O inutilizzati
+TODO: Implementare OAM con anche i registri inutilizzati

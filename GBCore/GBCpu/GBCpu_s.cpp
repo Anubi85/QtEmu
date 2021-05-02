@@ -246,7 +246,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::LD_A_off,   //0xF0
 	&GBCpu::POP,        //0xF1
 	&GBCpu::LD_A_off,   //0xF2
-	nullptr,            //0xF3
+	&GBCpu::EDI,        //0xF3
 	nullptr,            //0xF4
 	&GBCpu::PUSH,       //0xF5
 	nullptr,            //0xF6
@@ -254,7 +254,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	nullptr,            //0xF8
 	nullptr,            //0xF9
 	&GBCpu::LD_A_addr,  //0xFA
-	nullptr,            //0xFB
+	&GBCpu::EDI,        //0xFB
 	nullptr,            //0xFC
 	nullptr,            //0xFD
 	&GBCpu::CP,         //0xFE

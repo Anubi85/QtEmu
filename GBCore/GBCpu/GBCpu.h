@@ -45,6 +45,15 @@ enum class CpuRegister
 	AF = 0x03,
 };
 
+enum class IMERequest
+{
+	None,
+	ActivateNext,
+	Activate,
+	Deactivate,
+	DeactivateNext,
+};
+
 class GBCpu : IGBCpuStateContext, public GBComponent
 {
 private:
@@ -60,7 +69,7 @@ private:
         quint8 Single[REG8_NUM];
         quint16_be Double[REG16_NUM];
     } m_Registers;
-    //IGBCpuStateContext members
+	IMERequest m_IMERequest;
     bool m_IME;
     bool m_CB;
     quint8 m_OpCode;
@@ -111,6 +120,7 @@ private:
     bool JR(GBInstructionContext* context, GBBus* bus);
     bool RL(GBInstructionContext* context, GBBus* bus);
     bool RLA(GBInstructionContext* context, GBBus* bus);
+	bool EDI(GBInstructionContext* context, GBBus* bus);
 public:
     GBCpu();
     ~GBCpu() override;

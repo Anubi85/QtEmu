@@ -45,8 +45,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 win32: {
     QMAKE_POST_LINK += $$quote(copy $$shell_quote($${PWD}\*.gb) $$shell_quote($${DESTDIR}))
 }
-unix: {
+unix: !macx {
     QMAKE_POST_LINK += $$quote(cp $$shell_quote($${PWD}/*.gb) $$shell_quote($${DESTDIR}))
+}
+macx: {
+    QMAKE_POST_LINK += $$quote(cp $$shell_quote($${PWD})/*.gb $$shell_quote($${DESTDIR}))
 }
 
 DISTFILES += \
