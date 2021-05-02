@@ -1,5 +1,4 @@
 TODO: Eliminare stato GBCpuState_InterruptCheck (capire con cosa va sostituito)
-TODO: Migliorare gestione flag IME
 TODO: Rinominare GBInternalRam in GBHighRam
 TODO: Estendere range indirizzi video fino a 0xFF50 e gestire registri inutilizzati
 TODO: Gestire registri I/O inutilizzati

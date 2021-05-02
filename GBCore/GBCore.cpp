@@ -7,6 +7,7 @@
 #include "GBApu.h"
 #include "GBCartridge.h"
 #include "GBInternalRam.h"
+#include "GBInterrupt.h"
 #include "GBUtils.h"
 
 IEmulatorCore* GetCore()
@@ -147,6 +148,9 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
         case Component::InternalRAM:
             m_Components[comp] = new GBInternalRam();
             break;
+		case Component::Interrupt:
+			m_Components[comp] = new GBInterrupt();
+			break;
         default:
             //TODO: remove default
             m_Components[comp] = nullptr;

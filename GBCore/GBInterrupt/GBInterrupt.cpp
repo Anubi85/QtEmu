@@ -16,8 +16,6 @@ void GBInterrupt::Tick(GBBus *bus)
 	bus->SetInterruptAcq(Interrupt::None);
 	m_IF |= bus->GetInterruptsReq();
 	bus->SetInterruptReq(Interrupt::None);
-	//Notify active interrupts
-	bus->SetInterrupts(m_IF & m_IE & 0x1F);
 	//Handle read/write to registers
 	if (bus->IsReadReqPending())
 	{
@@ -47,4 +45,6 @@ void GBInterrupt::Tick(GBBus *bus)
 				break;
 		}
 	}
+	//Notify active interrupts
+	bus->SetInterrupts(m_IF & m_IE & 0x1F);
 }

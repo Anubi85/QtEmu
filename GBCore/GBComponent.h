@@ -3,7 +3,7 @@
 #include <QtGlobal>
 #include <QString>
 
-#define COMPONENT_NUM 7
+#define COMPONENT_NUM 8
 
 enum class Error : quint16
 {
@@ -29,6 +29,7 @@ enum class Component
     GPU,
     APU,
     InternalRAM,
+	Interrupt,
 };
 
 class GBBus;

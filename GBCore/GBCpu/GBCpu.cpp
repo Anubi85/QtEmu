@@ -65,13 +65,10 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
     GBInstruction inst = m_CB ? s_CBInstructionTable[m_OpCode] : s_InstructionTable[m_OpCode];
     if (inst != nullptr)
     {
-		if (m_IMERequest == IMERequest::Activate)
+		if (m_IMERequest != IMERequest::None)
 		{
-			m_IME = true;
-		}
-		if (m_IMERequest == IMERequest::Deactivate)
-		{
-			m_IME = false;
+			m_IME = m_IMERequest == IMERequest::Activate;
+			m_IMERequest = IMERequest::None;
 		}
         return (this->*inst)(ctx, bus);
     }

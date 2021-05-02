@@ -35,6 +35,7 @@ INCLUDEPATH += \
     GBCpu \
     GBGpu \
     GBRam \
+    GBInterrupt \
     GBUtility
 
 SOURCES += \

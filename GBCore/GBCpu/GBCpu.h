@@ -48,10 +48,8 @@ enum class CpuRegister
 enum class IMERequest
 {
 	None,
-	ActivateNext,
 	Activate,
 	Deactivate,
-	DeactivateNext,
 };
 
 class GBCpu : IGBCpuStateContext, public GBComponent
