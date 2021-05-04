@@ -123,5 +123,5 @@ public:
     GBCpu();
     ~GBCpu() override;
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
 };

@@ -41,7 +41,7 @@ void GBCpu::Reset()
     m_State->Reset();
 }
 
-void GBCpu::Tick(GBBus* bus)
+void GBCpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
     if (m_State->GetStateID() == CpuState::Error)
     {
@@ -49,7 +49,7 @@ void GBCpu::Tick(GBBus* bus)
     }
     else
     {
-        m_State->Update(bus);
+        m_State->Update(bus, interruptBus);
         m_Cycles++;
     }
 }

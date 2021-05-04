@@ -76,7 +76,7 @@ public:
     GBGpu();
     ~GBGpu() override;
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
     quint32* GetFrame();
 };

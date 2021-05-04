@@ -7,8 +7,9 @@ void GBRam::Reset()
     memset(m_Ram, 0, RAM_SIZE);
 }
 
-void GBRam::Tick(GBBus* bus)
+void GBRam::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
+    Q_UNUSED(interruptBus)
     if (IsAddressInRange(bus->GetAddress()))
     {
         if (bus->IsReadReqPending())

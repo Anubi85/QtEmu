@@ -7,8 +7,6 @@
 #define RAM_OFFSET 0xC000
 #define RAM_ECHO_SIZE 0x1E00
 
-class GBBus;
-
 class GBRam : public GBComponent
 {
 private:
@@ -18,5 +16,5 @@ private:
 public:
     GBRam() { Reset(); }
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
 };

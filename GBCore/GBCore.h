@@ -9,6 +9,7 @@ class GBCore : public IEmulatorCore
 {
 private:
     GBBus* m_Bus;
+    GBInterruptBus* m_InterruptBus;
     GBComponent* m_Components[COMPONENT_NUM];
     Error m_Error;
 public:

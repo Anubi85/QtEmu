@@ -119,35 +119,36 @@ void GBApu::WriteRegister(GBBus *bus)
 	}
 }
 
-void GBApu::Tick(GBBus *bus)
+void GBApu::Tick(GBBus *bus, GBInterruptBus* interruptBus)
 {
-	if (IsAddressInAudioRam(bus->GetAddress()))
-	{
-		if (bus->IsReadReqPending())
-		{
-			ReadSamplesRam(bus);
-		}
-		if (bus->IsWriteReqPending())
-		{
-			WriteSamplesRam(bus);
-		}
-	}
-	if (IsAddressInAudioReg(bus->GetAddress()))
-	{
-		if (bus->IsReadReqPending())
-		{
-			ReadRegister(bus);
-		}
-		if (bus->IsWriteReqPending())
-		{
-			WriteRegister(bus);
-		}
-	}
+    Q_UNUSED(interruptBus)
+    if (IsAddressInAudioRam(bus->GetAddress()))
+    {
+        if (bus->IsReadReqPending())
+        {
+            ReadSamplesRam(bus);
+        }
+        if (bus->IsWriteReqPending())
+        {
+            WriteSamplesRam(bus);
+        }
+    }
+    if (IsAddressInAudioReg(bus->GetAddress()))
+    {
+        if (bus->IsReadReqPending())
+        {
+            ReadRegister(bus);
+        }
+        if (bus->IsWriteReqPending())
+        {
+            WriteRegister(bus);
+        }
+    }
     m_FrameSequencer->Tick();
-	for (int ch = 0;  ch < AUDIO_CHANNELS_NUM; ch++)
-	{
+    for (int ch = 0;  ch < AUDIO_CHANNELS_NUM; ch++)
+    {
         m_Channels[ch]->Tick(m_FrameSequencer);
-	}
+    }
     m_Mixer->Tick();
     AddSamplesToBuffer(m_Mixer->GetSampleL(), m_Mixer->GetSampleR());
 }

@@ -1,5 +1,6 @@
 #include "GBCore.h"
 #include "GBBus.h"
+#include "GBInterruptBus.h"
 #include "GBCpu.h"
 #include "GBBios.h"
 #include "GBRam.h"
@@ -18,6 +19,7 @@ IEmulatorCore* GetCore()
 GBCore::GBCore()
 {
     m_Bus = new GBBus();
+    m_InterruptBus = new GBInterruptBus();
     for (int comp = 0; comp < COMPONENT_NUM; comp++)
     {
         m_Components[comp] = nullptr;
@@ -31,6 +33,7 @@ GBCore::~GBCore()
         delete m_Components[comp];
     }
     delete m_Bus;
+    delete m_InterruptBus;
 }
 
 void GBCore::Exec()
@@ -55,7 +58,7 @@ void GBCore::Exec()
         {
             if (m_Components[comp] != nullptr)
             {
-                m_Components[comp]->Tick(m_Bus);
+                m_Components[comp]->Tick(m_Bus, m_InterruptBus);
             }
         }
     }

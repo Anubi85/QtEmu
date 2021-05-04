@@ -1,5 +1,6 @@
 #include "GBInterrupt.h"
 #include "GBBus.h"
+#include "GBInterruptBus.h"
 #include "GBMemoryMap.h"
 
 void GBInterrupt::Reset()
@@ -9,13 +10,13 @@ void GBInterrupt::Reset()
 	m_IE = 0;
 }
 
-void GBInterrupt::Tick(GBBus *bus)
+void GBInterrupt::Tick(GBBus *bus, GBInterruptBus* interruptBus)
 {
 	//Handle interrupt requests and acknowledge
-	m_IF &= bus->GetInterruptsAck();
-	bus->SetInterruptAcq(Interrupt::None);
-	m_IF |= bus->GetInterruptsReq();
-	bus->SetInterruptReq(Interrupt::None);
+        m_IF &= interruptBus->GetInterruptsAck();
+        interruptBus->SetInterruptAcq(Interrupt::None);
+        m_IF |= interruptBus->GetInterruptsReq();
+        interruptBus->SetInterruptReq(Interrupt::None);
 	//Handle read/write to registers
 	if (bus->IsReadReqPending())
 	{
@@ -46,5 +47,5 @@ void GBInterrupt::Tick(GBBus *bus)
 		}
 	}
 	//Notify active interrupts
-	bus->SetInterrupts(m_IF & m_IE & 0x1F);
+        interruptBus->SetInterrupts(m_IF & m_IE & 0x1F);
 }

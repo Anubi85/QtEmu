@@ -9,8 +9,9 @@ void GBCpuState_Execute::Reset()
     m_Count = 0;
 }
 
-void GBCpuState_Execute::Update(GBBus* bus)
+void GBCpuState_Execute::Update(GBBus* bus, GBInterruptBus* interruptBus)
 {
+    Q_UNUSED(interruptBus)
     if (m_Count-- == 0)
     {
         if (m_Context->ExecuteOpCode(&m_InstructionContext, bus))

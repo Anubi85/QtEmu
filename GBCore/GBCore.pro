@@ -47,6 +47,7 @@ SOURCES += \
     GBCartridge/IGBCartridgeBehaviour.cpp \
     GBCartridge/GBCartridgeBehaviour_RomOnly.cpp \
     GBInterrupt/GBInterrupt.cpp \
+    GBInterruptBus.cpp \
     GBRam/GBRam.cpp \
     GBRam/GBInternalRam.cpp \
     GBApu/GBApu.cpp \
@@ -91,6 +92,7 @@ HEADERS += \
     GBCartridge/IGBCartridgeBehaviour.h \
     GBCartridge/GBCartridgeBehaviour_RomOnly.h \
     GBInterrupt/GBInterrupt.h \
+    GBInterruptBus.h \
     GBMemoryMap.h \
     GBRam/GBRam.h \
     GBRam/GBInternalRam.h \

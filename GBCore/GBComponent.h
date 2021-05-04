@@ -33,6 +33,7 @@ enum class Component
 };
 
 class GBBus;
+class GBInterruptBus;
 
 class GBComponent
 {
@@ -43,7 +44,7 @@ public:
     virtual ~GBComponent() { }
     bool HasError() { return m_ErrorCode != Error::Ok; }
     virtual void Reset() { m_ErrorCode = Error::Ok; }
-    virtual void Tick(GBBus* bus) = 0;
+    virtual void Tick(GBBus* bus, GBInterruptBus* interruptBus) = 0;
     quint16 GetLastError() { return static_cast<quint16>(m_ErrorCode); }
     QString GetErrorDescription(quint16 errorCode) { return GetErrorDescription(static_cast<Error>(errorCode)); }
     QString GetErrorDescription(Error error);

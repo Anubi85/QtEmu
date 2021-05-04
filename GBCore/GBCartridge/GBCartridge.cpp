@@ -9,8 +9,9 @@ void GBCartridge::Reset()
     m_Behaviour = nullptr;
 }
 
-void GBCartridge::Tick(GBBus* bus)
+void GBCartridge::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
+    Q_UNUSED(interruptBus)
     if (m_Behaviour != nullptr)
     {
         m_Behaviour->ProcessRequests(bus);

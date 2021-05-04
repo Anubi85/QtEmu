@@ -3,8 +3,9 @@
 #include "GBBus.h"
 #include "IGBCpuStateContext.h"
 
-void GBCpuState_Decode::Update(GBBus* bus)
+void GBCpuState_Decode::Update(GBBus* bus, GBInterruptBus* interruptBus)
 {
+    Q_UNUSED(interruptBus)
     if (bus->GetData() == 0xCB)
     {
         m_Context->SetCBFlag(true);

@@ -165,7 +165,7 @@ void GBGpu::WriteVideoRegister(GBBus* bus)
     }
 }
 
-void GBGpu::Tick(GBBus* bus)
+void GBGpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
     //read VRAM from standard bus
     ReadVideoRAM(bus, false);

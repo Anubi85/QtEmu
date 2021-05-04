@@ -1,5 +1,6 @@
 #include "GBCpuState_Fetch.h"
 #include "GBBus.h"
+#include "GBInterruptBus.h"
 #include "IGBCpuStateContext.h"
 
 quint16 GBCpuState_Fetch::s_InterruptRoutineAddress[INTERRUPT_NUM] =
@@ -16,24 +17,24 @@ void GBCpuState_Fetch::Reset()
     m_Count = m_Context->GetCBFlag() ? 3 : 0;
 }
 
-void GBCpuState_Fetch::Update(GBBus* bus)
+void GBCpuState_Fetch::Update(GBBus* bus, GBInterruptBus* interruptBus)
 {
     if (--m_Count <= 0)
     {
         quint16 address = 0; //it will aways be override by the following code
         //manage interrupts
-		if (m_Count != 0 && m_Context->GetImeFlag() && bus->GetInterrupts() != 0)
+        if (m_Count != 0 && m_Context->GetImeFlag() && interruptBus->GetInterrupts() != 0)
         {
-			for (int mask = 0x01; mask < *Interrupt::HiLo; mask <<= 1)
+            for (int mask = 0x01; mask < *Interrupt::HiLo; mask <<= 1)
             {
-				if ((bus->GetInterrupts() & mask) != 0)
+                if ((interruptBus->GetInterrupts() & mask) != 0)
                 {
-					//Acknowledge the interrupt and handle it
-					bus->SetInterruptAcq(static_cast<Interrupt>(mask));
+                    //Acknowledge the interrupt and handle it
+                    interruptBus->SetInterruptAcq(static_cast<Interrupt>(mask));
 #ifdef DEBUG
-					qDebug("Interrupt handling not implemented");
+                    qDebug("Interrupt handling not implemented");
 #endif
-					m_Context->SetState(CpuState::Error);
+                    m_Context->SetState(CpuState::Error);
                     break;
                 }
             }

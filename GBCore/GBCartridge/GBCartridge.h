@@ -19,6 +19,6 @@ public:
     GBCartridge() { m_Behaviour = nullptr; }
     ~GBCartridge() override { delete m_Behaviour; }
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
     bool Load(QString romFilePath);
 };

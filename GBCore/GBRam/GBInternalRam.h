@@ -13,5 +13,5 @@ private:
 public:
     GBInternalRam() { Reset(); }
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
 };

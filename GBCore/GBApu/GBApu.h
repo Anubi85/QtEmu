@@ -36,7 +36,7 @@ public:
 	GBApu();
 	~GBApu() override;
 	void Reset() override;
-	void Tick(GBBus *bus) override;
+    void Tick(GBBus *bus, GBInterruptBus* interruptBus) override;
     quint32 GetSamplesBufferSize() { return SAMPLES_BUFFER_SIZE; }
     quint8* GetSamples();
 };

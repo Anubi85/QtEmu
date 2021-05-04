@@ -14,6 +14,6 @@ private:
 public:
     GBCpuState_Fetch(IGBCpuStateContext* context) : IGBCpuState(context) { }
     void Reset() override;
-    void Update(GBBus* bus) override;
+    void Update(GBBus* bus, GBInterruptBus* interruptBus) override;
     CpuState GetStateID() override { return CpuState::Fetch; }
 };

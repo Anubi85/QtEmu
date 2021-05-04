@@ -17,5 +17,5 @@ public:
     GBBios() { Reset(); }
     bool Load(QString biosFilePath);
     void Reset() override;
-    void Tick(GBBus* bus) override;
+    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
 };

@@ -9,7 +9,7 @@ GBCpuState_InterruptCheck::GBCpuState_InterruptCheck(IGBCpuStateContext* context
 
 }
 
-void GBCpuState_InterruptCheck::Update(GBBus* bus)
+void GBCpuState_InterruptCheck::Update(GBBus* bus, GBInterruptBus* interruptBus)
 {
     m_Context->SetState(CpuState::Fetch);
 }

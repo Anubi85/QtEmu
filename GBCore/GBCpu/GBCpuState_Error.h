@@ -7,6 +7,6 @@ class GBCpuState_Error : public IGBCpuState
 {
 public:
     GBCpuState_Error(IGBCpuStateContext* context) : IGBCpuState(context) { }
-    void Update(GBBus* bus) override { Q_UNUSED(bus) }
+    void Update(GBBus* bus, GBInterruptBus* interruptBus) override { Q_UNUSED(bus) Q_UNUSED(interruptBus) }
     CpuState GetStateID() override { return CpuState::Error; }
 };

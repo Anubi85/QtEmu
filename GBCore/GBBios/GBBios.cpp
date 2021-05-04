@@ -50,8 +50,9 @@ bool GBBios::Load(QString biosFilePath)
     return m_IsBiosLoaded;
 }
 
-void GBBios::Tick(GBBus* bus)
+void GBBios::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
+    Q_UNUSED(interruptBus)
     //Check if BIOS data has been properly loaded
     if (m_IsBiosMapped && m_IsBiosLoaded)
     {
