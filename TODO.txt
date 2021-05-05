@@ -1,4 +1,8 @@
-TODO: Eliminare stato GBCpuState_InterruptCheck (capire con cosa va sostituito)
+TODO: Modificare stato GBCpuState_InterruptCheck
+    - controlla se ci sono interrupt
+    - se ci sono setta l'indirizzo di chiamata e mette la CPU in interrupt mode
+    - in interrupt mode fetch non fa nulla, decode esegue una CALL allinidirizzo interrupt
+    - se la CPU è in interrupt mode la rimette in normal mode
 TODO: Rinominare GBInternalRam in GBHighRam
 TODO: Estendere range indirizzi video fino a 0xFF50 e gestire registri inutilizzati
 TODO: Gestire registri I/O inutilizzati
