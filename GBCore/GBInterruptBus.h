@@ -2,6 +2,8 @@
 
 #include "GBUtils.h"
 
+#define INTERRUPT_NUM 5
+
 enum class Interrupt
 {
     None = 0x00,

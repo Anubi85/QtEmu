@@ -1,12 +1,8 @@
-TODO: Modificare stato GBCpuState_InterruptCheck
-    - controlla se ci sono interrupt
-    - se ci sono setta l'indirizzo di chiamata e mette la CPU in interrupt mode
-    - in interrupt mode fetch non fa nulla, decode esegue una CALL allinidirizzo interrupt
-    - se la CPU è in interrupt mode la rimette in normal mode
 TODO: Rinominare GBInternalRam in GBHighRam
 TODO: Estendere range indirizzi video fino a 0xFF50 e gestire registri inutilizzati
 TODO: Gestire registri I/O inutilizzati
 TODO: Implementare OAM con anche i registri inutilizzati
 TODO: Rimuovere ack segnali bus e resettarli ad ogni ciclo
 TODO: Usare GBMemoryMap.h per le definizioni di registri e indirizzi
-TODO: Gestire in modo opportuno gli interrupt in GBCpuState_Fetch facendo tutte le operazioni adatte
+TODO: GBCpuState_Decode controllare se in interrupt mode e dal caso fare il decode di una CALL
+TODO: CALL, implementare la funzione CALL in interrupt mode

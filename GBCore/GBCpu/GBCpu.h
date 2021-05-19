@@ -71,6 +71,8 @@ private:
     bool m_IME;
     bool m_CB;
     quint8 m_OpCode;
+    bool m_IsHandlingInterrupt;
+    quint16 m_InterruptRoutineAddress;
     IGBCpuState* m_CpuStates[CPU_STATES_NUM];
     IGBCpuState* m_State;
 
@@ -90,6 +92,9 @@ private:
     quint8 GetOpCode() override { return m_OpCode; }
     void SetOpCode(quint8 opCode) override { m_OpCode = opCode; }
     bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) override;
+    void ResetInterruptMode() override { m_IsHandlingInterrupt = false; }
+    void SetInterruptMode(quint16 interruptRoutineAddress) override;
+    bool IsHandlingInterrupt() override { return m_IsHandlingInterrupt; }
 
     //instructions
     bool NOP(GBInstructionContext* context, GBBus* bus);

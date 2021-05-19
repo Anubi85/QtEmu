@@ -86,6 +86,12 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
     }
 }
 
+void GBCpu::SetInterruptMode(quint16 interruptRoutineAddress)
+{
+    m_IsHandlingInterrupt = true;
+    m_InterruptRoutineAddress = interruptRoutineAddress;
+}
+
 void GBCpu::SetFlag(Flag flagMask, bool value)
 {
     if (value)

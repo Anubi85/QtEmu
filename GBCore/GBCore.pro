@@ -46,6 +46,7 @@ SOURCES += \
     GBCartridge/GBCartridge.cpp \
     GBCartridge/IGBCartridgeBehaviour.cpp \
     GBCartridge/GBCartridgeBehaviour_RomOnly.cpp \
+    GBCpu/GBCpuState_InterruptCheck_s.cpp \
     GBInterrupt/GBInterrupt.cpp \
     GBInterruptBus.cpp \
     GBRam/GBRam.cpp \

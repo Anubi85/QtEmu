@@ -18,4 +18,7 @@ public:
     virtual void SetOpCode(quint8 opCode) = 0;
     virtual quint8 GetOpCode() = 0;
     virtual bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) = 0;
+    virtual void ResetInterruptMode() = 0;
+    virtual void SetInterruptMode(quint16 interruptRoutineAddress) = 0;
+    virtual bool IsHandlingInterrupt() = 0;
 };
