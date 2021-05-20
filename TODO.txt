@@ -2,7 +2,4 @@ TODO: Rinominare GBInternalRam in GBHighRam
 TODO: Estendere range indirizzi video fino a 0xFF50 e gestire registri inutilizzati
 TODO: Gestire registri I/O inutilizzati
 TODO: Implementare OAM con anche i registri inutilizzati
-TODO: Rimuovere ack segnali bus e resettarli ad ogni ciclo
 TODO: Usare GBMemoryMap.h per le definizioni di registri e indirizzi
-TODO: GBCpuState_Decode controllare se in interrupt mode e dal caso fare il decode di una CALL
-TODO: CALL, implementare la funzione CALL in interrupt mode

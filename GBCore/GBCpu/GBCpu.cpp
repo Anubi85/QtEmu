@@ -36,6 +36,8 @@ void GBCpu::Reset()
     m_OpCode = NOP_INSTRUCTION;
     m_PC = 0;
     m_SP = 0;
+    m_InterruptRoutineAddress = 0x0000;
+    m_IsHandlingInterrupt = false;
     m_Registers.All = 0;
     m_State = m_CpuStates[*CpuState::Fetch];
     m_State->Reset();
@@ -84,6 +86,12 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
         //return false to prevent Execute state to go into InterruptCheck state
         return false;
     }
+}
+
+void GBCpu::ResetInterruptMode()
+{
+    m_IsHandlingInterrupt = false;
+    m_InterruptRoutineAddress = 0x0000;
 }
 
 void GBCpu::SetInterruptMode(quint16 interruptRoutineAddress)
@@ -726,18 +734,40 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        bus->SetAddress(m_PC++);
-        bus->RequestRead();
+        //if we are handling interrupt there is nothing to do in this step
+        if (!m_IsHandlingInterrupt)
+        {
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+        }
         context->AdvanceStep();
         return false;
     case 1:
-        context->SetLSB(bus->GetData());
-        bus->SetAddress(m_PC++);
-        bus->RequestRead();
+        if (!m_IsHandlingInterrupt)
+        {
+            //not handling interrupt, read from the bus
+            context->SetLSB(bus->GetData());
+            bus->SetAddress(m_PC++);
+            bus->RequestRead();
+        }
+        else
+        {
+            //interrupt handling, read from interrupt routine address
+            context->SetLSB(static_cast<quint8>(m_InterruptRoutineAddress & 0x00FF));
+        }
         context->AdvanceStep();
         return false;
     case 2:
-        context->SetMSB(bus->GetData());
+        if (!m_IsHandlingInterrupt)
+        {
+            //not handling interrupt, read from the bus
+            context->SetMSB(bus->GetData());
+        }
+        else
+        {
+            //interrupt handling, read from interrupt routine address
+            context->SetMSB(static_cast<quint8>((m_InterruptRoutineAddress & 0xFF00) >> 8));
+        }
         //Check if condition is specified
         if (!context->GetBit(Bit::Bit0))
         {

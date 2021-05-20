@@ -92,7 +92,7 @@ private:
     quint8 GetOpCode() override { return m_OpCode; }
     void SetOpCode(quint8 opCode) override { m_OpCode = opCode; }
     bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) override;
-    void ResetInterruptMode() override { m_IsHandlingInterrupt = false; }
+    void ResetInterruptMode() override;
     void SetInterruptMode(quint16 interruptRoutineAddress) override;
     bool IsHandlingInterrupt() override { return m_IsHandlingInterrupt; }
 

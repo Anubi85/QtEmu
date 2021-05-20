@@ -8,7 +8,8 @@ void GBCpuState_Decode::Update(GBBus* bus, GBInterruptBus* interruptBus)
     Q_UNUSED(interruptBus)
     if (m_Context->IsHandlingInterrupt())
     {
-        m_Context->SetOpCode(0x00); //TODO: put the right CALL opcode
+        //force execution of a CALL without condition, opcode 0xCD
+        m_Context->SetOpCode(0xCD);
         m_Context->SetState(CpuState::Execute);
     }
     else
