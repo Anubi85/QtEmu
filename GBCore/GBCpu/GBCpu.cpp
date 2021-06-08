@@ -734,11 +734,15 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
     switch (context->GetStep())
     {
     case 0:
-        //if we are handling interrupt there is nothing to do in this step
+        //if we are handling interrupt just disable IME flag
         if (!m_IsHandlingInterrupt)
         {
             bus->SetAddress(m_PC++);
             bus->RequestRead();
+        }
+        else
+        {
+            m_IME = false;
         }
         context->AdvanceStep();
         return false;
