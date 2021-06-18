@@ -28,6 +28,7 @@ enum class Component
     Cartridge,
     GPU,
     APU,
+    Serial,
     InternalRAM,
 	Interrupt,
 };

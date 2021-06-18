@@ -81,7 +81,8 @@ SOURCES += \
     GBCpu/GBCpuState_Decode.cpp \
     GBCpu/GBInstructionContext.cpp \
     GBCpu/GBCpuState_Execute.cpp \
-    GBCpu/GBCpuState_InterruptCheck.cpp \
+    GBCpu/GBCpuState_InterruptCheck.cpp \ \
+    GBSerial/GBSerial.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -97,6 +98,7 @@ HEADERS += \
     GBMemoryMap.h \
     GBRam/GBRam.h \
     GBRam/GBInternalRam.h \
+    GBSerial/GBSerial.h \
     GBUtility/GBCounter.h \
     GBUtility/GBUtils.h \
     GBApu/GBApu.h \
