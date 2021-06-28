@@ -36,6 +36,7 @@ INCLUDEPATH += \
     GBGpu \
     GBRam \
     GBInterrupt \
+    GBSerial \
     GBUtility
 
 SOURCES += \
@@ -81,7 +82,7 @@ SOURCES += \
     GBCpu/GBCpuState_Decode.cpp \
     GBCpu/GBInstructionContext.cpp \
     GBCpu/GBCpuState_Execute.cpp \
-    GBCpu/GBCpuState_InterruptCheck.cpp \ \
+    GBCpu/GBCpuState_InterruptCheck.cpp \
     GBSerial/GBSerial.cpp
 
 HEADERS += \

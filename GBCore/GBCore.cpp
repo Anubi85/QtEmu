@@ -9,6 +9,7 @@
 #include "GBCartridge.h"
 #include "GBInternalRam.h"
 #include "GBInterrupt.h"
+#include "GBSerial.h"
 #include "GBUtils.h"
 
 IEmulatorCore* GetCore()
@@ -20,7 +21,7 @@ GBCore::GBCore()
 {
     m_Bus = new GBBus();
     m_InterruptBus = new GBInterruptBus();
-    for (int comp = 0; comp < COMPONENT_NUM; comp++)
+    for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {
         m_Components[comp] = nullptr;
     }
@@ -28,7 +29,7 @@ GBCore::GBCore()
 
 GBCore::~GBCore()
 {
-    for (int comp = 0; comp < COMPONENT_NUM; comp++)
+    for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {
         delete m_Components[comp];
     }
@@ -54,7 +55,7 @@ void GBCore::Exec()
     }
     else
     {
-        for (int comp = 0; comp < COMPONENT_NUM; comp++)
+        for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
         {
             if (m_Components[comp] != nullptr)
             {
@@ -67,7 +68,7 @@ void GBCore::Exec()
 bool GBCore::HasError()
 {
     bool hasError = m_Error != Error::Ok;
-    for (int comp = 0; comp < COMPONENT_NUM; comp++)
+    for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {
         if (m_Components[comp] != nullptr)
         {
@@ -101,7 +102,7 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 {
     m_Bus->Clear();
     bool res = true;
-    for (int comp = 0; comp < COMPONENT_NUM; comp++)
+    for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {
         delete m_Components[comp];
         switch (static_cast<Component>(comp))
@@ -154,6 +155,9 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 		case Component::Interrupt:
 			m_Components[comp] = new GBInterrupt();
 			break;
+        case Component::Serial:
+            m_Components[comp] = new GBSerial();
+            break;
         default:
             //TODO: remove default
             m_Components[comp] = nullptr;

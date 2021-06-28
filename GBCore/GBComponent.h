@@ -3,8 +3,6 @@
 #include <QtGlobal>
 #include <QString>
 
-#define COMPONENT_NUM 8
-
 enum class Error : quint16
 {
     Ok = 0x0000,
@@ -31,6 +29,7 @@ enum class Component
     Serial,
     InternalRAM,
 	Interrupt,
+    Total
 };
 
 class GBBus;
