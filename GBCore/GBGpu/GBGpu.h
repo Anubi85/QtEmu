@@ -10,6 +10,9 @@
 #define VIDEO_REG_ADDRESS_OFFSET 0xFF40
 #define VIDEO_RAM_SIZE 0x2000
 #define VIDEO_RAM_ADDRESS_OFFSET 0x8000
+#define VIDEO_VALID_OAM_SIZE 0x00A0
+#define VIDEO_OAM_SIZE 0x0100
+#define VIDEO_OAM_ADDRESS_OFFSET 0xFE00
 #define PALETTE_NUM 10
 #define PALETTE_SIZE 4
 
@@ -20,7 +23,13 @@ enum class VideoRegister
     SCY = 0xFF42 - VIDEO_REG_ADDRESS_OFFSET,
     SCX = 0xFF43 - VIDEO_REG_ADDRESS_OFFSET,
     LY = 0xFF44 - VIDEO_REG_ADDRESS_OFFSET,
+	LYC = 0xFF45 - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
+	DMA = 0xFF46 - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
     BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
+	OBP0 = 0xFF48 - VIDEO_REG_ADDRESS_OFFSET,
+	OBP1 = 0xFF49 - VIDEO_REG_ADDRESS_OFFSET,
+	WY = 0xFF4A - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
+	WX = 0xFF4B - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
 };
 
 enum class Palette
@@ -47,16 +56,20 @@ private:
     IGBGpuState* m_State;
     quint8 m_Registers[VIDEO_REG_SIZE];
     quint8 m_VideoRAM[VIDEO_RAM_SIZE];
+	quint8 m_VideoOAM[VIDEO_VALID_OAM_SIZE];
     quint32 m_Cycles;
     quint32 m_ScreenBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
     QSemaphore m_FrameSemaphore;
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
     bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
+	bool IsAddressInVideoOAM(quint16 address) { return address >= VIDEO_OAM_ADDRESS_OFFSET && address < VIDEO_OAM_ADDRESS_OFFSET + VIDEO_OAM_SIZE; }
     GpuState GetVideoMode() { return static_cast<GpuState>(m_Registers[*VideoRegister::STAT] & 0x03); }
     void SetVideoMode(GpuState newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
     void ReadVideoRAM(GBBus* bus, bool modeOverride);
     void WriteVideoRAM(GBBus* bus);
+	void ReadVideoOAM(GBBus* bus, bool modeOverride);
+	void WriteVideoOAM(GBBus* bus);
     void ReadVideoRegister(GBBus* bus);
     void WriteVideoRegister(GBBus* bus);
     //IGBVideoStateContext

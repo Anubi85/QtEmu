@@ -34,7 +34,7 @@ void GBGpuState_Scanline2::Tick(GBBus* bus)
         //update tile data
         m_TileByte1 = m_NewTileByte1;
         m_TileByte2 = m_NewTileByte2;
-        //build the address for the first tyle byte
+		//build the address for the first tile byte
         bus->SetAddress(GetBackgroundTileAddress());
         break;
     case -5:

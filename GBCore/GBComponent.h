@@ -27,6 +27,7 @@ enum class Component
     GPU,
     APU,
     Serial,
+	UnusedIO,
     InternalRAM,
 	Interrupt,
     Total

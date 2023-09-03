@@ -44,6 +44,7 @@ void GBGpu::Reset()
     m_Cycles = 0;
     memset(m_VideoRAM, 0, VIDEO_RAM_SIZE);
     memset(m_Registers, 0, VIDEO_REG_SIZE);
+	memset(m_VideoOAM, 0, VIDEO_OAM_SIZE);
     if (m_FrameSemaphore.available() != 0)
     {
         m_FrameSemaphore.acquire();
@@ -126,6 +127,14 @@ void GBGpu::ReadVideoRegister(GBBus* bus)
             bus->SetData(m_Registers[*VideoRegister::BGP]);
             bus->ReadReqAck();
             break;
+		case VideoRegister::OBP0:
+			bus->SetData(m_Registers[*VideoRegister::OBP0]);
+			bus->ReadReqAck();
+			break;
+		case VideoRegister::OBP1:
+			bus->SetData(m_Registers[*VideoRegister::OBP1]);
+			bus->ReadReqAck();
+			break;
         }
     }
 }
@@ -157,6 +166,14 @@ void GBGpu::WriteVideoRegister(GBBus* bus)
             m_Registers[*VideoRegister::BGP] = bus->GetData();
             bus->WriteReqAck();
             break;
+		case VideoRegister::OBP0:
+			m_Registers[*VideoRegister::OBP0] = bus->GetData();
+			bus->WriteReqAck();
+			break;
+		case VideoRegister::OBP1:
+			m_Registers[*VideoRegister::OBP1] = bus->GetData();
+			bus->WriteReqAck();
+			break;
         case VideoRegister::LY:
             //read only registers
             bus->WriteReqAck();
@@ -165,20 +182,70 @@ void GBGpu::WriteVideoRegister(GBBus* bus)
     }
 }
 
+void GBGpu::ReadVideoOAM(GBBus *bus, bool modeOverride)
+{
+	//check if a read request is pending and address is in range
+	if (bus->IsReadReqPending() && IsAddressInVideoOAM(bus->GetAddress()))
+	{
+		GpuState videoMode = GetVideoMode();
+		if (((videoMode != GpuState::Scanline1) && (videoMode != GpuState::Scanline2)) || modeOverride)
+		{
+			quint16 oamAddress = bus->GetAddress() - VIDEO_OAM_ADDRESS_OFFSET;
+			if (oamAddress < VIDEO_VALID_OAM_SIZE)
+			{
+				bus->SetData(m_VideoOAM[oamAddress]);
+			}
+			else
+			{
+				bus->SetData(0x00);
+			}
+		}
+		else
+		{
+			bus->SetData(0xFF);
+		}
+		bus->ReadReqAck();
+	}
+}
+
+void GBGpu::WriteVideoOAM(GBBus* bus)
+{
+	//check if a write request is pending and address is in range
+	if (bus->IsWriteReqPending() && IsAddressInVideoOAM(bus->GetAddress()))
+	{
+		GpuState videoMode = GetVideoMode();
+		if ((videoMode != GpuState::Scanline1) && (videoMode != GpuState::Scanline2))
+		{
+			quint16 oamAddress = bus->GetAddress() - VIDEO_OAM_ADDRESS_OFFSET;
+			if (oamAddress < VIDEO_VALID_OAM_SIZE)
+			{
+				m_VideoOAM[oamAddress] = bus->GetData();
+			}
+		}
+		bus->WriteReqAck();
+	}
+}
+
 void GBGpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
     //read VRAM from standard bus
     ReadVideoRAM(bus, false);
     //read registers
     ReadVideoRegister(bus);
+	//read OAM
+	ReadVideoOAM(bus, false);
     //write VRAM
     WriteVideoRAM(bus);
     //write registers
     WriteVideoRegister(bus);
+	//write OAM
+	WriteVideoOAM(bus);
     //perform state action
     m_State->Tick(m_InternalBus);
     //read VRAM from internal bus
     ReadVideoRAM(m_InternalBus, true);
+	//read OAM from internal bus
+	ReadVideoOAM(m_InternalBus, true);
 }
 
 quint32* GBGpu::GetFrame()

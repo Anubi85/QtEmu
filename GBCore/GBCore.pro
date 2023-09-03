@@ -37,6 +37,7 @@ INCLUDEPATH += \
     GBRam \
     GBInterrupt \
     GBSerial \
+    GBUnusedIO \
     GBUtility
 
 SOURCES += \
@@ -83,7 +84,8 @@ SOURCES += \
     GBCpu/GBInstructionContext.cpp \
     GBCpu/GBCpuState_Execute.cpp \
     GBCpu/GBCpuState_InterruptCheck.cpp \
-    GBSerial/GBSerial.cpp
+    GBSerial/GBSerial.cpp \
+    GBUnusedIO/GBUnusedIO.cpp
 
 HEADERS += \
     ../Includes/IEmulatorCore.h \
@@ -100,6 +102,7 @@ HEADERS += \
     GBRam/GBRam.h \
     GBRam/GBInternalRam.h \
     GBSerial/GBSerial.h \
+    GBUnusedIO/GBUnusedIO.h \
     GBUtility/GBCounter.h \
     GBUtility/GBUtils.h \
     GBApu/GBApu.h \

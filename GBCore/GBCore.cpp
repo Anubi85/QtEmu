@@ -10,6 +10,7 @@
 #include "GBInternalRam.h"
 #include "GBInterrupt.h"
 #include "GBSerial.h"
+#include "GBUnusedIO.h"
 #include "GBUtils.h"
 
 IEmulatorCore* GetCore()
@@ -158,6 +159,9 @@ bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
         case Component::Serial:
             m_Components[comp] = new GBSerial();
             break;
+		case Component::UnusedIO:
+			m_Components[comp] = new GBUnusedIO();
+			break;
         default:
             //TODO: remove default
             m_Components[comp] = nullptr;
