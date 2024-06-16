@@ -60,6 +60,8 @@ private:
     quint32 m_Cycles;
     quint32 m_ScreenBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
     QSemaphore m_FrameSemaphore;
+	bool m_IsWindowActive;
+	quint8 m_WindowLineCount;
 
     bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
     bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
@@ -76,11 +78,21 @@ private:
 	quint32 PerformCycle() override { return ++m_Cycles; }
     void SetState(GpuState newStateId) override;
 	bool IsDisplayEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x80) != 0; }
+	bool IsBackgroundEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x01) != 0; }
+	bool IsWindowEnabled() override { return (m_Registers[*VideoRegister::LCDC] & 0x21) == 0x21; }
 	void ResetCycles() override { m_Cycles = 0; }
 	void IncreaseYLineCount() override { m_Registers[*VideoRegister::LY] = (m_Registers[*VideoRegister::LY] + 1) % VIDEO_MAX_Y_LINE_COUNT; }
+	void IncreaseWindowLineCount() override { m_WindowLineCount++; }
+	void ResetWindowLineCount() override { m_WindowLineCount = 0; }
 	quint8 GetYLineCount() override { return m_Registers[*VideoRegister::LY]; }
+	quint8 GetWindowLineCount() override { return  m_WindowLineCount; }
+	quint8 GetWindowYCoord() override { return m_Registers[*VideoRegister::WY]; }
+	quint8 GetWindowXCoord() override { return m_Registers[*VideoRegister::WX] - 7; }
+	bool IsWindowActive() override { return m_IsWindowActive; }
+	void ActivateWindow(bool active) override { m_IsWindowActive = active; }
     bool GetBackgroundTileMap() override { return (m_Registers[*VideoRegister::LCDC] & 0x08) != 0; }
-    bool GetBackgroundTileID() override { return (m_Registers[*VideoRegister::LCDC] & 0x10) != 0; }
+	bool GetWindowTileMap() override { return (m_Registers[*VideoRegister::LCDC] & 0x40) != 0; }
+	bool GetTileID() override { return (m_Registers[*VideoRegister::LCDC] & 0x10) != 0; }
     quint8 GetYScroll() override { return m_Registers[*VideoRegister::SCY]; }
     quint8 GetXScroll() override { return m_Registers[*VideoRegister::SCX]; }
     void SetPixel(quint8 pixelIdx, quint8 pixelValue) override;

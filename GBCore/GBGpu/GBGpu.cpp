@@ -19,7 +19,7 @@ GBGpu::GBGpu() :
     m_GpuStates[*GpuState::Suspended] = new GBGpuState_Suspended(this);
     m_State = nullptr;
     m_InternalBus = new GBBus();
-    Reset();
+	Reset();
 }
 
 GBGpu::~GBGpu()
@@ -135,6 +135,14 @@ void GBGpu::ReadVideoRegister(GBBus* bus)
 			bus->SetData(m_Registers[*VideoRegister::OBP1]);
 			bus->ReadReqAck();
 			break;
+		case VideoRegister::WX:
+			bus->SetData(m_Registers[*VideoRegister::WX]);
+			bus->ReadReqAck();
+			break;
+		case VideoRegister::WY:
+			bus->SetData(m_Registers[*VideoRegister::WY]);
+			bus->ReadReqAck();
+			break;
         }
     }
 }
@@ -178,6 +186,14 @@ void GBGpu::WriteVideoRegister(GBBus* bus)
             //read only registers
             bus->WriteReqAck();
             break;
+		case VideoRegister::WX:
+			m_Registers[*VideoRegister::WX] = bus->GetData();
+			bus->WriteReqAck();
+			break;
+		case VideoRegister::WY:
+			m_Registers[*VideoRegister::WY] = bus->GetData();
+			bus->WriteReqAck();
+			break;
         }
     }
 }
@@ -228,6 +244,7 @@ void GBGpu::WriteVideoOAM(GBBus* bus)
 
 void GBGpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
 {
+	Q_UNUSED(interruptBus)
     //read VRAM from standard bus
     ReadVideoRAM(bus, false);
     //read registers

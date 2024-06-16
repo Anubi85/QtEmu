@@ -488,6 +488,39 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
+bool GBCpu::OR(GBInstructionContext* context, GBBus* bus)
+{
+	switch (context->GetStep())
+	{
+	case 0:
+		if (context->GetZ() == *CpuRegister::F)
+		{
+			bus->SetAddress(context->GetX() == 0b11 ? m_PC++ : m_Registers.Double[*CpuRegister::HL]);
+			bus->RequestRead();
+			context->AdvanceStep();
+			return false;
+		}
+		else
+		{
+			m_Registers.Single[*CpuRegister::A] |= m_Registers.Single[context->GetZ()];
+			SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+			SetFlag(Flag::N, false);
+			SetFlag(Flag::H, false);
+			SetFlag(Flag::C, false);
+			return true;
+		}
+	case 1:
+		m_Registers.Single[*CpuRegister::A] |= bus->GetData();
+		SetFlag(Flag::Z, m_Registers.Single[*CpuRegister::A] == 0);
+		SetFlag(Flag::N, false);
+		SetFlag(Flag::H, false);
+		SetFlag(Flag::C, false);
+		return true;
+	}
+	m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+	return true;
+}
+
 bool GBCpu::ADD(GBInstructionContext* context,  GBBus* bus)
 {
     switch (context->GetStep())
@@ -669,6 +702,42 @@ bool GBCpu::DEC_r(GBInstructionContext* context, GBBus* bus)
     }
     m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
     return true;
+}
+
+bool GBCpu::DEC_rr(GBInstructionContext* context, GBBus* bus)
+{
+	Q_UNUSED(bus)
+	switch (context->GetStep())
+	{
+	case 0:
+		if (context->GetW() == *CpuRegister::AF)
+		{
+			context->SetCarry((m_SP & 0x00FF) == 0x00);
+			m_SP = (m_SP & 0xFF00) | ((m_SP - 1) & 0x00FF);
+		}
+		else
+		{
+			context->SetCarry(m_Registers.Single[context->GetY() + 1] == 0x00);
+			m_Registers.Single[context->GetY() + 1]--;
+		}
+		context->AdvanceStep();
+		return false;
+	case 1:
+		if(context->GetCarry())
+		{
+			if (context->GetW() == *CpuRegister::AF)
+			{
+				m_SP -= 0x0100;
+			}
+			else
+			{
+				m_Registers.Single[context->GetY()]--;
+			}
+		}
+		return true;
+	}
+	m_ErrorCode = Error::CPU_UnespectedOpCodeStep;
+	return true;
 }
 
 bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)

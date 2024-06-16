@@ -14,6 +14,8 @@ void GBGpuState_VBlank::Tick(GBBus* bus)
         m_Context->IncreaseYLineCount();
         if (m_Context->GetYLineCount() == 0)
         {
+			m_Context->ActivateWindow(false);
+			m_Context->ResetWindowLineCount();
             m_Context->FrameReady();
             m_Context->SetState(GpuState::Scanline1);
         }

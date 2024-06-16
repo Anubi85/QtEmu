@@ -14,7 +14,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	nullptr,            //0x08
 	nullptr,            //0x09
 	&GBCpu::LD_A_addr,  //0x0A
-	nullptr,            //0x0B
+	&GBCpu::DEC_rr,     //0x0B
 	&GBCpu::INC_r,      //0x0C
 	&GBCpu::DEC_r,      //0x0D
 	&GBCpu::LD_r_n,     //0x0E
@@ -30,7 +30,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::JR,         //0x18
 	nullptr,            //0x19
 	&GBCpu::LD_A_addr,  //0x1A
-	nullptr,            //0x1B
+	&GBCpu::DEC_rr,     //0x1B
 	&GBCpu::INC_r,      //0x1C
 	&GBCpu::DEC_r,      //0x1D
 	&GBCpu::LD_r_n,     //0x1E
@@ -46,7 +46,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::JR,         //0x28
 	nullptr,            //0x29
 	&GBCpu::LDI,        //0x2A
-	nullptr,            //0x2B
+	&GBCpu::DEC_rr,     //0x2B
 	&GBCpu::INC_r,      //0x2C
 	&GBCpu::DEC_r,      //0x2D
 	&GBCpu::LD_r_n,     //0x2E
@@ -62,7 +62,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::JR,         //0x38
 	nullptr,            //0x39
 	&GBCpu::LDD,        //0x3A
-	nullptr,            //0x3B
+	&GBCpu::DEC_rr,     //0x3B
 	&GBCpu::INC_r,      //0x3C
 	&GBCpu::DEC_r,      //0x3D
 	&GBCpu::LD_r_n,     //0x3E
@@ -179,14 +179,14 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::XOR,        //0xAD
 	&GBCpu::XOR,        //0xAE
 	&GBCpu::XOR,        //0xAF
-	nullptr,            //0xB0
-	nullptr,            //0xB1
-	nullptr,            //0xB2
-	nullptr,            //0xB3
-	nullptr,            //0xB4
-	nullptr,            //0xB5
-	nullptr,            //0xB6
-	nullptr,            //0xB7
+	&GBCpu::OR,         //0xB0
+	&GBCpu::OR,         //0xB1
+	&GBCpu::OR,         //0xB2
+	&GBCpu::OR,         //0xB3
+	&GBCpu::OR,         //0xB4
+	&GBCpu::OR,         //0xB5
+	&GBCpu::OR,         //0xB6
+	&GBCpu::OR,         //0xB7
 	&GBCpu::CP,         //0xB8
 	&GBCpu::CP,         //0xB9
 	&GBCpu::CP,         //0xBA
@@ -249,7 +249,7 @@ GBInstruction GBCpu::s_InstructionTable[INSTRUCTIONS_NUM] =
 	&GBCpu::EDI,        //0xF3
 	nullptr,            //0xF4
 	&GBCpu::PUSH,       //0xF5
-	nullptr,            //0xF6
+	&GBCpu::OR,         //0xF6
 	nullptr,            //0xF7
 	nullptr,            //0xF8
 	nullptr,            //0xF9
