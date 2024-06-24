@@ -6,7 +6,7 @@
 class GBUnusedIO : public GBComponent
 {
 private:
-	bool IsAddressInRange(quint16 address) { return address >= IO_UNUSED_REGISTERS_ADDRESS && address < IO_UNUSED_REGISTERS_ADDRESS + IO_UNUSED_REGISTERS_SIZE; }
+	bool IsAddressInRange(quint16 address);
 public:
 	GBUnusedIO() { Reset(); }
 	void Reset() override;

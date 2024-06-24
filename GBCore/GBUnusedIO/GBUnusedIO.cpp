@@ -6,6 +6,14 @@ void GBUnusedIO::Reset()
 	GBComponent::Reset();
 }
 
+bool GBUnusedIO::IsAddressInRange(quint16 address)
+{
+	return (address > SC_REGISTER && address < DIV_REGISTER) ||
+			(address > TAC_REGISTER && address < NR10_REGISTER) ||
+			(address > NR52_REGISTER && address < APU_RAM_ADDRESS) ||
+			(address >= IO_UNUSED_REGISTERS_ADDRESS && address < IO_UNUSED_REGISTERS_ADDRESS + IO_UNUSED_REGISTERS_SIZE);
+}
+
 void GBUnusedIO::Tick(GBBus* bus)
 {
 	if (IsAddressInRange(bus->MainBus()->GetAddress()))

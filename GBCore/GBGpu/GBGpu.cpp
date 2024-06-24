@@ -2,6 +2,7 @@
 #include <QFile>
 #include "GBGpu.h"
 #include "GBBus.h"
+#include "GBInterruptBus.h"
 #include "GBDma.h"
 #include "GBUtils.h"
 #include "GBGpuState_HBlank.h"
@@ -67,6 +68,50 @@ void GBGpu::SetState(GpuState newStateId)
     m_State->Reset();
 }
 
+void GBGpu::SetVideoMode(GpuState newMode,  GBInterruptBus* interruptBus)
+{
+	if (GetVideoMode() != newMode)
+	{
+		m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & ~STAT_VIDEO_MODE_MASK) | (static_cast<quint8>(newMode) & STAT_VIDEO_MODE_MASK);
+		switch (newMode)
+		{
+			case GpuState::HBlank:
+				if ((m_Registers[*VideoRegister::STAT] & STAT_HBLANK_INTERRUPT_MASK) != 0)
+				{
+					interruptBus->SetInterruptReq(Interrupt::LcdStatus);
+				}
+				break;
+			case GpuState::VBlank:
+				if ((m_Registers[*VideoRegister::STAT] & STAT_VBLANK_INTERRUPT_MASK) != 0)
+				{
+					interruptBus->SetInterruptReq(Interrupt::LcdStatus);
+				}
+				break;
+			case GpuState::Scanline1:
+				if ((m_Registers[*VideoRegister::STAT] & STAT_SCANLINE1_INTERRUPT_MASK) != 0)
+				{
+					interruptBus->SetInterruptReq(Interrupt::LcdStatus);
+				}
+				break;
+			default:
+				//nothing to do
+				break;
+		}
+	}
+}
+
+void GBGpu::CheckYLine(GBInterruptBus *interruptBus)
+{
+	bool lineReached = m_Registers[*VideoRegister::LY] == m_Registers[*VideoRegister::LYC];
+	quint8 statRegister = m_Registers[*VideoRegister::STAT];
+	bool lineReachedOld = (statRegister & STAT_LINE_COUNT_MASK) == 0;
+	m_Registers[*VideoRegister::STAT] = (statRegister & ~STAT_LINE_COUNT_MASK) | (lineReached ? STAT_LINE_COUNT_MASK : 0x00);
+	if (lineReached & !lineReachedOld)
+	{
+		interruptBus->SetInterruptReq(Interrupt::LcdStatus);
+	}
+}
+
 void GBGpu::ReadVideoRAM(IGBBus* bus, bool modeOverride)
 {
     //check if a read request is pending and address is in range
@@ -124,6 +169,10 @@ void GBGpu::ReadVideoRegister(IGBBus* bus)
 			bus->SetData(m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)]);
             bus->ReadReqAck();
             break;
+		case LYC_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)]);
+			bus->ReadReqAck();
+			break;
 		case DMA_REGISTER:
 			bus->SetAddress(0xFF); //Register is read-only
 			bus->ReadReqAck();
@@ -164,7 +213,7 @@ void GBGpu::WriteVideoRegister(IGBBus* bus)
             bus->WriteReqAck();
             break;
 		case STAT_REGISTER:
-			m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)] = (m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)] & 0x03) | (bus->GetData() & 0xFC);
+			m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)] = (m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)] & 0x07) | (bus->GetData() & 0xF8);
             bus->WriteReqAck();
             break;
 		case SCY_REGISTER:
@@ -191,6 +240,10 @@ void GBGpu::WriteVideoRegister(IGBBus* bus)
             //read only registers
             bus->WriteReqAck();
             break;
+		case LYC_REGISTER:
+			m_Registers[bus->GetLocalAddress(GPU_REGISTERS_ADDRESS)] = bus->GetData();
+			bus->WriteReqAck();
+			break;
 		case DMA_REGISTER:
 			m_Dma->Start(bus->GetData());
 			bus->WriteReqAck();
@@ -280,6 +333,9 @@ void GBGpu::Tick(GBBus* bus)
 	ReadVideoRAM(bus->GpuBus(), true);
 	//read OAM from internal bus
 	ReadVideoOAM(bus->GpuBus(), true);
+	//update STAT register
+	SetVideoMode(m_State->GetStateID(), bus->InterruptBus());
+	CheckYLine(bus->InterruptBus());
 }
 
 quint32* GBGpu::GetFrame()

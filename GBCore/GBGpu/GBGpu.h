@@ -9,9 +9,16 @@
 
 class IGBBus;
 class GBDma;
+class GBInterruptBus;
 
 #define PALETTE_NUM 10
 #define PALETTE_SIZE 4
+#define STAT_VIDEO_MODE_MASK 0x03
+#define STAT_LINE_COUNT_MASK 0x04
+#define STAT_HBLANK_INTERRUPT_MASK 0x08
+#define STAT_VBLANK_INTERRUPT_MASK 0x10
+#define STAT_SCANLINE1_INTERRUPT_MASK 0x20
+#define STAT_LINE_COUNT_INTERRUPT_MASK 0x40
 
 enum class VideoRegister
 {
@@ -20,8 +27,8 @@ enum class VideoRegister
 	SCY = 0xFF42 - GPU_REGISTERS_ADDRESS,
 	SCX = 0xFF43 - GPU_REGISTERS_ADDRESS,
 	LY = 0xFF44 - GPU_REGISTERS_ADDRESS,
-	LYC = 0xFF45 - GPU_REGISTERS_ADDRESS,//TO IMPLEMENT
-	DMA = 0xFF46 - GPU_REGISTERS_ADDRESS,//TO IMPLEMENT
+	LYC = 0xFF45 - GPU_REGISTERS_ADDRESS,
+	DMA = 0xFF46 - GPU_REGISTERS_ADDRESS,
 	BGP = 0xFF47 - GPU_REGISTERS_ADDRESS,
 	OBP0 = 0xFF48 - GPU_REGISTERS_ADDRESS,
 	OBP1 = 0xFF49 - GPU_REGISTERS_ADDRESS,
@@ -63,8 +70,9 @@ private:
 	bool IsAddressInVideoRAM(quint16 address) { return address >= GPU_RAM_ADDRESS && address < GPU_RAM_ADDRESS + GPU_RAM_SIZE; }
 	bool IsAddressInVideoReg(quint16 address) { return address >= GPU_REGISTERS_ADDRESS && address < GPU_REGISTERS_ADDRESS + GPU_REGISTERS_SIZE; }
 	bool IsAddressInVideoOAM(quint16 address) { return address >= OAM_ADDRESS && address < OAM_ADDRESS + OAM_TOTAL_SIZE; }
-    GpuState GetVideoMode() { return static_cast<GpuState>(m_Registers[*VideoRegister::STAT] & 0x03); }
-    void SetVideoMode(GpuState newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
+	GpuState GetVideoMode() { return static_cast<GpuState>(m_Registers[*VideoRegister::STAT] & STAT_VIDEO_MODE_MASK); }
+	void SetVideoMode(GpuState newMode, GBInterruptBus* interruptBus);
+	void CheckYLine(GBInterruptBus* interruptBus);
 	void ReadVideoRAM(IGBBus* bus, bool modeOverride);
 	void WriteVideoRAM(IGBBus* bus);
 	void ReadVideoOAM(IGBBus* bus, bool modeOverride);

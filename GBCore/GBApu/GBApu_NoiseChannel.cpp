@@ -8,9 +8,9 @@ GBApu_NoiseChannel::GBApu_NoiseChannel(quint8& apuStatus) :
 	GBApu_ChannelBase(AUDIO_CHANNEL4_ENABLE_MASK, APU_REGISTERS_ADDRESS + 3 * AUDIO_CHANNEL_REG_NUM, apuStatus)
 {
     m_Modules[0] = nullptr;
-    m_Modules[1] = new GBApu_LfsrModule(m_Registers);
-    m_Modules[2] = new GBApu_LengthCounterModule(0x3F, c_ChannelMask, m_ApuStatus, m_Registers);
-    m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
+	m_Modules[1] = new GBApu_LfsrModule(m_Registers);
+	m_Modules[2] = new GBApu_LengthCounterModule(0x3F, c_ChannelMask, m_ApuStatus, m_Registers);
+	m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
 void GBApu_NoiseChannel::ReadRegister(IGBBus* bus)

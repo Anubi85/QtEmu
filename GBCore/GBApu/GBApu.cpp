@@ -118,7 +118,7 @@ void GBApu::Tick(GBBus* bus)
         }
 		if (bus->MainBus()->IsWriteReqPending())
         {
-			m_SamplesRam[bus->MainBus()->GetLocalAddress(APU_REGISTERS_ADDRESS)] = bus->MainBus()->GetData();
+			m_SamplesRam[bus->MainBus()->GetLocalAddress(APU_RAM_ADDRESS)] = bus->MainBus()->GetData();
 			bus->MainBus()->WriteReqAck();
         }
     }
@@ -138,7 +138,7 @@ void GBApu::Tick(GBBus* bus)
     {
         m_Channels[ch]->Tick(m_FrameSequencer);
     }
-    m_Mixer->Tick();
+	m_Mixer->Tick();
     AddSamplesToBuffer(m_Mixer->GetSampleL(), m_Mixer->GetSampleR());
 }
 
