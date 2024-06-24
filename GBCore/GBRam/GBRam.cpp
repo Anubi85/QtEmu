@@ -7,20 +7,33 @@ void GBRam::Reset()
     memset(m_Ram, 0, RAM_SIZE);
 }
 
-void GBRam::Tick(GBBus* bus, GBInterruptBus* interruptBus)
+void GBRam::ReadData(IGBBus *bus)
 {
-    Q_UNUSED(interruptBus)
-    if (IsAddressInRange(bus->GetAddress()))
+	if (bus->IsReadReqPending())
+	{
+		bus->SetData(m_Ram[bus->GetAddress() % RAM_SIZE]);
+		bus->ReadReqAck();
+	}
+}
+
+void GBRam::WriteData(IGBBus *bus)
+{
+	if (bus->IsWriteReqPending())
+	{
+		m_Ram[bus->GetAddress() % RAM_SIZE] = bus->GetData();
+		bus->WriteReqAck();
+	}
+}
+
+void GBRam::Tick(GBBus* bus)
+{
+	if (IsAddressInRange(bus->MainBus()->GetAddress()))
     {
-        if (bus->IsReadReqPending())
-        {
-            bus->SetData(m_Ram[bus->GetAddress() % RAM_SIZE]);
-            bus->ReadReqAck();
-        }
-        if (bus->IsWriteReqPending())
-        {
-            m_Ram[bus->GetAddress() % RAM_SIZE] = bus->GetData();
-            bus->WriteReqAck();
-        }
+		if (bus->IsDmaActive())
+		{
+			ReadData(bus->DmaBus());
+		}
+		ReadData(bus->MainBus());
+		WriteData(bus->MainBus());
     }
 }

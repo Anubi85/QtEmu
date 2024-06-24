@@ -1,7 +1,7 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_Suspended.h"
 
-void GBGpuState_Suspended::Tick(GBBus* bus)
+void GBGpuState_Suspended::Tick(IGBBus* bus)
 {
     Q_UNUSED(bus)
     if (m_Context->IsDisplayEnabled())

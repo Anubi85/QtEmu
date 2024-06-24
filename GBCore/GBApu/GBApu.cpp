@@ -59,19 +59,7 @@ void GBApu::Reset()
     m_SamplesRam[0xF] = 0xDA;
 }
 
-void GBApu::ReadSamplesRam(GBBus *bus)
-{
-	bus->SetData(m_SamplesRam[bus->GetLocalAddress(AUDIO_REG_ADDRESS_OFFSET)]);
-	bus->ReadReqAck();
-}
-
-void GBApu::WriteSamplesRam(GBBus *bus)
-{
-	m_SamplesRam[bus->GetLocalAddress(AUDIO_REG_ADDRESS_OFFSET)] = bus->GetData();
-	bus->WriteReqAck();
-}
-
-void GBApu::ReadRegister(GBBus *bus)
+void GBApu::ReadRegister(IGBBus* bus)
 {
 	for(int ch = 0; ch < AUDIO_CHANNELS_NUM; ch++)
 	{
@@ -82,7 +70,7 @@ void GBApu::ReadRegister(GBBus *bus)
 	{
 		switch (bus->GetAddress())
 		{
-			case AUDIO_NR52_ADDRESS:
+			case NR52_REGISTER:
 				bus->SetData(m_NR52 | 0x70);
 				break;
 			default:
@@ -92,7 +80,7 @@ void GBApu::ReadRegister(GBBus *bus)
 	}
 }
 
-void GBApu::WriteRegister(GBBus *bus)
+void GBApu::WriteRegister(IGBBus* bus)
 {
 	for (int ch = 0; ch < AUDIO_CHANNELS_NUM; ch++)
 	{
@@ -103,7 +91,7 @@ void GBApu::WriteRegister(GBBus *bus)
 	{
 		switch (bus->GetAddress())
 		{
-			case AUDIO_NR52_ADDRESS:
+			case NR52_REGISTER:
 				m_NR52 &= 0x7F;
                 m_NR52 |= (bus->GetData() & 0x80);
 				if (!IsAudioEnabled())
@@ -119,29 +107,30 @@ void GBApu::WriteRegister(GBBus *bus)
 	}
 }
 
-void GBApu::Tick(GBBus *bus, GBInterruptBus* interruptBus)
+void GBApu::Tick(GBBus* bus)
 {
-    Q_UNUSED(interruptBus)
-    if (IsAddressInAudioRam(bus->GetAddress()))
+	if (IsAddressInAudioRam(bus->MainBus()->GetAddress()))
     {
-        if (bus->IsReadReqPending())
+		if (bus->MainBus()->IsReadReqPending())
         {
-            ReadSamplesRam(bus);
+			bus->MainBus()->SetData(m_SamplesRam[bus->MainBus()->GetLocalAddress(APU_REGISTERS_ADDRESS)]);
+			bus->MainBus()->ReadReqAck();
         }
-        if (bus->IsWriteReqPending())
+		if (bus->MainBus()->IsWriteReqPending())
         {
-            WriteSamplesRam(bus);
+			m_SamplesRam[bus->MainBus()->GetLocalAddress(APU_REGISTERS_ADDRESS)] = bus->MainBus()->GetData();
+			bus->MainBus()->WriteReqAck();
         }
     }
-    if (IsAddressInAudioReg(bus->GetAddress()))
+	if (IsAddressInAudioReg(bus->MainBus()->GetAddress()))
     {
-        if (bus->IsReadReqPending())
+		if (bus->MainBus()->IsReadReqPending())
         {
-            ReadRegister(bus);
+			ReadRegister(bus->MainBus());
         }
-        if (bus->IsWriteReqPending())
+		if (bus->MainBus()->IsWriteReqPending())
         {
-            WriteRegister(bus);
+			WriteRegister(bus->MainBus());
         }
     }
     m_FrameSequencer->Tick();

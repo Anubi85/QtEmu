@@ -3,9 +3,8 @@
 #include "GBBus.h"
 #include "IGBCpuStateContext.h"
 
-void GBCpuState_Decode::Update(GBBus* bus, GBInterruptBus* interruptBus)
+void GBCpuState_Decode::Update(GBBus* bus)
 {
-    Q_UNUSED(interruptBus)
     if (m_Context->IsHandlingInterrupt())
     {
         //force execution of a CALL without condition, opcode 0xCD
@@ -14,14 +13,15 @@ void GBCpuState_Decode::Update(GBBus* bus, GBInterruptBus* interruptBus)
     }
     else
     {
-        if (bus->GetData() == 0xCB)
+		quint8 data = bus->MainBus()->GetData();
+		if (data == 0xCB)
         {
             m_Context->SetCBFlag(true);
             m_Context->SetState(CpuState::Fetch);
         }
         else
         {
-            m_Context->SetOpCode(bus->GetData());
+			m_Context->SetOpCode(data);
             m_Context->SetState(CpuState::Execute);
         }
     }

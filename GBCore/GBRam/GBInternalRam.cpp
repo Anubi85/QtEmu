@@ -7,20 +7,19 @@ void GBInternalRam::Reset()
 	memset(m_Ram, 0, HRAM_SIZE);
 }
 
-void GBInternalRam::Tick(GBBus* bus, GBInterruptBus* interruptBus)
+void GBInternalRam::Tick(GBBus* bus)
 {
-    Q_UNUSED(interruptBus)
-    if (IsAddressInRange(bus->GetAddress()))
+	if (IsAddressInRange(bus->MainBus()->GetAddress()))
     {
-        if (bus->IsReadReqPending())
+		if (bus->MainBus()->IsReadReqPending())
         {
-			bus->SetData(m_Ram[bus->GetAddress() - HRAM_ADDRESS]);
-            bus->ReadReqAck();
+			bus->MainBus()->SetData(m_Ram[bus->MainBus()->GetLocalAddress(HRAM_ADDRESS)]);
+			bus->MainBus()->ReadReqAck();
         }
-        if (bus->IsWriteReqPending())
+		if (bus->MainBus()->IsWriteReqPending())
         {
-			m_Ram[bus->GetAddress() - HRAM_ADDRESS] = bus->GetData();
-            bus->WriteReqAck();
+			m_Ram[bus->MainBus()->GetLocalAddress(HRAM_ADDRESS)] = bus->MainBus()->GetData();
+			bus->MainBus()->WriteReqAck();
         }
     }
 }

@@ -12,7 +12,7 @@ enum class GpuState
 };
 
 class IGBGpuStateContext;
-class GBBus;
+class IGBBus;
 
 class IGBGpuState
 {
@@ -22,6 +22,6 @@ protected:
 public:
     virtual ~IGBGpuState();
     virtual void Reset() { }
-    virtual void Tick(GBBus* bus) = 0;
+	virtual void Tick(IGBBus* bus) = 0;
     virtual GpuState GetStateID() = 0;
 };

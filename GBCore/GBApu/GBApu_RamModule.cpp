@@ -43,7 +43,7 @@ void GBApu_RamModule::Tick(bool doAction, quint8 *sample)
     if (m_FrequencyCounter.IsZero())
     {
         m_FrequencyCounter.Reload(GetFrequencyCount());
-        m_SampleIdx = (m_SampleIdx + 1) % AUDIO_RAM_SIZE;
+		m_SampleIdx = (m_SampleIdx + 1) % APU_RAM_SIZE;
     }
     *sample = GetSample() >> GetVolumeShift();
 }

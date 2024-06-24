@@ -1,12 +1,15 @@
 #pragma once
 
 #include <QtGlobal>
+#include "GBMemoryMap.h"
 
 #define CARTRIDGE_REGISTER_MASK 0xE000
 #define RAM_ENABLE_REQUEST 0x0000
 #define ROM_BANK_SWITCH_REQUEST 0x2000
 #define RAM_BANK_SWITCH_REQUEST 0x4000
 #define SET_BANKING_MODE_REQUEST 0x6000
+
+#define ROM_ONLY_SIZE 0x8000
 
 class GBBus;
 
@@ -22,5 +25,5 @@ protected:
 	bool IsSetBankingModeRequest(quint16 address) { return  (address & CARTRIDGE_REGISTER_MASK) == SET_BANKING_MODE_REQUEST; }
 public:
     virtual ~IGBCartridgeBehaviour() { delete[] m_Data; }
-    virtual void ProcessRequests(GBBus* bus) = 0;
+	virtual void ProcessRequests(GBBus* bus) = 0;
 };

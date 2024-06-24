@@ -2,6 +2,7 @@
 #include "GBCpuState_InterruptCheck.h"
 #include "GBInstructionContext.h"
 #include "IGBCpuStateContext.h"
+#include "GBBus.h"
 
 void GBCpuState_Execute::Reset()
 {
@@ -9,12 +10,11 @@ void GBCpuState_Execute::Reset()
     m_Count = 0;
 }
 
-void GBCpuState_Execute::Update(GBBus* bus, GBInterruptBus* interruptBus)
+void GBCpuState_Execute::Update(GBBus* bus)
 {
-    Q_UNUSED(interruptBus)
     if (m_Count-- == 0)
     {
-        if (m_Context->ExecuteOpCode(&m_InstructionContext, bus))
+		if (m_Context->ExecuteOpCode(&m_InstructionContext, bus->MainBus()))
         {
             //clean up context before moving ot next state
             m_Context->SetCBFlag(false);

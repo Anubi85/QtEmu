@@ -6,8 +6,10 @@
 enum class Error : quint16
 {
     Ok = 0x0000,
-    BUS_ReadRequestNotServed = 0x0001,
-    BUS_WriteRequestNotServed = 0x0002,
+	MAINBUS_ReadRequestNotServed = 0x0001,
+	MAINBUS_WriteRequestNotServed = 0x0002,
+	DMABUS_ReadRequestNotServed = 0x0003,
+	DMABUS_WriteRequestNotServed = 0x0004,
     CPU_OpCodeNotImplemented = 0x0101,
     CPU_UnespectedOpCodeStep = 0x0102,
     BIOS_FileNotFound = 0x0201,
@@ -34,7 +36,6 @@ enum class Component
 };
 
 class GBBus;
-class GBInterruptBus;
 
 class GBComponent
 {
@@ -45,7 +46,7 @@ public:
     virtual ~GBComponent() { }
     bool HasError() { return m_ErrorCode != Error::Ok; }
     virtual void Reset() { m_ErrorCode = Error::Ok; }
-    virtual void Tick(GBBus* bus, GBInterruptBus* interruptBus) = 0;
+	virtual void Tick(GBBus* bus) = 0;
     quint16 GetLastError() { return static_cast<quint16>(m_ErrorCode); }
     QString GetErrorDescription(quint16 errorCode) { return GetErrorDescription(static_cast<Error>(errorCode)); }
     QString GetErrorDescription(Error error);

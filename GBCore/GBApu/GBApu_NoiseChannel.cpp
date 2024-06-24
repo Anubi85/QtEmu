@@ -1,11 +1,11 @@
-#include "GBBus.h"
+#include "GBInternalBus.h"
 #include "GBApu_NoiseChannel.h"
 #include "GBApu_LfsrModule.h"
 #include "GBApu_LengthCounterModule.h"
 #include "GBApu_VolumeEnvelopeModule.h"
 
 GBApu_NoiseChannel::GBApu_NoiseChannel(quint8& apuStatus) :
-    GBApu_ChannelBase(AUDIO_CHANNEL4_ENABLE_MASK, AUDIO_REG_ADDRESS_OFFSET + 3 * AUDIO_CHANNEL_REG_NUM, apuStatus)
+	GBApu_ChannelBase(AUDIO_CHANNEL4_ENABLE_MASK, APU_REGISTERS_ADDRESS + 3 * AUDIO_CHANNEL_REG_NUM, apuStatus)
 {
     m_Modules[0] = nullptr;
     m_Modules[1] = new GBApu_LfsrModule(m_Registers);
@@ -13,24 +13,24 @@ GBApu_NoiseChannel::GBApu_NoiseChannel(quint8& apuStatus) :
     m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
-void GBApu_NoiseChannel::ReadRegister(GBBus *bus)
+void GBApu_NoiseChannel::ReadRegister(IGBBus* bus)
 {
-    switch (bus->GetAddress() - c_StartRegAddress)
+	switch (bus->GetAddress())
     {
-        case AUDIO_CHANNEL_NRX0_ADDRESS:
+		case NR40_REGISTER:
             bus->SetData(0xFF);
             break;
-        case AUDIO_CHANNEL_NRX1_ADDRESS:
+		case NR41_REGISTER:
             bus->SetData(0xFF);
             break;
-        case AUDIO_CHANNEL_NRX2_ADDRESS:
-            bus->SetData(m_Registers[AUDIO_CHANNEL_NRX2_ADDRESS]);
+		case NR42_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)]);
             break;
-        case AUDIO_CHANNEL_NRX3_ADDRESS:
-            bus->SetData(m_Registers[AUDIO_CHANNEL_NRX3_ADDRESS]);
+		case NR43_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)]);
             break;
-        case AUDIO_CHANNEL_NRX4_ADDRESS:
-            bus->SetData(m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] | 0xBF);
+		case NR44_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)] | 0xBF);
             break;
         default:
             return;
@@ -38,24 +38,24 @@ void GBApu_NoiseChannel::ReadRegister(GBBus *bus)
     bus->ReadReqAck();
 }
 
-void GBApu_NoiseChannel::WriteRegister(GBBus *bus)
+void GBApu_NoiseChannel::WriteRegister(IGBBus* bus)
 {
-    switch (bus->GetAddress() - c_StartRegAddress)
+	switch (bus->GetAddress())
     {
-        case AUDIO_CHANNEL_NRX0_ADDRESS:
+		case NR40_REGISTER:
             //Not useed, do nothing
             break;
-        case AUDIO_CHANNEL_NRX1_ADDRESS:
-            m_Registers[AUDIO_CHANNEL_NRX1_ADDRESS] = bus->GetData() & 0x3F;
+		case NR41_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData() & 0x3F;
             break;
-        case AUDIO_CHANNEL_NRX2_ADDRESS:
-            m_Registers[AUDIO_CHANNEL_NRX2_ADDRESS] = bus->GetData();
+		case NR42_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData();
             break;
-        case AUDIO_CHANNEL_NRX3_ADDRESS:
-            m_Registers[AUDIO_CHANNEL_NRX3_ADDRESS] = bus->GetData();
+		case NR43_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData();
             break;
-        case AUDIO_CHANNEL_NRX4_ADDRESS:
-            m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] = bus->GetData() & 0xC0;
+		case NR44_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData() & 0xC0;
             Trigger();
             break;
         default:

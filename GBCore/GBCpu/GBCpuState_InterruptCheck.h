@@ -9,6 +9,6 @@ private:
     static quint16 s_InterruptRoutineAddress[INTERRUPT_NUM];
 public:
     GBCpuState_InterruptCheck(IGBCpuStateContext* context) : IGBCpuState(context) { }
-    void Update(GBBus* bus, GBInterruptBus* interruptBus) override;
+	void Update(GBBus* bus) override;
     CpuState GetStateID() override { return CpuState::InterruptCheck; }
 };

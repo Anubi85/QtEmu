@@ -4,7 +4,7 @@
 #include "GBApu_CommonDefs.h"
 #include "GBApu_Dac.h"
 
-class GBBus;
+class IGBBus;
 class GBApu_FrameSequencer;
 class GBApu_ChannelModuleBase;
 
@@ -25,7 +25,7 @@ public:
 	virtual ~GBApu_ChannelBase();
 	virtual void Tick(GBApu_FrameSequencer* sequencer);
 	virtual void Reset();
-    virtual void ReadRegister(GBBus* bus) = 0;
-    virtual void WriteRegister(GBBus* bus) = 0;
+	virtual void ReadRegister(IGBBus* bus) = 0;
+	virtual void WriteRegister(IGBBus* bus) = 0;
     quint8 GetSample() { return m_Dac->GetSample(); }
 };

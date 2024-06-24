@@ -26,6 +26,6 @@ private:
 public:
     GBGpuState_Scanline2(IGBGpuStateContext* context) : IGBGpuState(context) { }
     void Reset() override;
-    void Tick(GBBus* bus) override;
+	void Tick(IGBBus* bus) override;
     GpuState GetStateID() override { return GpuState::Scanline2; }
 };

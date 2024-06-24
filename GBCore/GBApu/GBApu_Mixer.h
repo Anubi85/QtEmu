@@ -2,9 +2,10 @@
 
 #include <QtGlobal>
 #include <qmap.h>
+#include "GBMemoryMap.h"
 #include "GBApu_CommonDefs.h"
 
-class GBBus;
+class IGBBus;
 class GBApu_ChannelBase;
 
 class GBApu_Mixer
@@ -24,8 +25,8 @@ public:
     ~GBApu_Mixer() { }
 	void Reset();
     void Tick();
-	void ReadRegister(GBBus* bus);
-	void WriteRegister(GBBus* bus);
+	void ReadRegister(IGBBus* bus);
+	void WriteRegister(IGBBus* bus);
     quint8 GetSampleR() { return m_SampleR; }
     quint8 GetSampleL() { return m_SampleL; }
 };

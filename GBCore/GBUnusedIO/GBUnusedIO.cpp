@@ -6,19 +6,18 @@ void GBUnusedIO::Reset()
 	GBComponent::Reset();
 }
 
-void GBUnusedIO::Tick(GBBus* bus, GBInterruptBus* interruptBus)
+void GBUnusedIO::Tick(GBBus* bus)
 {
-	Q_UNUSED(interruptBus)
-	if (IsAddressInRange(bus->GetAddress()))
+	if (IsAddressInRange(bus->MainBus()->GetAddress()))
 	{
-		if (bus->IsReadReqPending())
+		if (bus->MainBus()->IsReadReqPending())
 		{
-			bus->SetData(0xFF);
-			bus->ReadReqAck();
+			bus->MainBus()->SetData(0xFF);
+			bus->MainBus()->ReadReqAck();
 		}
-		if (bus->IsWriteReqPending())
+		if (bus->MainBus()->IsWriteReqPending())
 		{
-			bus->WriteReqAck();
+			bus->MainBus()->WriteReqAck();
 		}
 	}
 }

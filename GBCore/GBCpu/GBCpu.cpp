@@ -1,5 +1,5 @@
 #include "GBCpu.h"
-#include "GBBus.h"
+#include "GBInternalBus.h"
 #include "GBCpuState_Fetch.h"
 #include "GBCpuState_Decode.h"
 #include "GBCpuState_Execute.h"
@@ -43,7 +43,7 @@ void GBCpu::Reset()
     m_State->Reset();
 }
 
-void GBCpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
+void GBCpu::Tick(GBBus* bus)
 {
     if (m_State->GetStateID() == CpuState::Error)
     {
@@ -51,7 +51,7 @@ void GBCpu::Tick(GBBus* bus, GBInterruptBus* interruptBus)
     }
     else
     {
-        m_State->Update(bus, interruptBus);
+		m_State->Update(bus);
         m_Cycles++;
     }
 }
@@ -62,7 +62,7 @@ void GBCpu::SetState(CpuState newStateID)
     m_State->Reset();
 }
 
-bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
+bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, IGBBus* bus)
 {
     GBInstruction inst = m_CB ? s_CBInstructionTable[m_OpCode] : s_InstructionTable[m_OpCode];
     if (inst != nullptr)
@@ -72,7 +72,7 @@ bool GBCpu::ExecuteOpCode(GBInstructionContext* ctx, GBBus *bus)
 			m_IME = m_IMERequest == IMERequest::Activate;
 			m_IMERequest = IMERequest::None;
 		}
-        return (this->*inst)(ctx, bus);
+		return (this->*inst)(ctx, bus);
     }
     else
     {
@@ -124,14 +124,14 @@ quint8 GBCpu::AddSub(quint8 value1, quint8 value2, bool isSub)
     return res;
 }
 
-bool GBCpu::NOP(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::NOP(GBInstructionContext* context, IGBBus* bus)
 {
     Q_UNUSED(context)
     Q_UNUSED(bus)
     return true;
 }
 
-bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_r_n(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -164,7 +164,7 @@ bool GBCpu::LD_r_n(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_r1_r2(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_r1_r2(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -200,7 +200,7 @@ bool GBCpu::LD_r1_r2(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_addr_A(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -245,7 +245,7 @@ bool GBCpu::LD_addr_A(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_A_addr(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_A_addr(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -290,7 +290,7 @@ bool GBCpu::LD_A_addr(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_off_A(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_off_A(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -332,7 +332,7 @@ bool GBCpu::LD_off_A(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_A_off(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_A_off(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -373,7 +373,7 @@ bool GBCpu::LD_A_off(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LD_rr_nn(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -404,7 +404,7 @@ bool GBCpu::LD_rr_nn(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::PUSH(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::PUSH(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -432,7 +432,7 @@ bool GBCpu::PUSH(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::POP(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::POP(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -455,7 +455,7 @@ bool GBCpu::POP(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::XOR(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -488,7 +488,7 @@ bool GBCpu::XOR(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::OR(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::OR(GBInstructionContext* context, IGBBus* bus)
 {
 	switch (context->GetStep())
 	{
@@ -521,7 +521,7 @@ bool GBCpu::OR(GBInstructionContext* context, GBBus* bus)
 	return true;
 }
 
-bool GBCpu::ADD(GBInstructionContext* context,  GBBus* bus)
+bool GBCpu::ADD(GBInstructionContext* context,  IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -546,7 +546,7 @@ bool GBCpu::ADD(GBInstructionContext* context,  GBBus* bus)
     return true;
 }
 
-bool GBCpu::SUB(GBInstructionContext* context,  GBBus* bus)
+bool GBCpu::SUB(GBInstructionContext* context,  IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -571,7 +571,7 @@ bool GBCpu::SUB(GBInstructionContext* context,  GBBus* bus)
     return true;
 }
 
-bool GBCpu::CP(GBInstructionContext* context,  GBBus* bus)
+bool GBCpu::CP(GBInstructionContext* context,  IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -596,7 +596,7 @@ bool GBCpu::CP(GBInstructionContext* context,  GBBus* bus)
     return true;
 }
 
-bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::INC_r(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -632,7 +632,7 @@ bool GBCpu::INC_r(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::INC_rr(GBInstructionContext* context, IGBBus* bus)
 {
     Q_UNUSED(bus)
     switch (context->GetStep())
@@ -668,7 +668,7 @@ bool GBCpu::INC_rr(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::DEC_r(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::DEC_r(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -704,7 +704,7 @@ bool GBCpu::DEC_r(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::DEC_rr(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::DEC_rr(GBInstructionContext* context, IGBBus* bus)
 {
 	Q_UNUSED(bus)
 	switch (context->GetStep())
@@ -740,7 +740,7 @@ bool GBCpu::DEC_rr(GBInstructionContext* context, GBBus* bus)
 	return true;
 }
 
-bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LDD(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -769,7 +769,7 @@ bool GBCpu::LDD(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::LDI(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::LDI(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -798,7 +798,7 @@ bool GBCpu::LDI(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::CALL(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -896,7 +896,7 @@ bool GBCpu::CALL(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::RET(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::RET(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -990,7 +990,7 @@ bool GBCpu::RET(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::BIT(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -1019,7 +1019,7 @@ bool GBCpu::BIT(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::JP(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::JP(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -1069,7 +1069,7 @@ bool GBCpu::JP(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::JR(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -1111,7 +1111,7 @@ bool GBCpu::JR(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::RL(GBInstructionContext* context, IGBBus* bus)
 {
     switch (context->GetStep())
     {
@@ -1160,7 +1160,7 @@ bool GBCpu::RL(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
+bool GBCpu::RLA(GBInstructionContext* context, IGBBus* bus)
 {
     Q_UNUSED(bus)
     switch (context->GetStep())
@@ -1178,7 +1178,7 @@ bool GBCpu::RLA(GBInstructionContext* context, GBBus* bus)
     return true;
 }
 
-bool GBCpu::EDI(GBInstructionContext *context, GBBus *bus)
+bool GBCpu::EDI(GBInstructionContext *context, IGBBus* bus)
 {
 	Q_UNUSED(bus)
 	if (context->GetBit(Bit::Bit3))

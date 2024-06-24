@@ -1,6 +1,6 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_Scanline2.h"
-#include "GBBus.h"
+#include "GBInternalBus.h"
 
 void GBGpuState_Scanline2::Reset()
 {
@@ -31,7 +31,7 @@ quint16 GBGpuState_Scanline2::GetTileDataAddress(quint8 tileID)
     return address;
 }
 
-void GBGpuState_Scanline2::Tick(GBBus* bus)
+void GBGpuState_Scanline2::Tick(IGBBus* bus)
 {
     m_Context->PerformCycle();
 	switch (m_FetcherStepCount)

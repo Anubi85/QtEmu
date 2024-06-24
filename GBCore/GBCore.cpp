@@ -1,6 +1,5 @@
 #include "GBCore.h"
 #include "GBBus.h"
-#include "GBInterruptBus.h"
 #include "GBCpu.h"
 #include "GBBios.h"
 #include "GBRam.h"
@@ -20,8 +19,7 @@ IEmulatorCore* GetCore()
 
 GBCore::GBCore()
 {
-    m_Bus = new GBBus();
-    m_InterruptBus = new GBInterruptBus();
+	m_Bus = new GBBus();
     for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {
         m_Components[comp] = nullptr;
@@ -34,33 +32,46 @@ GBCore::~GBCore()
     {
         delete m_Components[comp];
     }
-    delete m_Bus;
-    delete m_InterruptBus;
+	delete m_Bus;
 }
 
 void GBCore::Exec()
 {
-    if (m_Bus->IsReadReqPending())
+	if (m_Bus->MainBus()->IsReadReqPending())
     {
-        m_Error = Error::BUS_ReadRequestNotServed;
+		m_Error = Error::MAINBUS_ReadRequestNotServed;
 #ifdef DEBUG
-        qDebug("Read request to a not implemented address 0x%04X", m_Bus->GetAddress());
+		qDebug("[MAIN] Read request to a not implemented address 0x%04X", m_Bus->MainBus()->GetAddress());
 #endif
     }
-    else if (m_Bus->IsWriteReqPending())
+	else if (m_Bus->MainBus()->IsWriteReqPending())
     {
-        m_Error = Error::BUS_WriteRequestNotServed;
+		m_Error = Error::MAINBUS_WriteRequestNotServed;
 #ifdef DEBUG
-        qDebug("Write request to a not implemented address 0x%04X", m_Bus->GetAddress());
+		qDebug("[MAIN] Write request to a not implemented address 0x%04X", m_Bus->MainBus()->GetAddress());
 #endif
     }
+	else if (m_Bus->DmaBus()->IsReadReqPending())
+	{
+		m_Error = Error::DMABUS_ReadRequestNotServed;
+#ifdef DEBUG
+		qDebug("[DMA] Read request to a not implemented address 0x%04X", m_Bus->DmaBus()->GetAddress());
+#endif
+	}
+	else if (m_Bus->DmaBus()->IsWriteReqPending())
+	{
+		m_Error = Error::DMABUS_WriteRequestNotServed;
+#ifdef DEBUG
+		qDebug("[DMA] Write request to a not implemented address 0x%04X", m_Bus->DmaBus()->GetAddress());
+#endif
+	}
     else
     {
         for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
         {
             if (m_Components[comp] != nullptr)
             {
-                m_Components[comp]->Tick(m_Bus, m_InterruptBus);
+				m_Components[comp]->Tick(m_Bus);
             }
         }
     }
@@ -101,7 +112,7 @@ quint8* GBCore::GetAudioSamples()
 
 bool GBCore::Initialize(QString biosFilePath, QString romFilePath)
 {
-    m_Bus->Clear();
+	m_Bus->Clear();
     bool res = true;
     for (int comp = 0; comp < static_cast<int>(Component::Total); comp++)
     {

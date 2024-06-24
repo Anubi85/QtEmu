@@ -1,4 +1,5 @@
 #include "IGBCpuState.h"
+#include "GBInternalBus.h"
 
 IGBCpuState::IGBCpuState(IGBCpuStateContext* context)
 {

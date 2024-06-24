@@ -1,7 +1,8 @@
 #pragma once
 
+#include <QtGlobal>
+
 class GBBus;
-class GBInterruptBus;
 class IGBCpuStateContext;
 
 #define CPU_STATES_NUM 5
@@ -23,6 +24,6 @@ protected:
 public:
     virtual ~IGBCpuState();
     virtual void Reset() { }
-    virtual void Update(GBBus* bus, GBInterruptBus* interruptBus) = 0;
+	virtual void Update(GBBus* bus) = 0;
     virtual CpuState GetStateID() = 0;
 };

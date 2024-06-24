@@ -50,23 +50,22 @@ bool GBBios::Load(QString biosFilePath)
     return m_IsBiosLoaded;
 }
 
-void GBBios::Tick(GBBus* bus, GBInterruptBus* interruptBus)
+void GBBios::Tick(GBBus* bus)
 {
-    Q_UNUSED(interruptBus)
     //Check if BIOS data has been properly loaded
     if (m_IsBiosMapped && m_IsBiosLoaded)
     {
         //Check if BIOS data has been requested
-        if (bus->IsReadReqPending() && (bus->GetAddress() <= BIOS_SIZE))
+		if (bus->MainBus()->IsReadReqPending() && (bus->MainBus()->GetAddress() <= BIOS_SIZE))
         {
-            bus->ReadReqAck();
-            bus->SetData(static_cast<quint8>(m_Data[bus->GetAddress()]));
+			bus->MainBus()->ReadReqAck();
+			bus->MainBus()->SetData(static_cast<quint8>(m_Data[bus->MainBus()->GetAddress()]));
         }
     }
     //Check for BIOS unmap command
-    if (bus->IsWriteReqPending() && (bus->GetAddress() == BIOS_UNMAP))
+	if (bus->MainBus()->IsWriteReqPending() && (bus->MainBus()->GetAddress() == BIOS_UNMAP_REGISTER))
     {
-        m_IsBiosMapped = (bus->GetData() & 0x01) == 0;
-        bus->WriteReqAck();
+		m_IsBiosMapped = (bus->MainBus()->GetData() & 0x01) == 0;
+		bus->MainBus()->WriteReqAck();
     }
 }

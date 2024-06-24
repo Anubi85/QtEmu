@@ -8,6 +8,6 @@ class GBGpuState_HBlank : public IGBGpuState
 {
 public:
     GBGpuState_HBlank(IGBGpuStateContext* context) : IGBGpuState(context) { }
-    void Tick(GBBus* bus) override;
+	void Tick(IGBBus* bus) override;
     GpuState GetStateID() override { return GpuState::HBlank; }
 };

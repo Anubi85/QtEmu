@@ -5,31 +5,28 @@
 #include "GBUtils.h"
 #include "IGBGpuState.h"
 #include "IGBGpuStateContext.h"
+#include "GBMemoryMap.h"
 
-#define VIDEO_REG_SIZE 0x000C
-#define VIDEO_REG_ADDRESS_OFFSET 0xFF40
-#define VIDEO_RAM_SIZE 0x2000
-#define VIDEO_RAM_ADDRESS_OFFSET 0x8000
-#define VIDEO_VALID_OAM_SIZE 0x00A0
-#define VIDEO_OAM_SIZE 0x0100
-#define VIDEO_OAM_ADDRESS_OFFSET 0xFE00
+class IGBBus;
+class GBDma;
+
 #define PALETTE_NUM 10
 #define PALETTE_SIZE 4
 
 enum class VideoRegister
 {
-    LCDC = 0xFF40 - VIDEO_REG_ADDRESS_OFFSET,
-    STAT = 0xFF41 - VIDEO_REG_ADDRESS_OFFSET,
-    SCY = 0xFF42 - VIDEO_REG_ADDRESS_OFFSET,
-    SCX = 0xFF43 - VIDEO_REG_ADDRESS_OFFSET,
-    LY = 0xFF44 - VIDEO_REG_ADDRESS_OFFSET,
-	LYC = 0xFF45 - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
-	DMA = 0xFF46 - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
-    BGP = 0xFF47 - VIDEO_REG_ADDRESS_OFFSET,
-	OBP0 = 0xFF48 - VIDEO_REG_ADDRESS_OFFSET,
-	OBP1 = 0xFF49 - VIDEO_REG_ADDRESS_OFFSET,
-	WY = 0xFF4A - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
-	WX = 0xFF4B - VIDEO_REG_ADDRESS_OFFSET,//TO IMPLEMENT
+	LCDC = 0xFF40 - GPU_REGISTERS_ADDRESS,
+	STAT = 0xFF41 - GPU_REGISTERS_ADDRESS,
+	SCY = 0xFF42 - GPU_REGISTERS_ADDRESS,
+	SCX = 0xFF43 - GPU_REGISTERS_ADDRESS,
+	LY = 0xFF44 - GPU_REGISTERS_ADDRESS,
+	LYC = 0xFF45 - GPU_REGISTERS_ADDRESS,//TO IMPLEMENT
+	DMA = 0xFF46 - GPU_REGISTERS_ADDRESS,//TO IMPLEMENT
+	BGP = 0xFF47 - GPU_REGISTERS_ADDRESS,
+	OBP0 = 0xFF48 - GPU_REGISTERS_ADDRESS,
+	OBP1 = 0xFF49 - GPU_REGISTERS_ADDRESS,
+	WY = 0xFF4A - GPU_REGISTERS_ADDRESS,
+	WX = 0xFF4B - GPU_REGISTERS_ADDRESS,
 };
 
 enum class Palette
@@ -51,29 +48,29 @@ class GBGpu : IGBGpuStateContext, public GBComponent
 private:
     static quint32 s_Palettes[PALETTE_NUM][PALETTE_SIZE];
 
-    GBBus* m_InternalBus;
     IGBGpuState* m_GpuStates[GPU_STATES_NUM];
     IGBGpuState* m_State;
-    quint8 m_Registers[VIDEO_REG_SIZE];
-    quint8 m_VideoRAM[VIDEO_RAM_SIZE];
-	quint8 m_VideoOAM[VIDEO_VALID_OAM_SIZE];
+	GBDma* m_Dma;
+	quint8 m_Registers[GPU_REGISTERS_SIZE];
+	quint8 m_VideoRAM[GPU_RAM_SIZE];
+	quint8 m_VideoOAM[OAM_VALID_SIZE];
     quint32 m_Cycles;
     quint32 m_ScreenBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
     QSemaphore m_FrameSemaphore;
 	bool m_IsWindowActive;
 	quint8 m_WindowLineCount;
 
-    bool IsAddressInVideoRAM(quint16 address) { return address >= VIDEO_RAM_ADDRESS_OFFSET && address < VIDEO_RAM_ADDRESS_OFFSET + VIDEO_RAM_SIZE; }
-    bool IsAddressInVideoReg(quint16 address) { return address >= VIDEO_REG_ADDRESS_OFFSET && address < VIDEO_REG_ADDRESS_OFFSET + VIDEO_REG_SIZE; }
-	bool IsAddressInVideoOAM(quint16 address) { return address >= VIDEO_OAM_ADDRESS_OFFSET && address < VIDEO_OAM_ADDRESS_OFFSET + VIDEO_OAM_SIZE; }
+	bool IsAddressInVideoRAM(quint16 address) { return address >= GPU_RAM_ADDRESS && address < GPU_RAM_ADDRESS + GPU_RAM_SIZE; }
+	bool IsAddressInVideoReg(quint16 address) { return address >= GPU_REGISTERS_ADDRESS && address < GPU_REGISTERS_ADDRESS + GPU_REGISTERS_SIZE; }
+	bool IsAddressInVideoOAM(quint16 address) { return address >= OAM_ADDRESS && address < OAM_ADDRESS + OAM_TOTAL_SIZE; }
     GpuState GetVideoMode() { return static_cast<GpuState>(m_Registers[*VideoRegister::STAT] & 0x03); }
     void SetVideoMode(GpuState newMode) { m_Registers[*VideoRegister::STAT] = (m_Registers[*VideoRegister::STAT] & 0xFC) | static_cast<quint8>(newMode); }
-    void ReadVideoRAM(GBBus* bus, bool modeOverride);
-    void WriteVideoRAM(GBBus* bus);
-	void ReadVideoOAM(GBBus* bus, bool modeOverride);
-	void WriteVideoOAM(GBBus* bus);
-    void ReadVideoRegister(GBBus* bus);
-    void WriteVideoRegister(GBBus* bus);
+	void ReadVideoRAM(IGBBus* bus, bool modeOverride);
+	void WriteVideoRAM(IGBBus* bus);
+	void ReadVideoOAM(IGBBus* bus, bool modeOverride);
+	void WriteVideoOAM(IGBBus* bus);
+	void ReadVideoRegister(IGBBus* bus);
+	void WriteVideoRegister(IGBBus* bus);
     //IGBVideoStateContext
 	quint32 PerformCycle() override { return ++m_Cycles; }
     void SetState(GpuState newStateId) override;
@@ -101,7 +98,7 @@ public:
     GBGpu();
     ~GBGpu() override;
     void Reset() override;
-    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
+	void Tick(GBBus* bus) override;
     void GetScreenSize(int& w, int& h) { w = SCREEN_WIDTH; h = SCREEN_HEIGHT; }
     quint32* GetFrame();
 };

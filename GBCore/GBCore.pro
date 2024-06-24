@@ -49,6 +49,8 @@ SOURCES += \
     GBCartridge/IGBCartridgeBehaviour.cpp \
     GBCartridge/GBCartridgeBehaviour_RomOnly.cpp \
     GBCpu/GBCpuState_InterruptCheck_s.cpp \
+    GBGpu/GBDma.cpp \
+    GBInternalBus.cpp \
     GBInterrupt/GBInterrupt.cpp \
     GBInterruptBus.cpp \
     GBRam/GBRam.cpp \
@@ -85,6 +87,7 @@ SOURCES += \
     GBCpu/GBCpuState_Execute.cpp \
     GBCpu/GBCpuState_InterruptCheck.cpp \
     GBSerial/GBSerial.cpp \
+    GBSharedBus.cpp \
     GBUnusedIO/GBUnusedIO.cpp
 
 HEADERS += \
@@ -96,12 +99,15 @@ HEADERS += \
     GBCartridge/GBCartridge.h \
     GBCartridge/IGBCartridgeBehaviour.h \
     GBCartridge/GBCartridgeBehaviour_RomOnly.h \
+    GBGpu/GBDma.h \
+    GBInternalBus.h \
     GBInterrupt/GBInterrupt.h \
     GBInterruptBus.h \
     GBMemoryMap.h \
     GBRam/GBRam.h \
     GBRam/GBInternalRam.h \
     GBSerial/GBSerial.h \
+    GBSharedBus.h \
     GBUnusedIO/GBUnusedIO.h \
     GBUtility/GBCounter.h \
     GBUtility/GBUtils.h \
@@ -140,6 +146,7 @@ HEADERS += \
     GBCpu/GBCpuState_Error.h \
     GBCpu/GBInstructionContext.h \
     GBCpu/GBInstruction.h \
+    IGBBus.h
 
 unix {
     target.path = /usr/lib

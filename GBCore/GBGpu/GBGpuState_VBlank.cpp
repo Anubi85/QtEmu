@@ -1,7 +1,7 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_VBlank.h"
 
-void GBGpuState_VBlank::Tick(GBBus* bus)
+void GBGpuState_VBlank::Tick(IGBBus* bus)
 {
     Q_UNUSED(bus)
     if (!m_Context->IsDisplayEnabled())

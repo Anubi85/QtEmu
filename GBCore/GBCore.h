@@ -8,8 +8,7 @@ extern "C" Q_DECL_EXPORT IEmulatorCore* GetCore();
 class GBCore : public IEmulatorCore
 {
 private:
-    GBBus* m_Bus;
-    GBInterruptBus* m_InterruptBus;
+	GBBus* m_Bus;
     GBComponent* m_Components[static_cast<int>(Component::Total)];
     Error m_Error;
 public:

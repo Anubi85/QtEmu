@@ -1,4 +1,4 @@
-#include "GBBus.h"
+#include "GBInternalBus.h"
 #include "GBApu_SweepSquareChannel.h"
 #include "GBApu_FrequencySweepModule.h"
 #include "GBApu_SquareWaveModule.h"
@@ -6,7 +6,7 @@
 #include "GBApu_VolumeEnvelopeModule.h"
 
 GBApu_SweepSquareChannel::GBApu_SweepSquareChannel(quint8& apuStatus) :
-        GBApu_ChannelBase(AUDIO_CHANNEL1_ENABLE_MASK, AUDIO_REG_ADDRESS_OFFSET, apuStatus)
+		GBApu_ChannelBase(AUDIO_CHANNEL1_ENABLE_MASK, APU_REGISTERS_ADDRESS, apuStatus)
 {
     m_Modules[0] = new GBApu_FrequencySweepModule(c_ChannelMask, m_ApuStatus, m_Registers);
     m_Modules[1] = new GBApu_SquareWaveModule(m_Registers);
@@ -14,24 +14,24 @@ GBApu_SweepSquareChannel::GBApu_SweepSquareChannel(quint8& apuStatus) :
     m_Modules[3] = new GBApu_VolumeEnvelopeModule(m_Registers);
 }
 
-void GBApu_SweepSquareChannel::ReadRegister(GBBus *bus)
+void GBApu_SweepSquareChannel::ReadRegister(IGBBus* bus)
 {
-	switch (bus->GetAddress() - c_StartRegAddress)
+	switch (bus->GetAddress())
 	{
-		case AUDIO_CHANNEL_NRX0_ADDRESS:
-			bus->SetData(m_Registers[AUDIO_CHANNEL_NRX0_ADDRESS] | 0x80);
+		case NR10_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)] | 0x80);
 			break;
-		case AUDIO_CHANNEL_NRX1_ADDRESS:
-			bus->SetData(m_Registers[AUDIO_CHANNEL_NRX1_ADDRESS] | 0x3F);
+		case NR11_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)] | 0x3F);
 			break;
-		case AUDIO_CHANNEL_NRX2_ADDRESS:
-			bus->SetData(m_Registers[AUDIO_CHANNEL_NRX2_ADDRESS]);
+		case NR12_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)]);
 			break;
-		case AUDIO_CHANNEL_NRX3_ADDRESS:
+		case NR13_REGISTER:
 			bus->SetData(0xFF);
 			break;
-		case AUDIO_CHANNEL_NRX4_ADDRESS:
-			bus->SetData(m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] | 0xBF);
+		case NR14_REGISTER:
+			bus->SetData(m_Registers[bus->GetLocalAddress(c_StartRegAddress)] | 0xBF);
 			break;
 		default:
 			return;
@@ -39,24 +39,24 @@ void GBApu_SweepSquareChannel::ReadRegister(GBBus *bus)
 	bus->ReadReqAck();
 }
 
-void GBApu_SweepSquareChannel::WriteRegister(GBBus *bus)
+void GBApu_SweepSquareChannel::WriteRegister(IGBBus* bus)
 {
-	switch (bus->GetAddress() - c_StartRegAddress)
+	switch (bus->GetAddress())
 	{
-		case AUDIO_CHANNEL_NRX0_ADDRESS:
-			m_Registers[AUDIO_CHANNEL_NRX0_ADDRESS] = bus->GetData() & 0x7F;
+		case NR10_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData() & 0x7F;
 			break;
-		case AUDIO_CHANNEL_NRX1_ADDRESS:
-			m_Registers[AUDIO_CHANNEL_NRX1_ADDRESS] = bus->GetData();
+		case NR11_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData();
 			break;
-		case AUDIO_CHANNEL_NRX2_ADDRESS:
-			m_Registers[AUDIO_CHANNEL_NRX2_ADDRESS] = bus->GetData();
+		case NR12_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData();
 			break;
-		case AUDIO_CHANNEL_NRX3_ADDRESS:
-			m_Registers[AUDIO_CHANNEL_NRX3_ADDRESS] = bus->GetData();
+		case NR13_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData();
 			break;
-		case AUDIO_CHANNEL_NRX4_ADDRESS:
-			m_Registers[AUDIO_CHANNEL_NRX4_ADDRESS] = bus->GetData() & 0xC7;
+		case NR14_REGISTER:
+			m_Registers[bus->GetLocalAddress(c_StartRegAddress)] = bus->GetData() & 0xC7;
 			Trigger();
 			break;
 		default:

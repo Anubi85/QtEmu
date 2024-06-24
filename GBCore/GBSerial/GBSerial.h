@@ -13,5 +13,5 @@ private:
 public:
     GBSerial() { Reset(); }
     void Reset() override;
-    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
+	void Tick(GBBus* bus) override;
 };

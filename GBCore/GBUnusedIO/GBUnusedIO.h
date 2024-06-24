@@ -1,16 +1,14 @@
 #pragma once
 
 #include "GBComponent.h"
-
-#define UNUSED_IO_ADDRESS_OFFSET 0xFF4C
-#define UNUSED_IO_SIZE 0x0034
+#include "GBMemoryMap.h"
 
 class GBUnusedIO : public GBComponent
 {
 private:
-	bool IsAddressInRange(quint16 address) { return address >= UNUSED_IO_ADDRESS_OFFSET && address < UNUSED_IO_ADDRESS_OFFSET + UNUSED_IO_SIZE; }
+	bool IsAddressInRange(quint16 address) { return address >= IO_UNUSED_REGISTERS_ADDRESS && address < IO_UNUSED_REGISTERS_ADDRESS + IO_UNUSED_REGISTERS_SIZE; }
 public:
 	GBUnusedIO() { Reset(); }
 	void Reset() override;
-	void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
+	void Tick(GBBus* bus) override;
 };

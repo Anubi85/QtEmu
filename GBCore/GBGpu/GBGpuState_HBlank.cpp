@@ -1,7 +1,7 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_HBlank.h"
 
-void GBGpuState_HBlank::Tick(GBBus* bus)
+void GBGpuState_HBlank::Tick(IGBBus* bus)
 {
     Q_UNUSED(bus)
     if ((m_Context->PerformCycle() % 456) == 0)

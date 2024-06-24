@@ -10,42 +10,42 @@ void GBInterrupt::Reset()
 	m_IE = 0;
 }
 
-void GBInterrupt::Tick(GBBus *bus, GBInterruptBus* interruptBus)
+void GBInterrupt::Tick(GBBus* bus)
 {
 	//Handle interrupt requests and acknowledge
-        m_IF &= interruptBus->GetInterruptsAck();
-        interruptBus->SetInterruptAcq(Interrupt::None);
-        m_IF |= interruptBus->GetInterruptsReq();
-        interruptBus->SetInterruptReq(Interrupt::None);
+	m_IF &= bus->InterruptBus()->GetInterruptsAck();
+	bus->InterruptBus()->SetInterruptAcq(Interrupt::None);
+	m_IF |= bus->InterruptBus()->GetInterruptsReq();
+	bus->InterruptBus()->SetInterruptReq(Interrupt::None);
 	//Handle read/write to registers
-	if (bus->IsReadReqPending())
+	if (bus->MainBus()->IsReadReqPending())
 	{
-		switch (bus->GetAddress())
+		switch (bus->MainBus()->GetAddress())
 		{
 			case IF_REGISTER:
-				bus->ReadReqAck();
-				bus->SetData(m_IF & 0x1F);
+				bus->MainBus()->ReadReqAck();
+				bus->MainBus()->SetData(m_IF & 0x1F);
 				break;
 			case IE_REGISTER:
-				bus->ReadReqAck();
-				bus->SetData(m_IE & 0x1F);
+				bus->MainBus()->ReadReqAck();
+				bus->MainBus()->SetData(m_IE & 0x1F);
 				break;
 		}
 	}
-	if (bus->IsWriteReqPending())
+	if (bus->MainBus()->IsWriteReqPending())
 	{
-		switch (bus->GetAddress())
+		switch (bus->MainBus()->GetAddress())
 		{
 			case IF_REGISTER:
-				bus->WriteReqAck();
-				m_IF = bus->GetData() & 0x1F;
+				bus->MainBus()->WriteReqAck();
+				m_IF = bus->MainBus()->GetData() & 0x1F;
 				break;
 			case IE_REGISTER:
-				bus->WriteReqAck();
-				m_IE = bus->GetData() & 0x1F;
+				bus->MainBus()->WriteReqAck();
+				m_IE = bus->MainBus()->GetData() & 0x1F;
 				break;
 		}
 	}
 	//Notify active interrupts
-        interruptBus->SetInterrupts(m_IF & m_IE & 0x1F);
+	bus->InterruptBus()->SetInterrupts(m_IF & m_IE & 0x1F);
 }

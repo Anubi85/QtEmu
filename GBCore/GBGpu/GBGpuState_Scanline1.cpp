@@ -1,7 +1,7 @@
 #include "IGBGpuStateContext.h"
 #include "GBGpuState_Scanline1.h"
 
-void GBGpuState_Scanline1::Tick(GBBus* bus)
+void GBGpuState_Scanline1::Tick(IGBBus* bus)
 {
     Q_UNUSED(bus)
     if (m_Context->PerformCycle() == 80)

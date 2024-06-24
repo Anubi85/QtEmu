@@ -91,44 +91,44 @@ private:
 	quint16 GetPcAndIncrement() override { return m_PC++; }
     quint8 GetOpCode() override { return m_OpCode; }
     void SetOpCode(quint8 opCode) override { m_OpCode = opCode; }
-    bool ExecuteOpCode(GBInstructionContext* ctx, GBBus* bus) override;
+	bool ExecuteOpCode(GBInstructionContext* ctx, IGBBus* bus) override;
     void ResetInterruptMode() override;
     void SetInterruptMode(quint16 interruptRoutineAddress) override;
     bool IsHandlingInterrupt() override { return m_IsHandlingInterrupt; }
 
     //instructions
-    bool NOP(GBInstructionContext* context, GBBus* bus);
-    bool LD_r_n(GBInstructionContext* context, GBBus* bus);
-    bool LD_r1_r2(GBInstructionContext* context, GBBus* bus);
-    bool LD_addr_A(GBInstructionContext* context, GBBus* bus);
-    bool LD_A_addr(GBInstructionContext* context, GBBus* bus);
-    bool LD_off_A(GBInstructionContext* context, GBBus* bus);
-    bool LD_A_off(GBInstructionContext* context, GBBus* bus);
-    bool LD_rr_nn(GBInstructionContext* context, GBBus* bus);
-    bool PUSH(GBInstructionContext* context, GBBus* bus);
-    bool POP(GBInstructionContext* context, GBBus* bus);
-    bool XOR(GBInstructionContext* context, GBBus* bus);
-	bool OR(GBInstructionContext* context, GBBus* bus);
-    bool ADD(GBInstructionContext* context, GBBus* bus);
-    bool SUB(GBInstructionContext* context, GBBus* bus);
-    bool CP(GBInstructionContext* context, GBBus* bus);
-    bool INC_r(GBInstructionContext* context, GBBus* bus);
-    bool INC_rr(GBInstructionContext* context, GBBus* bus);
-    bool DEC_r(GBInstructionContext* context, GBBus* bus);
-	bool DEC_rr(GBInstructionContext* context, GBBus* bus);
-    bool LDD(GBInstructionContext* context, GBBus* bus);
-    bool LDI(GBInstructionContext* context, GBBus* bus);
-    bool CALL(GBInstructionContext* context, GBBus* bus);
-    bool RET(GBInstructionContext* context, GBBus* bus);
-    bool BIT(GBInstructionContext* context, GBBus* bus);
-    bool JP(GBInstructionContext* context, GBBus* bus);
-    bool JR(GBInstructionContext* context, GBBus* bus);
-    bool RL(GBInstructionContext* context, GBBus* bus);
-    bool RLA(GBInstructionContext* context, GBBus* bus);
-	bool EDI(GBInstructionContext* context, GBBus* bus);
+	bool NOP(GBInstructionContext* context, IGBBus* bus);
+	bool LD_r_n(GBInstructionContext* context, IGBBus* bus);
+	bool LD_r1_r2(GBInstructionContext* context, IGBBus* bus);
+	bool LD_addr_A(GBInstructionContext* context, IGBBus* bus);
+	bool LD_A_addr(GBInstructionContext* context, IGBBus* bus);
+	bool LD_off_A(GBInstructionContext* context, IGBBus* bus);
+	bool LD_A_off(GBInstructionContext* context, IGBBus* bus);
+	bool LD_rr_nn(GBInstructionContext* context, IGBBus* bus);
+	bool PUSH(GBInstructionContext* context, IGBBus* bus);
+	bool POP(GBInstructionContext* context, IGBBus* bus);
+	bool XOR(GBInstructionContext* context, IGBBus* bus);
+	bool OR(GBInstructionContext* context, IGBBus* bus);
+	bool ADD(GBInstructionContext* context, IGBBus* bus);
+	bool SUB(GBInstructionContext* context, IGBBus* bus);
+	bool CP(GBInstructionContext* context, IGBBus* bus);
+	bool INC_r(GBInstructionContext* context, IGBBus* bus);
+	bool INC_rr(GBInstructionContext* context, IGBBus* bus);
+	bool DEC_r(GBInstructionContext* context, IGBBus* bus);
+	bool DEC_rr(GBInstructionContext* context, IGBBus* bus);
+	bool LDD(GBInstructionContext* context, IGBBus* bus);
+	bool LDI(GBInstructionContext* context, IGBBus* bus);
+	bool CALL(GBInstructionContext* context, IGBBus* bus);
+	bool RET(GBInstructionContext* context, IGBBus* bus);
+	bool BIT(GBInstructionContext* context, IGBBus* bus);
+	bool JP(GBInstructionContext* context, IGBBus* bus);
+	bool JR(GBInstructionContext* context, IGBBus* bus);
+	bool RL(GBInstructionContext* context, IGBBus* bus);
+	bool RLA(GBInstructionContext* context, IGBBus* bus);
+	bool EDI(GBInstructionContext* context, IGBBus* bus);
 public:
     GBCpu();
     ~GBCpu() override;
     void Reset() override;
-    void Tick(GBBus* bus, GBInterruptBus* interruptBus) override;
+	void Tick(GBBus* bus) override;
 };

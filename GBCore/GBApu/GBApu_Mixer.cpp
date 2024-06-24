@@ -1,4 +1,4 @@
-#include "GBBus.h"
+#include "GBInternalBus.h"
 #include "GBApu_Mixer.h"
 #include "GBApu_ChannelBase.h"
 
@@ -46,14 +46,14 @@ void GBApu_Mixer::Tick()
     m_SampleL = ComputeSample(false);
 }
 
-void GBApu_Mixer::ReadRegister(GBBus *bus)
+void GBApu_Mixer::ReadRegister(IGBBus* bus)
 {
 	switch (bus->GetAddress())
 	{
-		case AUDIO_NR50_ADDRESS:
+		case NR50_REGISTER:
 			bus->SetData(m_NR50);
 			break;
-		case AUDIO_NR51_ADDRESS:
+		case NR51_REGISTER:
 			bus->SetData(m_NR51);
 			break;
 		default:
@@ -62,14 +62,14 @@ void GBApu_Mixer::ReadRegister(GBBus *bus)
 	bus->ReadReqAck();
 }
 
-void GBApu_Mixer::WriteRegister(GBBus *bus)
+void GBApu_Mixer::WriteRegister(IGBBus* bus)
 {
 	switch (bus->GetAddress())
 	{
-		case AUDIO_NR50_ADDRESS:
+		case NR50_REGISTER:
 			m_NR50 = bus->GetData();
 			break;
-		case AUDIO_NR51_ADDRESS:
+		case NR51_REGISTER:
 			m_NR51 = bus->GetData();
 			break;
 		default:
